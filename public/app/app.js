@@ -3,6 +3,7 @@
 // create the module and name it scotchApp
 angular.module('tmtApp', [
   'tmtApp.testcases',
+  'tmtApp.configures',
   'tmtControllers', 
   'tmtServices',
   'ui.bootstrap', 
@@ -25,7 +26,7 @@ angular.module('tmtApp', [
 
       
     // Redirects and Otherwise //
-
+    /*
     // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
     $urlRouterProvider
 
@@ -34,7 +35,7 @@ angular.module('tmtApp', [
       .when('/tc?id', '/testcases/:id')
       .when('/testcases/:id', '/testcases/:id')
       // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
-      .otherwise('/');
+      .otherwise('/'); */
     
     // State Configurations 
     $stateProvider
@@ -44,25 +45,26 @@ angular.module('tmtApp', [
         templateUrl: 'app/pages/home.html',
         controller: 'homeController'
       })
+      /*
       .state('campaigns', {
         url: '/campaigns',
-        templateUrl: 'app/pages/campaigns.html',
+        templateUrl: 'app/campaigns/campaigns.html',
         //controller: 'campaignsController'
       })
       .state('resources', {
         url: '/resources',
-        templateUrl: 'app/pages/resources.html',
+        templateUrl: 'app/resources/resources.html',
         //controller: 'resourcesController'
       })
+      .state('settings', {
+        url: '/settings',
+        templateUrl: 'app/configures/configure.html',
+        controller: 'configController'
+      })*/
       .state('about', {
         url: '/about',
         templateUrl: 'app/pages/about.html',
         controller: 'aboutController'
-      })
-      .state('settings', {
-        url: '/settings',
-        templateUrl: 'app/pages/configure.html',
-        controller: 'configController'
       })
       .state('contact', {
         url: '/contact',

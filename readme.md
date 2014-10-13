@@ -1,0 +1,1 @@
+This project contains web GUI for Test Management Tool written in Angularjs.

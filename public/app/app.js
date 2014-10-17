@@ -3,6 +3,7 @@
 // create the module and name it scotchApp
 angular.module('tmtApp', [
   'tmtApp.testcases',
+  'tmtApp.campaigns',
   'tmtApp.configures',
   'tmtControllers', 
   'tmtServices',
@@ -26,22 +27,21 @@ angular.module('tmtApp', [
 
       
     // Redirects and Otherwise //
-    /*
+    
     // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
-    $urlRouterProvider
-
+    //$urlRouterProvider
       // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
       // Here we are just setting up some convenience urls.
-      .when('/tc?id', '/testcases/:id')
-      .when('/testcases/:id', '/testcases/:id')
+      //.when('/tc?id', '/testcases/:id')
+      //.when('/testcases/:id', '/testcases/:id')
       // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
-      .otherwise('/'); */
+    //  .otherwise('/');
     
     // State Configurations 
     $stateProvider
      
       .state('home', {
-        url: '/',
+        url: '',
         templateUrl: 'app/pages/home.html',
         controller: 'homeController'
       })

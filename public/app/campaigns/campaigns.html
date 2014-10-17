@@ -1,3 +1,15 @@
-<div class="jumbotron text-center">
-	<h1>Campaigns</h1>
+<div class="row">
+
+    <div class="col-sm-2">
+        <div ui-view="campaignsFilters">filters..</div>
+    </div>
+    
+    <div class="col-sm-8">
+        <div ui-view="campaignsBody">campaign-Body</div>
+    </div>
+    
+    <div class="col-sm-1">
+        <div ui-view="campaignsStatus">status..</div>
+    </div>
 </div>
+

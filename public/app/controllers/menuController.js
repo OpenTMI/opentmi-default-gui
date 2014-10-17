@@ -5,8 +5,7 @@ angular.module('tmtControllers')
     //http://quarktheme.com/typography-icons/
     $scope.menus = [
     {
-      title: "Test Management", tooltip: 'test',  
-      action: "#", icon: 'cogs',
+      title: "Test Management", tooltip: 'test', icon: 'cogs',
       menus: [
         {  title: "Testcases", tooltip: 'test', action: "#/testcases" },
         {  title: "Campaigns", tooltip: '', action: "#/campaigns" },
@@ -30,16 +29,14 @@ angular.module('tmtControllers')
     },
     {
       title: "DUT", tooltip: 'Device Under Test',
-      action: "#", 
       menus: [
         { title: "Devices", action: "#/resources?type=dut" },
-        { title: "Specifications", action: "#/dut-specifications" },
-        { title: "Features", action: "#/dut-features" },
+        { title: "Features", action: "#/duts/features" },
+        { title: "Specifications", action: "#/duts/specifications" },
       ]
     },
     {
       title: "Resources", tooltip: 'Test rets',
-      action: "#", 
       menus: [
         { title: "List of Resources", action: "#/resources" },
         { title: "Specifications", action: "#/specifications" },
@@ -48,15 +45,13 @@ angular.module('tmtControllers')
     },
     {
       title: "Builds", tooltip: 'Build informations',
-      action: "#",
       menus: [
-        { title: "Builds", action: "#/builds" },
-        { title: "Tree", action: "#/builds-tree" }
+        { title: "Builds", action: "#/duts/builds" },
+        { title: "Tree", action: "#/duts/builds-tree" }
       ]
     },
     {
       title: "Results", tooltip: 'Test Results',
-      action: "#",
       menus: [
         { title: "Results", action: "#/results" },
         { title: "Analyse", action: "#/results-analyse" }
@@ -64,7 +59,6 @@ angular.module('tmtControllers')
     },
     {
       title: "Reports", tooltip: 'Test Reports',
-      action: "#",
       menus: [
         { title: "Reports", action: "#/reports?news" },
         { title: "Templates", action: "#/reports-templates" }
@@ -73,8 +67,7 @@ angular.module('tmtControllers')
     ];
     
     $scope.cmenu = {
-      title: "", tooltip: 'test',  
-      action: "#", icon: 'cogs',
+      title: "", tooltip: 'test', icon: 'cogs',
       menus: [
         {  title: "Accounts", tooltip: 'test', action: "#/accounts" },
         {  title: "Groups", action: "#/groups" },

@@ -15,10 +15,12 @@ angular.module('tmtControllers')
     
     $scope.msg = {};
     
-    
+    var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
+                       '<a href="#/testcases/{{ row.entity.id }}">{{ row.entity[col.field] }}</a>' +
+                       '</div>';
     $scope.columns = [ 
-      { field: 'id', width:300, enableCellEdit: true, pinnedLeft:true }, 
-      { field: 'tcid', width:300, enableCellEdit: true }, 
+      { field: 'tcid', width:200, enableCellEdit: true, cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
+      { field: 'status.value', width:80, enableCellEdit: true, displayName: 'Status' },
       /*{ field: 'specs', enableCellEdit: true },
       { field: 'duration', width:100, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>' },
       { field: 'owner.user', enableCellEdit: true },*/

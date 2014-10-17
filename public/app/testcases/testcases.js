@@ -20,7 +20,7 @@ angular.module('tmtApp.testcases', [
                 templateUrl: 'app/testcases/testcases.filters.html',
               },
               'tcBody@testcases': { 
-                templateUrl: 'app/testcases/testcases.body.html'
+                templateUrl: 'app/testcases/testcases.list.html'
               },
               'tcStatus@testcases': { 
                 templateUrl: 'app/testcases/testcases.status.html'

@@ -40,7 +40,9 @@
   
  <script src="app/app.js"></script>
   
+  <!-- Routers -->
   <script src="app/testcases/testcases.js"></script>
+  <script src="app/campaigns/campaigns.js"></script>
   <script src="app/configures/configures.js"></script>
   
   <!-- Controllers -->
@@ -48,6 +50,7 @@
   <script src="app/controllers/homeController.js"></script>
   <script src="app/controllers/menuController.js"></script>
   <script src="app/testcases/testcase-controller.js"></script>
+  <script src="app/campaigns/campaigns-controller.js"></script>
   <script src="app/configures/account-controller.js"></script>
   
   
@@ -55,6 +58,7 @@
   <!-- Services -->
   <script src="app/services.js"></script>
   <script src="app/testcases/testcase-service.js"></script>
+  <script src="app/campaigns/campaigns-service.js"></script>
   <script src="app/configures/account-service.js"></script>
   
   <script src="app/filters.js"></script>
@@ -75,7 +79,8 @@
       </div>
       <ul class="nav navbar-nav navbar-left">
         <li ng-repeat="menu in menus" ng-class="{dropdown: menu.menus}">
-          <a href="{{menu.action}}" ng-class="{'dropdown-toggle': menu.menus}" data-toggle="dropdown" title="{{menu.tooltip}}">
+          
+          <a  ng-class="{'dropdown-toggle': menu.menus}" data-toggle="dropdown" title="{{menu.tooltip}}">
             <!-- <i ng-if="menu.icon" class="fa fa-{{menu.icon}}" />  -->
             {{menu.title}} <span class="caret"></span>
           </a>
@@ -101,7 +106,7 @@
         <!-- <li><a href="#configure"><i class="fa fa-cogs"></i></a></li> -->
         
         <li ng-class="{dropdown: cmenu.menus}">
-          <a href="{{cmenu.action}}" ng-class="{'dropdown-toggle': cmenu.menus}" data-toggle="dropdown" title="{{cmenu.tooltip}}">
+          <a ng-class="{'dropdown-toggle': cmenu.menus}" data-toggle="dropdown" title="{{cmenu.tooltip}}">
           <i class="fa fa-cogs"></i><span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li ng-repeat="submenu in cmenu.menus">
@@ -109,11 +114,13 @@
             </li>
           </ul>
           
-          
         </li>
         
         <li><a href="#about"><i class="fa fa-info"></i></a></li>
         <li><a href="#contact"><i class="fa fa-comment"></i></a></li>
+        
+        <li ng-if="!loggedIn"><a href="#login"><i class="fa fa-sign-in"></i></a></li>
+        <li ng-if="loggedIn"><a href="#logout"><i class="fa fa-sign-out"></i></a></li>
       </ul>
     </div>
   </div>

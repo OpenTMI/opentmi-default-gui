@@ -2,25 +2,26 @@
 
 angular.module('tmtControllers')
   .controller('tcController', 
-             ['$scope', 'Testcase', '$stateParams', '$log', 
+             ['$scope', 'Testcase', '$stateParams', '$log',
     function ($scope,   Testcase,   $stateParams,    $log) {
   
     $log.info('init tcController')
-    
-    $scope.tags = [];
-     /*
-    $scope.loadTags = function(query) {
-      return tags.query().$promise;
-    };*/
-    
-    $scope.msg = {};
     
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
                        '<a href="#/testcases/{{ row.entity.id }}">{{ row.entity[col.field] }}</a>' +
                        '</div>';
     $scope.columns = [ 
       { field: 'tcid', width:200, enableCellEdit: true, cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
-      { field: 'status.value', width:80, enableCellEdit: true, displayName: 'Status' },
+      { field: 'status.value', width:100, enableCellEdit: true, displayName: 'Status', 
+        editableCellTemplate: 'ui-grid/dropdownEditor',
+        /*cellFilter: 'mapStatus', */ editDropdownValueLabel: 'status', editDropdownOptionsArray: [
+          { id: 'released', status: 'released' }, 
+          { id: 'develop', status: 'develop'   },
+          { id: 'maintenance', status: 'maintenance' },
+          { id: 'unknown', status: 'unknown' }
+        ]
+      },
+      { field: 'owner.name', width:200, enableCellEdit: true, displayName: 'User' }
       /*{ field: 'specs', enableCellEdit: true },
       { field: 'duration', width:100, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>' },
       { field: 'owner.user', enableCellEdit: true },*/
@@ -28,21 +29,30 @@ angular.module('tmtControllers')
     $scope.gridOptions = { 
       columnDefs: $scope.columns,
       enableColumnResizing: true,
-      //enableFiltering: true,
-      //exporterMenuCsv: true,
+      enableFiltering: true,
+      //showFooter: true,
+      exporterMenuCsv: true,
       enableGridMenu: true
     };
     
-    $scope.testcaseService = Testcase.query({fl: true, _id: $stateParams.testcaseId});
-    $scope.dataTestcases = {};
+    function doUpdateList(q)
+    {
+      Testcase.query({q: JSON.stringify(q)}).$promise.then( function(testcases){
+        $scope.dataTestcases = testcases;
+        $scope.$root.$broadcast('tcListStatus', {dataLength: testcases.length});
+      });
+    }
+    
     $scope.gridOptions.data = 'dataTestcases';
     
-    $scope.testcaseService.$promise.then( function(testcases){
-      $scope.dataTestcases = testcases;
+    $scope.$on('tcFilter', function(event, data) {
+      var q = {$and: []}
+      data.tags.forEach( function(tag){
+        q.$and.push( {tcid: {"$regex": ("/"+tag+"/"), "$options":"i"}} );
+      });
+      doUpdateList(q);
     });
-    
-    //$scope.msg.lastCellEdited = 'asd';
-    
+    doUpdateList({});
     
     $scope.gridOptions.onRegisterApi = function(gridApi){
       //set gridApi on scope
@@ -50,16 +60,34 @@ angular.module('tmtControllers')
       gridApi.edit.on.afterCellEdit($scope,function(rowEntity, colDef, newValue, oldValue){
         
         //Somewhy this not working property!
-        $scope.msg.lastCellEdited = 'edited row id:' + rowEntity._id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
-        $scope.$apply();
+        $scope.$root.$broadcast('tcListStatus', {lastCellEdited: 'edited tc: ' + rowEntity.tcid + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue});
         
         rowEntity.$update( function( response ) {
-          $scope.msg.error = null;
+          $scope.$root.$broadcast('tcListStatus', {error: null});
         }, function( error ) {
-          $scope.msg.error = error;
+          $scope.$root.$broadcast('tcListStatus', {error: error});
         });
         
       });
     }; 
     
-  }]);
+  }])
+  /*
+  .filter('mapStatus', function() {
+    var statusHash = {
+      'released': 'released',
+      'develop': 'develop',
+      'maintenance': 'maintenance',
+      'unknown': 'unknown'
+    };
+    
+    return function(input) {
+      if (!input){
+        return '';
+      } else {
+        return statusHash[input];
+      }
+    };
+  })*/
+  
+  ;

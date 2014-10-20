@@ -10,7 +10,8 @@ angular.module('tmtApp', [
   'ui.bootstrap', 
   'ui.router', 
   'ngTagsInput', 
-  'ngAnimate'
+  'ngAnimate',
+  'restangular'
 ])
 
 .run(
@@ -22,8 +23,8 @@ angular.module('tmtApp', [
   ]
 )
 // configure our routes
-.config(['$stateProvider', '$urlRouterProvider', 
-  function($stateProvider, $urlRouterProvider) {
+.config(['$stateProvider', '$urlRouterProvider',  'RestangularProvider',
+  function($stateProvider,  $urlRouterProvider, RestangularProvider ) {
 
       
     // Redirects and Otherwise //
@@ -71,4 +72,7 @@ angular.module('tmtApp', [
         templateUrl: 'app/pages/contact.html',
         controller: 'contactController'
       });
+
+    RestangularProvider.setRequestSuffix('.json');
+    RestangularProvider.setBaseUrl('/api/v0');
 }]);

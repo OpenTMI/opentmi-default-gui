@@ -14,16 +14,18 @@ angular.module('tmtApp.testcases', [
         })
         .state('testcases.list', {
           url: '',
-          controller: 'tcController',
           views: {
               'tcFilters@testcases': { 
                 templateUrl: 'app/testcases/testcases.filters.html',
+                controller: 'tcFilterController'
               },
               'tcBody@testcases': { 
-                templateUrl: 'app/testcases/testcases.list.html'
+                templateUrl: 'app/testcases/testcases.list.html',
+                controller: 'tcController',
               },
               'tcStatus@testcases': { 
-                templateUrl: 'app/testcases/testcases.status.html'
+                templateUrl: 'app/testcases/testcases.status.html',
+                controller: 'tcStatusController',
               }
           }
         })

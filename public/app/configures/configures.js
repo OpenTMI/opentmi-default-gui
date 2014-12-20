@@ -14,16 +14,18 @@ angular.module('tmtApp.configures', [
         })
         .state('groups', {
           url: '/groups',
-          templateUrl: 'app/configures/groups.html'
+          templateUrl: 'app/configures/groups.html',
+          controller: 'groupsController'
         })
         .state('settings', {
           url: '/settings',
-          templateUrl: 'app/configures/settings.html'
+          templateUrl: 'app/configures/settings.html',
+          controller: 'settingsController'
         })
         .state('addons', {
           url: '/addons',
           templateUrl: 'app/configures/addons.html',
-          //controller: addonsController
+          controller: 'addonsController'
         })
       }
   ]

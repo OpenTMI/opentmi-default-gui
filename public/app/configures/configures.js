@@ -22,7 +22,8 @@ angular.module('tmtApp.configures', [
         })
         .state('addons', {
           url: '/addons',
-          templateUrl: 'app/configures/addons.html'
+          templateUrl: 'app/configures/addons.html',
+          //controller: addonsController
         })
       }
   ]

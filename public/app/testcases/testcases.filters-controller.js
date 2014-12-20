@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('tmtControllers')
-  .controller('tcFilterController', 
+  .controller('TestcaseFilterController', 
              ['$scope', '$stateParams', '$log', 
     function ($scope,    $stateParams,    $log) {
   
-    $log.info('init tcFilterController')
+    $log.info('init TestcaseFilterController')
     
     $scope.tags = [];
 

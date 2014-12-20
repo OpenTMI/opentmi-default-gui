@@ -17,21 +17,21 @@ angular.module('tmtApp.testcases', [
           views: {
               'tcFilters@testcases': { 
                 templateUrl: 'app/testcases/testcases.filters.html',
-                controller: 'tcFilterController'
+                controller: 'TestcaseFilterController'
               },
               'tcBody@testcases': { 
                 templateUrl: 'app/testcases/testcases.list.html',
-                controller: 'tcController',
+                controller: 'TestcaseController',
               },
               'tcStatus@testcases': { 
                 templateUrl: 'app/testcases/testcases.status.html',
-                controller: 'tcStatusController',
+                controller: 'TestcaseStatusController',
               }
           }
         })
         .state('testcases.detail', {
           url: '/{testcaseId:[0-9a-fA-F]{24}}',
-          controller: 'tcDetailsController',
+          controller: 'TestcaseDetailsController',
           views: {
               'tcFilters@testcases': { 
                 templateUrl: 'app/testcases/testcases.details.filters.html',

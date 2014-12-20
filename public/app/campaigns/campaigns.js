@@ -14,7 +14,7 @@ angular.module('tmtApp.campaigns', [
         })
         .state('campaigns.list', {
           url: '',
-          controller: 'campaignsController',
+          controller: 'CampaignsController',
           views: {
               'campaignsFilters@campaigns': { 
                 templateUrl: 'app/campaigns/campaigns.filters.html',
@@ -29,7 +29,7 @@ angular.module('tmtApp.campaigns', [
         })
         .state('campaigns.detail', {
           url: '/{campaignId:[0-9a-fA-F]{24}}',
-          controller: 'campaignDetailsController',
+          controller: 'CampaignDetailsController',
           views: {
               'campaignsFilters@campaigns': { 
                 templateUrl: 'app/campaigns/campaigns.details.filters.html',
@@ -44,7 +44,7 @@ angular.module('tmtApp.campaigns', [
         })
         .state('campaigns.new', {
           url: '/new',
-          controller: 'campaignsCreateController',
+          controller: 'CampaignsCreateController',
           views: {
               'campaignsFilters@campaigns': { 
                 template: '',

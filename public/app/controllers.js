@@ -2,12 +2,7 @@
 
 /* Controllers */
 
-angular.module('tmtControllers', [
-  'ui.grid', 
-  'ui.grid.edit', 
-  'ui.grid.pinning',
-  /*, 'ui.grid.exporter', 'ui.grid.selection'*/
-])
+angular.module('tmtControllers', [])
 
   /*.controller('defaultController', ['$scope',function($scope) {
     $scope.keypressCallback = function ($event) {

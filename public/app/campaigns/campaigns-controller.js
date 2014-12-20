@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('tmtControllers')
-  .controller('campaignsController', 
+  .controller('CampaignsController', 
              ['$scope', 'Campaign', '$stateParams', '$log', 
     function ($scope,   Campaign,   $stateParams,    $log) {
   
-    $log.info('init campaignController')
+    $log.info('init CampaignController')
     
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
                        '<a href="#/campaigns/{{ row.entity.id }}">{{ row.entity[col.field] }}</a>' +

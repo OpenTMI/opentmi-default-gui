@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('tmtControllers')
-  .controller('tcStatusController', 
+  .controller('TestcaseStatusController', 
              ['$scope', '$stateParams', '$log', 
     function ($scope,    $stateParams,    $log) {
   
-    $log.info('init tcStatusController')
+    $log.info('init TestcaseStatusController')
     
     $scope.msg = {}
     

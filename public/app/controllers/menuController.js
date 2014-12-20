@@ -1,7 +1,7 @@
 'use strict';	
 
 angular.module('tmtControllers')
-  .controller("menuCtrl",function($scope, $http) {
+  .controller("MenuController", function($scope, $http) {
     //http://quarktheme.com/typography-icons/
     $scope.menus = [
     {
@@ -77,18 +77,18 @@ angular.module('tmtControllers')
     }
     
   })
-  .controller('mainController', function($scope, $http) {
+  .controller('MainController', function($scope, $http) {
     // create a message to display in our view
     $scope.message = 'General Purpose Test Management and automation framework';
   })
-  .controller('configController', function($scope) {
+  .controller('ConfigController', function($scope) {
     $scope.message = 'There will be app configurations';
   })
-  .controller('aboutController', function($scope) {
+  .controller('AboutController', function($scope) {
     $scope.message = 'Look! I am an about page.';
   })
 
-  .controller('contactController', function($scope) {
+  .controller('ContactController', function($scope) {
     $scope.message = 'Jussi Vatjus-Anttila';
   });
  

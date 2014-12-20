@@ -40,6 +40,8 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.0.1/ng-tags-input.min.js"></script>
 
 
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/vendor/socket/socket.min.js"></script>
   
   <!--[if lt IE 9]>
   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -56,6 +58,7 @@
   <script src="app/controllers.js"></script>
   <script src="app/controllers/homeController.js"></script>
   <script src="app/controllers/menuController.js"></script>
+  <script src="app/controllers/socketController.js"></script>
   <script src="app/testcases/testcase-controller.js"></script>
   <script src="app/testcases/testcases.filters-controller.js"></script>
   <script src="app/testcases/testcases.status-controller.js"></script>
@@ -89,7 +92,7 @@
 <!-- define angular controller -->
 <body>
 
-  <div class="navbar navbar-default" ng-controller="menuCtrl">
+  <div class="navbar navbar-default" ng-controller="MenuController">
     
     <div class="container">
       <div class="navbar-header">

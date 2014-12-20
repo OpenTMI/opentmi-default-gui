@@ -11,7 +11,12 @@ angular.module('tmtApp', [
   'ui.router', 
   'ngTagsInput', 
   'ngAnimate',
-  'restangular'
+  'restangular',
+  'ui.grid', 
+  'ui.grid.edit', 
+  'ui.grid.pinning',
+  /*, 'ui.grid.exporter', 'ui.grid.selection',*/
+  'btford.socket-io'
 ])
 
 .run(
@@ -43,34 +48,33 @@ angular.module('tmtApp', [
      
       .state('home', {
         url: '',
-        templateUrl: 'app/pages/home.html',
-        controller: 'homeController'
+        templateUrl: 'app/pages/home.html'
       })
       /*
       .state('campaigns', {
         url: '/campaigns',
         templateUrl: 'app/campaigns/campaigns.html',
-        //controller: 'campaignsController'
+        //controller: 'CampaignsController'
       })*/
       .state('resources', {
         url: '/resources',
         templateUrl: 'app/resources/resources.html',
-        //controller: 'resourcesController'
+        //controller: 'ResourcesController'
       })/*
       .state('settings', {
         url: '/settings',
         templateUrl: 'app/configures/configure.html',
-        controller: 'configController'
+        controller: 'ConfigController'
       })*/
       .state('about', {
         url: '/about',
         templateUrl: 'app/pages/about.html',
-        controller: 'aboutController'
+        controller: 'AboutController'
       })
       .state('contact', {
         url: '/contact',
         templateUrl: 'app/pages/contact.html',
-        controller: 'contactController'
+        controller: 'ContactController'
       });
 
     RestangularProvider.setRequestSuffix('.json');

@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('tmtControllers')
-  .controller('tcController', 
+  .controller('TestcaseController', 
              ['$scope', 'Testcase', '$stateParams', '$log',
     function ($scope,   Testcase,   $stateParams,    $log) {
   
-    $log.info('init tcController')
+    $log.info('init TestcaseController')
     
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
                        '<a href="#/testcases/{{ row.entity.id }}">{{ row.entity[col.field] }}</a>' +

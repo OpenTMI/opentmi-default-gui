@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('tmtControllers')
-  .controller('groupsController', 
+  .controller('GroupsController', 
              ['$scope', 'Groups', '$stateParams', '$log', 
     function ($scope,   Groups,   $stateParams,    $log) {
   
-    $log.info('init groupsController')
+    $log.info('init GroupsController')
 
     $scope.message = 'List of user groups'
     

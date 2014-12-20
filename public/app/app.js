@@ -51,12 +51,12 @@ angular.module('tmtApp', [
         url: '/campaigns',
         templateUrl: 'app/campaigns/campaigns.html',
         //controller: 'campaignsController'
-      })
+      })*/
       .state('resources', {
         url: '/resources',
         templateUrl: 'app/resources/resources.html',
         //controller: 'resourcesController'
-      })
+      })/*
       .state('settings', {
         url: '/settings',
         templateUrl: 'app/configures/configure.html',

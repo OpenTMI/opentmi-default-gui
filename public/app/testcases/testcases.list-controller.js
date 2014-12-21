@@ -23,10 +23,10 @@ angular.module('tmtControllers')
           { id: 'unknown', status: 'unknown' }
         ]
       },
-      { field: 'owner.name', width:200, enableCellEdit: true, displayName: 'User' }
+      { field: 'cre.user', width:200, enableCellEdit: true, displayName: 'Creator' },
+      { field: 'owner.name', width:200, enableCellEdit: true, displayName: 'Owner' },
       //{ field: 'specs', enableCellEdit: true },
       //{ field: 'duration', width:100, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>' },
-      //{ field: 'owner.user', enableCellEdit: true },
     ]; 
     $scope.gridOptions = { 
       columnDefs: $scope.columns,
@@ -41,11 +41,18 @@ angular.module('tmtControllers')
     {
       Testcase.query({q: JSON.stringify(q)}).$promise.then( 
         function(testcases){
-          if( testcases.length > 0 ){
-            $scope.dataTestcases = testcases;
-          }
-          $scope.$root.$broadcast('tcListStatus', 
-            {dataLength: testcases.length});
+          $scope.dataTestcases = testcases;
+          var status = {
+              dataLength: testcases.length,
+              totalDuration: 0 };
+          var TotalDuration = 0;
+          testcases.forEach( function(tc){
+            if( tc.hasOwnProperty('history') && tc.history.hasOwnProperty('durationAvg')  ){
+              status.totalDuration += tc.history.durationAvg;
+            }
+          });
+
+          $scope.$root.$broadcast('tcListStatus', status);
       });
     }
     

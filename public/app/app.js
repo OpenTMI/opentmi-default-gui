@@ -16,7 +16,8 @@ angular.module('tmtApp', [
   'ui.grid.edit', 
   'ui.grid.pinning',
   /*, 'ui.grid.exporter', 'ui.grid.selection',*/
-  'btford.socket-io'
+  'btford.socket-io',
+  'angularMoment'
 ])
 
 .run(

@@ -10,11 +10,14 @@ angular.module('tmtControllers')
     $scope.msg = {}
     
     $scope.$on('tcListStatus', function(event, data) {
-      if( data.lastCellEdited ) 
+      console.log(data);
+      if( data.hasOwnProperty('lastCellEdited') ) 
         $scope.msg.lastCellEdited = data.lastCellEdited;
-      if( data.dataLength ) 
-        $scope.msg.dataLength = data.dataLength;      
-      
+      if( data.hasOwnProperty('dataLength') ) 
+        $scope.msg.dataLength = data.dataLength;
+      if( data.hasOwnProperty('lastError')) {
+        $scope.msg.dataError = data.lastError;
+      }
     });
     
   }]);

@@ -21,7 +21,7 @@ angular.module('tmtApp.testcases', [
               },
               'tcBody@testcases': { 
                 templateUrl: 'app/testcases/testcases.list.html',
-                controller: 'TestcaseController',
+                controller: 'TestcaseListController',
               },
               'tcStatus@testcases': { 
                 templateUrl: 'app/testcases/testcases.status.html',

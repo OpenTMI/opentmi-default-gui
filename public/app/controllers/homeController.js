@@ -18,7 +18,7 @@ controller('HomeController',
       $log.error('ws error');
     });
     $scope.$on('socket:test', function (ev, data) {
-      $log.debug(data);
+      $log.debug('client <- server: '+data);
     });
     
     $scope.addSlide = function(url, text) {

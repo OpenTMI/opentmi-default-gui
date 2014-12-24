@@ -5,19 +5,23 @@ angular.module('tmtApp', [
   'tmtApp.testcases',
   'tmtApp.campaigns',
   'tmtApp.configures',
+  'tmtApp.wizard',
   'tmtControllers', 
   'tmtServices',
   'ui.bootstrap', 
   'ui.router', 
   'ngTagsInput', 
   'ngAnimate',
+  'ngStorage',
   'restangular',
   'ui.grid', 
   'ui.grid.edit', 
   'ui.grid.pinning',
   /*, 'ui.grid.exporter', 'ui.grid.selection',*/
   'btford.socket-io',
-  'angularMoment'
+  'angularMoment',
+
+  'mgo-angular-wizard'
 ])
 
 .run(
@@ -32,31 +36,31 @@ angular.module('tmtApp', [
 .config(['$stateProvider', '$urlRouterProvider',  'RestangularProvider',
   function($stateProvider,  $urlRouterProvider, RestangularProvider ) {
 
-      
+
     // Redirects and Otherwise //
     
     // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
-    //$urlRouterProvider
+    $urlRouterProvider
       // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
       // Here we are just setting up some convenience urls.
-      //.when('/tc?id', '/testcases/:id')
-      //.when('/testcases/:id', '/testcases/:id')
+      .when('/tc?id', '/testcases/:id')
+      .when('/tc/:id', '/testcases/:id')
       // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
-    //  .otherwise('/');
+      .otherwise('/');
     
     // State Configurations 
     $stateProvider
-     
       .state('home', {
         url: '',
-        templateUrl: 'app/pages/home.html'
+        templateUrl: 'app/pages/home.html',
+        controller: 'defaultController',
+        /*onEnter: function(){
+          console.log('title')
+        }
+        onExit: function(title){
+          if(title){ console.log(title) }
+        }*/
       })
-      /*
-      .state('campaigns', {
-        url: '/campaigns',
-        templateUrl: 'app/campaigns/campaigns.html',
-        //controller: 'CampaignsController'
-      })*/
       .state('resources', {
         url: '/resources',
         templateUrl: 'app/resources/resources.html',

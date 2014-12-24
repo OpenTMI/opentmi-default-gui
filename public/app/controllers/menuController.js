@@ -38,7 +38,7 @@ angular.module('tmtControllers')
     {
       title: "Resources", tooltip: 'Test rets',
       menus: [
-        { title: "List of Resources", action: "#/resources" },
+        { title: "Resources", action: "#/resources" },
         { title: "Specifications", action: "#/specifications" },
         { title: "Features", action: "#/features" }
       ]

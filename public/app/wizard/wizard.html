@@ -1,0 +1,30 @@
+<style>
+.main-inner {
+  height: 300px;
+  border-color: red;
+  border-radius: 1px;
+}
+</style>
+<section class="inner main-inner">
+  <wizard on-finish="finishedWizard()"> 
+      <wz-step title="Starting">
+          <h1>Installing Test Management System..</h1>
+          <p>Ready to install TMT v{{tmt.version}}</p>
+          <input type="submit" wz-next value="Next" />
+      </wz-step>
+      <wz-step title="Database">
+          <h1>Configure database (mongoDB) connections</h1>
+          <p>Host: {{database.host}}</p>
+          <p>Port: {{database.port}}</p>
+          <p>Username: {{database.uname}}</p>
+          <p>Password: {{database.pwd}}</p>
+          <input type="submit" ng-click="goBack()" value="Previous" />
+          <input type="submit" wz-next="logStep()" value="Next" />
+      </wz-step>
+      <wz-step title="Complete">
+          <p>Installation finished.</p>
+          <input type="submit" wz-next value="Finish now" />
+      </wz-step>
+  </wizard>
+</section>
+

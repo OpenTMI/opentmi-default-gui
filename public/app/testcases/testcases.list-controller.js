@@ -11,6 +11,7 @@ angular.module('tmtControllers')
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
                        '<a href="#/testcases/{{ row.entity.id }}">{{ row.entity[col.field] }}</a>' +
                        '</div>';
+    var defaultCellTemplate = '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>';
     $scope.columns = [ 
       { field: 'tcid', width:200, enableCellEdit: true, cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
       { field: 'status.value', width:100, enableCellEdit: true, displayName: 'Status', 
@@ -18,15 +19,26 @@ angular.module('tmtControllers')
         //cellFilter: 'mapStatus', 
         editDropdownValueLabel: 'status', editDropdownOptionsArray: [
           { id: 'released', status: 'released' }, 
-          { id: 'develop', status: 'develop'   },
+          { id: 'development', status: 'development'   },
           { id: 'maintenance', status: 'maintenance' },
           { id: 'unknown', status: 'unknown' }
         ]
       },
-      { field: 'cre.user', width:200, enableCellEdit: true, displayName: 'Creator' },
+      //{ field: 'cre.user', width:200, enableCellEdit: true, displayName: 'Creator' },
       { field: 'owner.name', width:200, enableCellEdit: true, displayName: 'Owner' },
+      { field: 'other_info.layer', width:50, enableCellEdit: true, displayName: 'Layer',
+        editableCellTemplate: 'ui-grid/dropdownEditor',
+        //cellFilter: 'mapStatus', 
+        editDropdownValueLabel: 'status', editDropdownOptionsArray: [
+          { id: 'L1', status: 'L1' }, 
+          { id: 'L2', status: 'L2'   },
+          { id: 'L12', status: 'L12' },
+          { id: 'L3', status: 'L3' },
+          { id: 'unknown', status: 'unknown' },
+        ] },
+
       //{ field: 'specs', enableCellEdit: true },
-      //{ field: 'duration', width:100, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>' },
+      //{ field: 'history.durationAvg', width:100, enableCellEdit: true, cellTemplate: defaultCellTemplate },
     ]; 
     $scope.gridOptions = { 
       columnDefs: $scope.columns,

@@ -25,8 +25,9 @@ angular.module('tmtControllers')
         ]
       },
       //{ field: 'cre.user', width:200, enableCellEdit: true, displayName: 'Creator' },
-      { field: 'owner.name', width:200, enableCellEdit: true, displayName: 'Owner' },
-      { field: 'other_info.layer', width:50, enableCellEdit: true, displayName: 'Layer',
+      { field: 'owner.name', width:100, enableCellEdit: true, displayName: 'Owner' },
+      { field: 'other_info.component', width:100, enableCellEdit: true, displayName: 'Component' },
+      /*{ field: 'other_info.layer', width:50, enableCellEdit: true, displayName: 'Layer',
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //cellFilter: 'mapStatus', 
         editDropdownValueLabel: 'status', editDropdownOptionsArray: [
@@ -35,7 +36,7 @@ angular.module('tmtControllers')
           { id: 'L12', status: 'L12' },
           { id: 'L3', status: 'L3' },
           { id: 'unknown', status: 'unknown' },
-        ] },
+        ] }*/,
 
       //{ field: 'specs', enableCellEdit: true },
       //{ field: 'history.durationAvg', width:100, enableCellEdit: true, cellTemplate: defaultCellTemplate },

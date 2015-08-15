@@ -15,12 +15,13 @@
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" />
   <link rel="stylesheet" href="/vendor/ui-grid/3.0.4/ui-grid.min.css" />
   <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.0.1/ng-tags-input.min.css" />
+  <link rel="stylesheet", href="/vendor/pivottable/1.6.3/pivot.min.css" />
   
   <!-- styles for ng-animate are located here -->
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
   <!-- SPELLS -->
-  <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
@@ -51,7 +52,7 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="/vendor/socket/socket.min.js"></script>
   <script src="/vendor/ngStorage/ngStorage.min.js"></script>
-  
+  <script src="/vendor/pivottable/1.6.3/pivot.min.js"></script>  
   
   <!--[if lt IE 9]>
   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -63,6 +64,7 @@
   <script src="app/wizard/wizard.js"></script>
   <script src="app/testcases/testcases.js"></script>
   <script src="app/campaigns/campaigns.js"></script>
+  <script src="app/results/results.js"></script>
   <script src="app/configures/configures.js"></script>
   
   <!-- Controllers -->
@@ -74,6 +76,9 @@
   <script src="app/testcases/testcases.list-controller.js"></script>
   <script src="app/testcases/testcases.filters-controller.js"></script>
   <script src="app/testcases/testcases.status-controller.js"></script>
+  <script src="app/results/results.list-controller.js"></script>
+  <script src="app/results/results.filters-controller.js"></script>
+  <script src="app/results/results.status-controller.js"></script>
   <script src="app/campaigns/campaigns-controller.js"></script>
   <script src="app/configures/account-controller.js"></script>
   <script src="app/configures/groups-controller.js"></script>
@@ -88,6 +93,7 @@
   <script src="app/wizard/wizard-service.js"></script>
   <script src="app/testcases/testcase-service.js"></script>
   <script src="app/campaigns/campaigns-service.js"></script>
+  <script src="app/results/result-service.js"></script>
   <script src="app/configures/account-service.js"></script>
   <script src="app/configures/addons-service.js"></script>
   <script src="app/configures/groups-service.js"></script>

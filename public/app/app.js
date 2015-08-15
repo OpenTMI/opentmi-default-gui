@@ -5,6 +5,7 @@ angular.module('tmtApp', [
   'tmtApp.testcases',
   'tmtApp.campaigns',
   'tmtApp.configures',
+  'tmtApp.results',
   'tmtApp.wizard',
   'tmtControllers', 
   'tmtServices',

@@ -6,6 +6,7 @@ angular.module('tmtApp', [
   'tmtApp.campaigns',
   'tmtApp.configures',
   'tmtApp.results',
+  'tmtApp.resultsAnalyse',
   'tmtApp.wizard',
   'tmtControllers', 
   'tmtServices',

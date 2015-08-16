@@ -10,15 +10,14 @@ angular.module('tmtControllers')
     Result.query({q: JSON.stringify({}), fl:true}).$promise.then( 
       function(results){
         $log.info(results)
-        //$scope.results = results;
-        $scope.results = [{tcid: '1', 'final.verdict': 'pass'}]
+        $scope.results = results;
         pivotUi()
     });
-
+    
     function pivotUi() {
         //var derivers = $.pivotUtilities.derivers;
         var renderers = $.extend($.pivotUtilities.renderers, 
-                    $.pivotUtilities.gchart_renderers);
+                    $.pivotUtilities.c3_renderers);
         $("#pivottable").pivotUI($scope.results, {
             rows: ["tcid"],
             cols: ["final.verdict"],

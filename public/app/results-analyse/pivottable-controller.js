@@ -20,7 +20,7 @@ angular.module('tmtControllers')
                     $.pivotUtilities.c3_renderers);
         $("#pivottable").pivotUI($scope.results, {
             rows: ["tcid"],
-            cols: ["final.verdict"],
+            cols: ["verdict.final"],
             rendererName: "Table",
             renderers: renderers,
         });

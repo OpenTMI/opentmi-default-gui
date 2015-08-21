@@ -7,12 +7,33 @@ angular.module('tmtControllers')
   
     $log.info('init pivottableController')
     $scope.results = [];
-    Result.query({q: JSON.stringify({}), fl:true}).$promise.then( 
-      function(results){
-        $log.info(results)
-        $scope.results = results;
-        pivotUi()
-    });
+    
+    $scope.update = function() {
+        Result.query({q: JSON.stringify({}), fl:true}).$promise.then( 
+          function(results){
+            $log.info(results)
+            
+            for(var r of results) {
+                r['exec.dut.count'] = ""+r['exec.dut.count'];
+                r.duration = parseFloat(r.duration);
+                if(r['exec.sut.fut.0']){
+                    r['exec.sut.fut'] = r['exec.sut.fut.0']
+                    delete r['exec.sut.fut.0']
+                }
+                if(r['exec.sut.cut.0']){
+                    r['exec.sut.cut'] = r['exec.sut.cut.0']
+                    delete r['exec.sut.cut.0']
+                }
+                if(r['exec.sut.cut.1']){
+                    r['exec.sut.cut2'] = r['exec.sut.cut.1']
+                    delete r['exec.sut.cut.1']
+                }
+            }
+            $scope.results = results;
+            pivotUi()
+        });
+    }
+    $scope.update();
 
     /**
      * Get week number in the year.
@@ -41,7 +62,7 @@ angular.module('tmtControllers')
                           $.pivotUtilities.export_renderers);
         $("#pivottable").pivotUI($scope.results, {
             rows: ["tcid"],
-            cols: ["verdict.final"],
+            cols: ["exec.verdict"],
             rendererName: "Table",
             renderers: renderers,
             derivedAttributes: {
@@ -58,7 +79,16 @@ angular.module('tmtControllers')
                     }
                     return date.getWeek()
                   },
-                "Duration": derivers.bin("exec.duration", 30)
+                "Duration_bin10": derivers.bin("exec.duration", 10),
+                /*"Duration": function(record) {
+                    duration = 0;
+                    try {
+                        duration = parseFloat(record.duration);
+                    } catch (e) {
+                        
+                    }
+                    return duration;
+                }*/
             },
             /*sorters: function(attr) {
                 if(attr == "month name") {
@@ -68,7 +98,7 @@ angular.module('tmtControllers')
                     return sortAs(["Mon","Tue","Wed", "Thu","Fri","Sat","Sun"]);
                 }
             },*/
-            hiddenAttributes: ["__v","_id._bsontype","_id.id" ,"exec.logs", 'exec.duration'],
+            hiddenAttributes: ["__v","_id._bsontype","_id.id" ,"exec.logs"],
 
         });
     }

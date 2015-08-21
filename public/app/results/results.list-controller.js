@@ -16,7 +16,7 @@ angular.module('tmtControllers')
       { field: 'tcid', width:200, cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
       //{ field: 'other_info.component', width:100, displayName: 'Component' },
       { field: 'exec.duration', width:100, cellTemplate: defaultCellTemplate, displayName: 'Duration' },
-      { field: 'verdict.final', width:100, cellTemplate: defaultCellTemplate, displayName: 'Verdict' },
+      { field: 'exec.verdict', width:100, cellTemplate: defaultCellTemplate, displayName: 'Verdict' },
     ]; 
     $scope.gridOptions = { 
       columnDefs: $scope.columns,

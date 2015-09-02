@@ -3,6 +3,7 @@
 // create the module and name it scotchApp
 angular.module('tmtApp', [
   'tmtApp.testcases',
+  'tmtApp.testcasesAnalyse',
   'tmtApp.campaigns',
   'tmtApp.configures',
   'tmtApp.results',

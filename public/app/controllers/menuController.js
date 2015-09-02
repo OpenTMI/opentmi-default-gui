@@ -8,6 +8,7 @@ angular.module('tmtControllers')
       title: "Test Management", tooltip: 'test', icon: 'cogs',
       menus: [
         {  title: "Testcases", tooltip: 'test', action: "#/testcases" },
+        {  title: "Testcase Analyse", tooltip: 'test analyse', action: "#/testcases-analyse" },
         {  title: "Campaigns", tooltip: '', action: "#/campaigns" },
         {  title: "Plans", tooltip: '', action: "#/plans" },
         {  title: "Automation", tooltip: '', action: "#/automation" }

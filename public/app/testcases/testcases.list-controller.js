@@ -26,7 +26,7 @@ angular.module('tmtControllers')
       },
       //{ field: 'cre.user', width:200, enableCellEdit: true, displayName: 'Creator' },
       { field: 'owner.name', width:100, enableCellEdit: true, displayName: 'Owner' },
-      { field: 'other_info.component', width:100, enableCellEdit: true, displayName: 'Component' },
+      //{ field: 'other_info.component', width:100, enableCellEdit: true, displayName: 'Component' },
       /*{ field: 'other_info.layer', width:50, enableCellEdit: true, displayName: 'Layer',
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //cellFilter: 'mapStatus', 
@@ -52,25 +52,23 @@ angular.module('tmtControllers')
     
     function doUpdateList(q)
     {
-      Testcase.query({q: JSON.stringify(q)}).$promise.then( 
+      Testcase.query({q: JSON.stringify(q), f: "tcid status owner"}).$promise.then( 
         function(testcases){
-          $scope.dataTestcases = testcases;
           var status = {
               dataLength: testcases.length,
               totalDuration: 0 };
           var TotalDuration = 0;
           testcases.forEach( function(tc){
-            if( tc.hasOwnProperty('history') && tc.history.hasOwnProperty('durationAvg')  ){
-              status.totalDuration += tc.history.durationAvg;
+            if( tc['history.durationAvg']){
+                status.totalDuration += tc['history.durationAvg'];
             }
           });
-
+          $scope.dataTestcases = testcases;
           $scope.$root.$broadcast('tcListStatus', status);
       });
     }
     
     $scope.gridOptions.data = 'dataTestcases';
-    
     
     $scope.$on('tcFilter', function(event, data) {
       var q = {$and: []}

@@ -9,14 +9,25 @@ angular.module('tmtControllers')
     
     
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
-                       '<a href="#/results/{{ row.entity.id }}">{{ row.entity[col.field] }}</a>' +
+                       '<a href="#/results/{{ row.entity._id }}">{{ row.entity[col.field] }}</a>' +
                        '</div>';
     var defaultCellTemplate = '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>';
     $scope.columns = [ 
       { field: 'tcid', width:200, cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
       //{ field: 'other_info.component', width:100, displayName: 'Component' },
-      { field: 'exec.duration', width:100, cellTemplate: defaultCellTemplate, displayName: 'Duration' },
-      { field: 'exec.verdict', width:100, cellTemplate: defaultCellTemplate, displayName: 'Verdict' },
+      { field: 'exec.duration', width:100, 
+        cellTemplate: defaultCellTemplate, displayName: 'Duration' },
+      { field: 'exec.verdict',  width:100, displayName: 'Verdict',
+        cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
+          if (grid.getCellValue(row,col) == "pass") {
+            return 'green';
+          }
+          return 'red';
+        } },
+      { field: 'exec.dut.type',  width:100, 
+        cellTemplate: defaultCellTemplate, displayName: 'DutType' },
+      { field: 'exec.sut.cut', 
+        cellTemplate: defaultCellTemplate, displayName: 'Components' },
     ]; 
     $scope.gridOptions = { 
       columnDefs: $scope.columns,
@@ -37,8 +48,8 @@ angular.module('tmtControllers')
               totalDuration: 0 };
           var TotalDuration = 0;
           results.forEach( function(result){
-            if( result.hasOwnProperty('history') && result.history.hasOwnProperty('durationAvg')  ){
-              status.totalDuration += result.history.durationAvg;
+            if( result.hasOwnProperty('exec') && result.exec.hasOwnProperty('duration')  ){
+              status.totalDuration += result.exec.duration;
             }
           });
 
@@ -50,15 +61,16 @@ angular.module('tmtControllers')
     
     
     $scope.$on('resultFilter', function(event, data) {
-      var q = {$and: []}
+      var q = {}
       data.tags.forEach( function(tag){
+        if( !q.$and ) q.$and = [];
         q.$and.push( {tcid: {"$regex": ("/"+tag+"/"), "$options":"i"}} );
       });
       doUpdateList(q);
       
     });
     doUpdateList({});
-    
+    /*
     $scope.gridOptions.onRegisterApi = function(gridApi){
       //set gridApi on scope
       $scope.gridApi = gridApi;
@@ -75,7 +87,7 @@ angular.module('tmtControllers')
         });
         
       });
-    }; 
+    };*/
     
   }])
   /*

@@ -25,18 +25,22 @@ angular.module('tmtControllers')
         ]
       },
       //{ field: 'cre.user', width:200, enableCellEdit: true, displayName: 'Creator' },
-      { field: 'owner.name', width:100, enableCellEdit: true, displayName: 'Owner' },
-      //{ field: 'other_info.component', width:100, enableCellEdit: true, displayName: 'Component' },
-      /*{ field: 'other_info.layer', width:50, enableCellEdit: true, displayName: 'Layer',
-        editableCellTemplate: 'ui-grid/dropdownEditor',
-        //cellFilter: 'mapStatus', 
-        editDropdownValueLabel: 'status', editDropdownOptionsArray: [
-          { id: 'L1', status: 'L1' }, 
-          { id: 'L2', status: 'L2'   },
-          { id: 'L12', status: 'L12' },
-          { id: 'L3', status: 'L3' },
-          { id: 'unknown', status: 'unknown' },
-        ] }*/,
+      { field: 'owner.name', width:100, 
+        enableCellEdit: true, displayName: 'Owner' },
+      { field: 'other_info.type', width:100, 
+        enableCellEdit: true, displayName: 'Type' },
+      { field: 'other_info.components', 
+        enableCellEdit: true, displayName: 'Components' },
+      //{ field: 'other_info.layer', width:50, enableCellEdit: true, displayName: 'Layer',
+      // editableCellTemplate: 'ui-grid/dropdownEditor',
+      // //cellFilter: 'mapStatus', 
+      // editDropdownValueLabel: 'status', editDropdownOptionsArray: [
+      //   { id: 'L1', status: 'L1' }, 
+      //   { id: 'L2', status: 'L2'   },
+      //   { id: 'L12', status: 'L12' },
+      //   { id: 'L3', status: 'L3' },
+      //   { id: 'unknown', status: 'unknown' },
+      // ] },
 
       //{ field: 'specs', enableCellEdit: true },
       //{ field: 'history.durationAvg', width:100, enableCellEdit: true, cellTemplate: defaultCellTemplate },
@@ -49,18 +53,24 @@ angular.module('tmtControllers')
       exporterMenuCsv: true,
       enableGridMenu: true
     };
+
+    Object.resolve = function(path, obj, safe) {
+        return path.split('.').reduce(function(prev, curr) {
+            return !safe ? prev[curr] : (prev ? prev[curr] : undefined)
+        }, obj || self)
+    }
     
     function doUpdateList(q)
     {
-      Testcase.query({q: JSON.stringify(q), f: "tcid status owner"}).$promise.then( 
+      Testcase.query({q: JSON.stringify(q), f: "tcid execution.estimation.duration status owner other_info.type other_info.components"}).$promise.then( 
         function(testcases){
           var status = {
               dataLength: testcases.length,
               totalDuration: 0 };
           var TotalDuration = 0;
           testcases.forEach( function(tc){
-            if( tc['history.durationAvg']){
-                status.totalDuration += tc['history.durationAvg'];
+            if( Object.resolve('execution.estimation.duration', tc) ) {
+                status.totalDuration += Object.resolve('execution.estimation.duration', tc, 0);
             }
           });
           $scope.dataTestcases = testcases;
@@ -69,16 +79,18 @@ angular.module('tmtControllers')
     }
     
     $scope.gridOptions.data = 'dataTestcases';
+    doUpdateList({});
     
     $scope.$on('tcFilter', function(event, data) {
-      var q = {$and: []}
+      
+      var q = {}
       data.tags.forEach( function(tag){
+        if( !q.$and ) q.$and = [];
         q.$and.push( {tcid: {"$regex": ("/"+tag+"/"), "$options":"i"}} );
       });
       doUpdateList(q);
       
     });
-    doUpdateList({});
     
     $scope.gridOptions.onRegisterApi = function(gridApi){
       //set gridApi on scope
@@ -86,13 +98,17 @@ angular.module('tmtControllers')
       gridApi.edit.on.afterCellEdit($scope,
         function(rowEntity, colDef, newValue, oldValue){
         
+        $log.info('edited tc: ' + rowEntity.tcid + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue);
         //Somewhy this not working property!
-        $scope.$root.$broadcast('tcListStatus', {lastCellEdited: 'edited tc: ' + rowEntity.tcid + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue});
+        $scope.$root.$broadcast('tcListStatus', 
+            {lastCellEdited: 'edited tc: ' + rowEntity.tcid + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue});
         
         rowEntity.$update( function( response ) {
-          $scope.$root.$broadcast('tcListStatus', {error: null});
+          //$scope.$root.$broadcast('tcListStatus', {error: null});
+          $log.info("Update success");
         }, function( error ) {
           $scope.$root.$broadcast('tcListStatus', {error: error});
+          $log.info("Update fails");
         });
         
       });

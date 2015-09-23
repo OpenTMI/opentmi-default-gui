@@ -9,7 +9,7 @@ angular.module('tmtControllers')
     $scope.results = [];
     
     $scope.update = function() {
-        Result.query({q: JSON.stringify({}), fl:true}).$promise.then( 
+        Result.query({q: JSON.stringify({}), fl:true, l: 5000}).$promise.then( 
           function(results){
             $log.info(results)
             

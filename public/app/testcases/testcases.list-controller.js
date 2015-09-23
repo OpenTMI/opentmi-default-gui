@@ -13,7 +13,7 @@ angular.module('tmtControllers')
                        '</div>';
     var defaultCellTemplate = '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>';
     $scope.columns = [ 
-      { field: 'tcid', width:200, enableCellEdit: true, cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
+      { field: 'tcid', /*width:200,*/ enableCellEdit: true, cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
       { field: 'status.value', width:100, enableCellEdit: true, displayName: 'Status', 
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //cellFilter: 'mapStatus', 
@@ -29,7 +29,7 @@ angular.module('tmtControllers')
         enableCellEdit: true, displayName: 'Owner' },
       { field: 'other_info.type', width:100, 
         enableCellEdit: true, displayName: 'Type' },
-      { field: 'other_info.components', 
+      { field: 'other_info.components', width: 100, 
         enableCellEdit: true, displayName: 'Components' },
       //{ field: 'other_info.layer', width:50, enableCellEdit: true, displayName: 'Layer',
       // editableCellTemplate: 'ui-grid/dropdownEditor',

@@ -13,7 +13,7 @@ angular.module('tmtControllers')
                        '</div>';
     var defaultCellTemplate = '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>';
     $scope.columns = [ 
-      { field: 'tcid', width:200, cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
+      { field: 'tcid', cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
       //{ field: 'other_info.component', width:100, displayName: 'Component' },
       { field: 'exec.duration', width:100, 
         cellTemplate: defaultCellTemplate, displayName: 'Duration' },

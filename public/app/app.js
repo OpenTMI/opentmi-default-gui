@@ -5,6 +5,7 @@ angular.module('tmtApp', [
   'tmtApp.testcases',
   'tmtApp.testcasesAnalyse',
   'tmtApp.campaigns',
+  'tmtApp.builds',
   'tmtApp.configures',
   'tmtApp.results',
   'tmtApp.resultsAnalyse',

@@ -70,7 +70,7 @@ angular.module('tmtControllers')
     $scope.cmenu = {
       title: "", tooltip: 'test', icon: 'cogs',
       menus: [
-        {  title: "Accounts", tooltip: 'test', action: "#/accounts" },
+        {  title: "Accounts", tooltip: 'Manage Accounts', action: "#/accounts" },
         {  title: "Groups", action: "#/groups" },
         {  title: "Settings", action: "#/settings" },
         {  title: "Addons", action: "#/addons" },

@@ -10,9 +10,11 @@ angular.module('tmtControllers')
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
                        '<a href="#/campaigns/{{ row.entity.id }}">{{ row.entity[col.field] }}</a>' +
                        '</div>';
-    
+    var checkBoxTemplate = '<input type="checkbox" ng-model="row.entity.dude" ng-click="toggle(row.entity.name,row.entity.dude)">'
+
     $scope.columns = [ 
-      { field: 'name', width:300, enableCellEdit: true, pinnedLeft:true, cellTemplate: linkCellTemplate  },
+      { field: 'enable.value', cellTemplate: checkBoxTemplate, displayName: '', width: 50, enableCellEdit: true, pinnedLeft: true },
+      { field: 'name', width:300, enableCellEdit: true, pinnedLeft:true, cellTemplate: linkCellTemplate  },      
     ];
     $scope.gridOptions = { 
       columnDefs: $scope.columns,
@@ -22,8 +24,8 @@ angular.module('tmtControllers')
       enableGridMenu: true
     };
     
-    $scope.campaignService = Campaign.query({fl: true, _id: $stateParams.campaignId});
-    $scope.dataCampaigns = {};
+    $scope.campaignService = Campaign.query({_id: $stateParams.campaignId});
+    $scope.dataCampaigns = [];
     $scope.gridOptions.data = 'dataCampaigns';
     
     $scope.campaignService.$promise.then( function(campaigns){
@@ -37,13 +39,13 @@ angular.module('tmtControllers')
       gridApi.edit.on.afterCellEdit($scope,function(rowEntity, colDef, newValue, oldValue){
         
         //Somewhy this not working property!
-        $scope.msg.lastCellEdited = 'edited row id:' + rowEntity._id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
-        $scope.$apply();
+        //$scope.msg.lastCellEdited = 'edited row id:' + rowEntity._id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
+        //$scope.$apply();
         
         rowEntity.$update( function( response ) {
-          $scope.msg.error = null;
+          //$scope.msg.error = null;
         }, function( error ) {
-          $scope.msg.error = error;
+          //$scope.msg.error = error;
         });
         
       });

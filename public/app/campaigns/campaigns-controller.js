@@ -14,7 +14,7 @@ angular.module('tmtControllers')
 
     $scope.columns = [ 
       { field: 'enable.value', cellTemplate: checkBoxTemplate, displayName: '', width: 50, enableCellEdit: true, pinnedLeft: true },
-      { field: 'name', width:300, enableCellEdit: true, pinnedLeft:true, cellTemplate: linkCellTemplate  },      
+      { field: 'name', /*width:300,*/ enableCellEdit: true, pinnedLeft:true, cellTemplate: linkCellTemplate  },
     ];
     $scope.gridOptions = { 
       columnDefs: $scope.columns,

@@ -9,7 +9,7 @@ angular.module('tmtControllers')
     $scope.testcases = [];
     
     $scope.update = function() {
-        Testcase.query({q: JSON.stringify({}), fl:true}).$promise.then( 
+        Testcase.query({f: 'tcid other_info compatible status requirements', q: JSON.stringify({}), fl:true}).$promise.then( 
           function(testcases){
             $log.info(testcases)
             

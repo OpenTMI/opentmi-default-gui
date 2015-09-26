@@ -3,13 +3,42 @@
 angular.module('tmtControllers').
 controller('HomeController', 
   function ($scope, $log, socket) {
-    $scope.myInterval = 5000;
-    var slides = $scope.slides = [];
 
-    
+    var wsKey = 'home';
+    $scope.today = {
+      passrate: 0,
+      executed: 0,
+      max: 1,
+      failures: {
+        individual: {
+          count: 10,
+          max: 40
+        }
+      }
+    }
+    $scope.now = {
+      jenkins: {
+        master: {
+          alive: 1
+        },
+        slaves: {
+          count: 50,
+          active: 50
+        }
+      },
+      racks: {
+        count: 6,
+        active: 4
+      },
+      duts: {
+        count: 50,
+        active: 2
+      } 
+    }
     $log.info('connecting to ws..');
     
-    socket.forward('test', $scope);
+    socket.forward('home', $scope);
+    socket.forward('home.today', $scope);
     $scope.$on('socket:broadcast', function(event, data) {
       $log.debug('got a message', event.name);
     });
@@ -17,18 +46,11 @@ controller('HomeController',
     $scope.$on('socket:error', function (ev, data) {
       $log.error('ws error');
     });
-    $scope.$on('socket:test', function (ev, data) {
-      $log.debug('client <- server: '+data);
+    $scope.$on('socket:home', function (ev, data) {
+      $log.debug('server -> client: '+data);
     });
-    
-    $scope.addSlide = function(url, text) {
-      slides.push({
-        image: url, text: text
-      });
-    };
-    
-    $scope.addSlide('#', 'Current status');
-    $scope.addSlide('#', 'Active execution');
-    $scope.addSlide('#', 'This week');
-    $scope.addSlide('#', 'This month');
+    $scope.$on('socket:home.today', function (ev, data) {
+      $log.debug('server -> client: '+data);
+      $scope.today = data;
+    });
   });

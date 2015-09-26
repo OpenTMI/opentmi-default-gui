@@ -1,19 +1,39 @@
-<div class="jumbotron text-center">
-	<h1>Test Management Tool</h1>
-	
-	<p>{{ message }}</p>
-  
-  <div ng-controller="HomeController">
-    <div style="height: 305px">
-      <carousel interval="myInterval">
-        <slide ng-repeat="slide in slides" active="slide.active">
-          <img ng-src="{{slide.image}}" style="margin:auto; height: 300px">
-          <div class="carousel-caption">
-            <p>{{slide.text}}</p>
-          </div>
-        </slide>
-      </carousel>
-    </div>
-  </div>
-  
+<div class="jumbotron text-center" ng-controller="HomeController">
+  <h2>Test Management and Automation Cloud</h2>
+  <tabset style="height: 480px">
+    <tab heading="Today Test Status">
+      <div class="col">
+
+        <small><em>Today Passrate:</em></small>
+        <div class="row-sm-1"><progressbar value="today.passrate"></progressbar></div>
+        
+        <small><em>Today Executed:</em></small>
+        <div class="row-sm-2"><progressbar max="today.max" value="today.executed">{{today.executed}}</progressbar></div>
+
+        <small><em>Individual Failures:</em></small>
+        <div class="row-sm-3">
+          <progressbar max="today.failures.individual.max" value="today.failures.individual.count">{{today.failures.individual.count}}</progressbar>
+        </div>
+      
+      </div>
+    </tab>
+    <tab heading="Active Execution">
+      <small><em>Jenkins master:</em></small>
+      <div class="row-sm-1">
+      {{now.jenkins.master.alive?"ALIVE":"DEAD"}}
+      </div>
+      <small><em>Jenkins slave:</em></small>
+      <div class="row-sm-2"><progressbar value="now.jenkins.slaves.active" max="now.jenkins.slaves.count">{{now.jenkins.slaves.active}}</progressbar></div>
+      <small><em>Racks:</em></small>
+      <div class="row-sm-3"><progressbar value="now.racks.active" max="now.racks.count">{{now.racks.active}}</progressbar></div>      
+      <small><em>Duts:</em></small>
+      <div class="row-sm-4"><progressbar max="now.duts.count" value="now.duts.active">{{now.duts.active}}</progressbar></div>
+    </tab>
+    <tab heading="This week">
+      
+    </tab>
+    <tab heading="This Month">
+      
+    </tab>
+  </tabset>
 </div>

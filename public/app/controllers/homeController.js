@@ -24,6 +24,10 @@ controller('HomeController',
         slaves: {
           count: 50,
           active: 50
+        },
+        jobs: {
+          active: 0,
+          count: 0
         }
       },
       racks: {
@@ -39,6 +43,7 @@ controller('HomeController',
     
     socket.forward('home', $scope);
     socket.forward('home.today', $scope);
+    socket.forward('home.now', $scope);
     $scope.$on('socket:broadcast', function(event, data) {
       $log.debug('got a message', event.name);
     });
@@ -50,7 +55,11 @@ controller('HomeController',
       $log.debug('server -> client: '+data);
     });
     $scope.$on('socket:home.today', function (ev, data) {
-      $log.debug('server -> client: '+data);
-      $scope.today = data;
+      $log.debug('server -> client: '+JSON.stringify(data));
+      _.extend($scope.today, data);
+    });
+    $scope.$on('socket:home.now', function (ev, data) {
+      $log.debug('server -> client: '+JSON.stringify(data));
+      _.extend($scope.now, data);
     });
   });

@@ -8,9 +8,20 @@ function AddonGui (app, server, io, passport){
 
   this.name = 'default gui';
   this.description = 'Example GUI for TMT';
-  
+
   this.register = function(){
     app.use( express.static(__dirname + '/public/') );
+
+    global.pubsub.on('jenkins.computers', function(data){
+      status.now.jenkins.slaves.count = data.totalExecutors;
+      status.now.jenkins.slaves.active = data.busyExecutors;
+      status.now.jenkins.master.alive = 1;
+    });
+    global.pubsub.on('jenkins.jobs', function(data){
+      status.now.jenkins.jobs.count = data.length;
+      status.now.jenkins.jobs.active = data.length/2;
+      console.log(data);
+    });
   }
 
   this.unregister = function(){
@@ -19,58 +30,80 @@ function AddonGui (app, server, io, passport){
 
   var Result = mongoose.model('Result');
 
-
-  io.on('connection', function (socket) {
-      winston.info('new arrival! :)');
-      socket.emit('home', 'hello client');
-      socket.on('home', function(data){
-        console.log(data);
-      });
-      socket.broadcast.emit('home', 'new client arrived :)');
-      var i=0;
-      var today = {
-        passrate: 0,
-        max: 1,
-        executed: 0,
-        failures: {
-          individual: {
-            count: 0,
-            max: 0
-          }
+  var status = {
+    now: {
+      jenkins: {
+        master: {
+          alive: 0
+        },
+        slaves: { 
+          active: 0,
+          count: 0
+        },
+        jobs: {
+          count: 0,
+          active: 0   
         }
       }
-
-      var resultCount = function() {
-        var _today = moment().startOf('day');
-        var q = {'cre.time': {"$gte": _today.toDate()} };
-        //q = {}
-        Result.find( q , function(error, docs){
-          if( error ) {
-            winston.error(error);
-            return;
-          }
-          passrate = 0;
-          today.executed = docs.length;
-          var failures =  {}
-          if( docs.length > 0 ){
-            _.each(docs, function(doc){
-              verdict = doc.exec.verdict=='pass'?1:0
-              passrate += verdict;
-              if( verdict === 0 ) {
-                failures[ doc.tcid ] = 1;
-              }
-            });
-            today.passrate = passrate / docs.length;
-          }
-          today.failures.individual.count = Object.keys(failures).length;
-          socket.emit('home.today', today);
-
-        });
+    },
+    today: {
+      passrate: 0,
+      max: 1,
+      executed: 0,
+      failures: {
+        individual: {
+          count: 0,
+          max: 0
+        }
       }
-      setInterval( resultCount, 1000 );
+    }
+  };
+  
+  var resultCount = function() {
+    var _today = moment().startOf('day');
+    var q = {'cre.time': {"$gte": _today.toDate()} };
+    //q = {}
+    Result.find( q , function(error, docs){
+      if( error ) {
+        winston.error(error);
+        return;
+      }
+      passrate = 0;
+      status.today.executed = docs.length;
+      var failures =  {}
+      if( docs.length > 0 ){
+        _.each(docs, function(doc){
+          verdict = doc.exec.verdict=='pass'?1:0
+          passrate += verdict;
+          if( verdict === 0 ) {
+            failures[ doc.tcid ] = 1;
+          }
+        });
+        status.today.passrate = passrate / docs.length;
+      }
+      status.today.failures.individual.count = Object.keys(failures).length;
+    });
+  }
+  resultCount();
+  //setInterval( resultCount, 2000 );
+
+  io.on('connection', function (client) {
+      winston.info('new arrival: '+client.request.connection.remoteAddress);
+      client.emit('home', 'hello client');
+      client.on('home', function(data){
+        console.log(data);
+      });
+      client.broadcast.emit('home', 'new client arrived :)');
+      var i=0;
+
+      var nowStatus = function() {
+        client.emit('home.today', status.today);
+        client.emit('home.now', status.now);
+      }
+      setInterval( nowStatus, 2000 );
 
       setInterval(function(){
-        socket.emit('home', 'test-'+i++);
+        client.emit('home', 'test-'+i++);
       }, 1000);
   });
 

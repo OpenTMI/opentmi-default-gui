@@ -23,11 +23,16 @@
       {{now.jenkins.master.alive?"ALIVE":"DEAD"}}
       </div>
       <small><em>Jenkins slave:</em></small>
-      <div class="row-sm-2"><progressbar value="now.jenkins.slaves.active" max="now.jenkins.slaves.count">{{now.jenkins.slaves.active}}</progressbar></div>
-      <small><em>Racks:</em></small>
-      <div class="row-sm-3"><progressbar value="now.racks.active" max="now.racks.count">{{now.racks.active}}</progressbar></div>      
+      <div class="row-sm-2"><progressbar value="now.jenkins.slaves.active" max="now.jenkins.slaves.count"><span style="color:white; white-space:nowrap;">{{now.jenkins.slaves.active}} / {{now.jenkins.slaves.count}}</span></progressbar></div>
+
+      <small><em>Jenkins Jobs:</em></small>
+      <div class="row-sm-4"><progressbar max="now.jenkins.jobs.count" value="now.jenkins.jobs.active"><span style="color:white; white-space:nowrap;">{{now.jenkins.jobs.active}} / {{now.jenkins.jobs.count}}</span></progressbar></div>
+
+      <small><em>Test Automation Clients:</em></small>
+      <div class="row-sm-5"><progressbar value="now.racks.active" max="now.racks.count">{{now.racks.active}}</progressbar></div>
+
       <small><em>Duts:</em></small>
-      <div class="row-sm-4"><progressbar max="now.duts.count" value="now.duts.active">{{now.duts.active}}</progressbar></div>
+      <div class="row-sm-6"><progressbar max="now.duts.count" value="now.duts.active">{{now.duts.active}}</progressbar></div>
     </tab>
     <tab heading="This week">
       

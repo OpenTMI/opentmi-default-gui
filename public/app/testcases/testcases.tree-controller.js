@@ -10,14 +10,10 @@ angular.module('tmtControllers')
 
 
     $scope.treeModel = [
-      {
-        "id": "features",
-        "parent": "#",
-        "text": "By Features"
-      },
+      
         {
           "id": "connetivity",
-          "parent": "features",
+          "parent": "#",
           "text": "Connectivity"
         },
           {
@@ -35,7 +31,7 @@ angular.module('tmtControllers')
           },
         {
           "id": "drivers",
-          "parent": "features",
+          "parent": "#",
           "text": "Drivers"
         },
           {
@@ -49,17 +45,18 @@ angular.module('tmtControllers')
           },
       ];
 
-      Testcase.query({t: 'distinct', f: "tcid", q: {'other_info.features': '6lowpan'}}).$promise.then( 
+      Testcase.query({t: 'distinct', f: "tcid", q: {'other_info.components': '6lowpan'}}).$promise.then( 
         function(lwpTcs){
           _.each(lwpTcs, function(tcid){
             $scope.treeModel.push({
               id: tcid,
               parent: '6lowpan',
-              text: tcid
+              text: tcid,
+              /*icon:"/jstree/imgs/tree.png"*/
             });
           });
-        }
-        Testcase.query({t: 'distinct', f: "tcid", q: {'other_info.features': 'thread'}}).$promise.then( 
+        });
+      Testcase.query({t: 'distinct', f: "tcid", q: {'other_info.components': 'thread'}}).$promise.then( 
         function(lwpTcs){
           _.each(lwpTcs, function(tcid){
             $scope.treeModel.push({

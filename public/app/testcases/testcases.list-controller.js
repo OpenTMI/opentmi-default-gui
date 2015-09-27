@@ -49,7 +49,10 @@ angular.module('tmtControllers')
       columnDefs: $scope.columns,
       enableColumnResizing: true,
       enableFiltering: true,
-      //showFooter: true,
+      //enableRowSelection: true,
+      enableFullRowSelection: true,
+      multiSelect: false,
+      showFooter: true,
       exporterMenuCsv: true,
       enableGridMenu: true
     };
@@ -59,14 +62,20 @@ angular.module('tmtControllers')
             return !safe ? prev[curr] : (prev ? prev[curr] : undefined)
         }, obj || self)
     }
+    var status = {
+              dataLength: 0,
+              totalDuration: 0 };
+        
+    var updateListStatus = function(){
+      $scope.$root.$broadcast('tcListStatus', status);
+    }  
     
     function doUpdateList(q)
     {
       Testcase.query({q: JSON.stringify(q), f: "tcid execution.estimation.duration status owner other_info.type other_info.components"}).$promise.then( 
         function(testcases){
-          var status = {
-              dataLength: testcases.length,
-              totalDuration: 0 };
+          status.dataLength = testcases.length;
+          status.totalDuration = 0;
           var TotalDuration = 0;
           testcases.forEach( function(tc){
             if( Object.resolve('execution.estimation.duration', tc) ) {
@@ -74,7 +83,7 @@ angular.module('tmtControllers')
             }
           });
           $scope.dataTestcases = testcases;
-          $scope.$root.$broadcast('tcListStatus', status);
+          updateListStatus();
       });
     }
     
@@ -86,7 +95,16 @@ angular.module('tmtControllers')
       var q = {}
       data.tags.forEach( function(tag){
         if( !q.$and ) q.$and = [];
-        q.$and.push( {tcid: {"$regex": ("/"+tag+"/"), "$options":"i"}} );
+
+        var or = [
+          {tcid: {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          {'other_info.components': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          {'other_info.features': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          {'other_info.type': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          {'status.value': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+
+        ]
+        q.$and.push( {$or: or} );
       });
       doUpdateList(q);
       
@@ -95,6 +113,13 @@ angular.module('tmtControllers')
     $scope.gridOptions.onRegisterApi = function(gridApi){
       //set gridApi on scope
       $scope.gridApi = gridApi;
+      console.log(gridApi.selection)
+      gridApi.selection.on.rowSelectionChanged($scope,function(row){
+        var msg = 'row selected ' + row.isSelected;
+        if( row.isSelected ) {
+          $scope.$root.$broadcast('tcStatus', row.entity);
+        } else updateListStatus();
+      });
       gridApi.edit.on.afterCellEdit($scope,
         function(rowEntity, colDef, newValue, oldValue){
         
@@ -110,7 +135,6 @@ angular.module('tmtControllers')
           $scope.$root.$broadcast('tcListStatus', {error: error});
           $log.info("Update fails");
         });
-        
       });
     }; 
     

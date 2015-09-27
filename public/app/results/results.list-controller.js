@@ -33,6 +33,7 @@ angular.module('tmtControllers')
       columnDefs: $scope.columns,
       enableColumnResizing: true,
       enableFiltering: true,
+      enableCellEdit: false,
       //showFooter: true,
       exporterMenuCsv: true,
       enableGridMenu: true
@@ -64,7 +65,19 @@ angular.module('tmtControllers')
       var q = {}
       data.tags.forEach( function(tag){
         if( !q.$and ) q.$and = [];
-        q.$and.push( {tcid: {"$regex": ("/"+tag+"/"), "$options":"i"}} );
+
+        var or = [
+          {tcid: {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          //{'exec.duration': tag}},
+          {'exec.sut.fut': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          {'exec.sut.cut': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          {'exec.verdict': tag}
+          //{'exec.dut.type': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          //{'exec.dut.model': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          //{'campaign': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          //{'exec.sut.branch': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+        ]
+        q.$and.push( {$or: or} );
       });
       doUpdateList(q);
       

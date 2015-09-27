@@ -7,10 +7,19 @@ angular.module('tmtControllers')
   
     $log.info('init TestcaseStatusController')
     
-    $scope.msg = {}
-    $scope.alerts = []
+    $scope.msg = {};
+    $scope.alerts = [];
+    $scope.tc = {};
+    $scope.showTc = function(){ return $scope.show=='tc';}
+    $scope.showList = function(){ return $scope.show=='list';}
+
+   $scope.$on('tcStatus', function(event, data) {
+      $scope.tc = data;
+      $scope.show = 'tc';
+   });
     
     $scope.$on('tcListStatus', function(event, data) {
+      $scope.show = 'list';
       if( data.hasOwnProperty('lastCellEdited') ) 
         $scope.addAlert( {type: 'success', msg: data.lastCellEdited})
       if( data.hasOwnProperty('dataLength') ) 

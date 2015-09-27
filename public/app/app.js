@@ -21,10 +21,12 @@ angular.module('tmtApp', [
   'ui.grid', 
   'ui.grid.edit', 
   'ui.grid.pinning',
-  /*, 'ui.grid.exporter', 'ui.grid.selection',*/
+  'ui.grid.selection',
+  'ui.grid.exporter',
   'btford.socket-io',
   'angularMoment',
   'jsTree.directive',
+  'jsonFormatter',
   'mgo-angular-wizard'
 ])
 

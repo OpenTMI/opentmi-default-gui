@@ -13,10 +13,10 @@ angular.module('tmtControllers')
                        '</div>';
     var defaultCellTemplate = '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>';
     $scope.columns = [ 
+      { field: 'cre.time', width: 140, type: 'date', 
+        cellFilter: 'date:"yy/MM/dd HH:mm"', displayName: 'Date'  }, 
       { field: 'tcid', cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
       //{ field: 'other_info.component', width:100, displayName: 'Component' },
-      { field: 'exec.duration', width:100, 
-        cellTemplate: defaultCellTemplate, displayName: 'Duration' },
       { field: 'exec.verdict',  width:100, displayName: 'Verdict',
         cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
           if (grid.getCellValue(row,col) == "pass") {
@@ -24,6 +24,10 @@ angular.module('tmtControllers')
           }
           return 'red';
         } },
+      { field: 'campaign', width:100, 
+        cellTemplate: defaultCellTemplate, displayName: 'Campaign' },
+      { field: 'exec.duration', width:100, 
+        cellTemplate: defaultCellTemplate, displayName: 'Duration' },
       { field: 'exec.dut.type',  width:100, 
         cellTemplate: defaultCellTemplate, displayName: 'DutType' },
       { field: 'exec.sut.cut', 

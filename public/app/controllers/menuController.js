@@ -9,6 +9,7 @@ angular.module('tmtControllers')
       menus: [
         {  title: "Testcases", tooltip: 'test', action: "#/testcases" },
         {  title: "Testcase Analyse", tooltip: 'test analyse', action: "#/testcases-analyse" },
+        {  title: "Testcase Tree", action: '#/testcases-tree'},
         {  title: "Campaigns", tooltip: '', action: "#/campaigns" },
         {  title: "Plans", tooltip: '', action: "#/plans" },
         {  title: "Automation", tooltip: '', action: "#/automation" }
@@ -33,6 +34,7 @@ angular.module('tmtControllers')
       menus: [
         { title: "Devices", action: "#/resources?type=dut" },
         { title: "Features", action: "#/duts/features" },
+        { title: "Features Tree", action: "#/duts/features/tree" },
         { title: "Specifications", action: "#/duts/specifications" },
       ]
     },
@@ -48,7 +50,7 @@ angular.module('tmtControllers')
       title: "Builds", tooltip: 'Build informations',
       menus: [
         { title: "Builds", action: "#/duts/builds" },
-        { title: "Tree", action: "#/duts/builds-tree" }
+        { title: "Tree", action: "#/duts/builds/tree" }
       ]
     },
     {
@@ -61,8 +63,8 @@ angular.module('tmtControllers')
     {
       title: "Reports", tooltip: 'Test Reports',
       menus: [
-        { title: "Reports", action: "#/reports?news" },
-        { title: "Templates", action: "#/reports-templates" }
+        { title: "Reports", action: "#/reports" },
+        { title: "Templates", action: "#/reports/templates" }
       ]
     }
     ];

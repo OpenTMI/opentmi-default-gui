@@ -43,6 +43,15 @@ angular.module('tmtApp.builds', [
               }
           }
         })*/
+        .state('builds.tree', {
+          url: '/tree',
+          views: {
+            'buildBody@builds': {
+              templateUrl: 'app/builds/builds.tree.html',
+              controller: 'BuildTreeController'
+            }
+          }
+        })
       }
   ]
 );

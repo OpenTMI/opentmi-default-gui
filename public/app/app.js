@@ -24,7 +24,7 @@ angular.module('tmtApp', [
   /*, 'ui.grid.exporter', 'ui.grid.selection',*/
   'btford.socket-io',
   'angularMoment',
-
+  'jsTree.directive',
   'mgo-angular-wizard'
 ])
 

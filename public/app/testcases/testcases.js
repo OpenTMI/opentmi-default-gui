@@ -44,6 +44,15 @@ angular.module('tmtApp.testcases', [
               }
           }
         })
+        .state('testcases.tree', {
+          url: '/tree',
+          views: {
+            'tcBody@testcases': {
+              templateUrl: 'app/testcases/testcases.tree.html',
+              controller: 'TestcaseTreeController'
+            }
+          }
+        })
       }
   ]
 );

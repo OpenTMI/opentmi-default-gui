@@ -9,7 +9,7 @@ angular.module('tmtControllers')
       menus: [
         {  title: "Testcases", tooltip: 'test', action: "#/testcases" },
         {  title: "Testcase Analyse", tooltip: 'test analyse', action: "#/testcases-analyse" },
-        {  title: "Testcase Tree", action: '#/testcases-tree'},
+        {  title: "Testcase Tree", action: '#/testcases/tree'},
         {  title: "Campaigns", tooltip: '', action: "#/campaigns" },
         {  title: "Plans", tooltip: '', action: "#/plans" },
         {  title: "Automation", tooltip: '', action: "#/automation" }

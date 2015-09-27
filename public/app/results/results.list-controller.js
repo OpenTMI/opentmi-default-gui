@@ -24,7 +24,7 @@ angular.module('tmtControllers')
           }
           return 'red';
         } },
-      { field: 'campaign', width:100, 
+      { field: 'campaign', width:100, grouping: { groupPriority: 0 },
         cellTemplate: defaultCellTemplate, displayName: 'Campaign' },
       { field: 'exec.duration', width:100, 
         cellTemplate: defaultCellTemplate, displayName: 'Duration' },
@@ -35,13 +35,19 @@ angular.module('tmtControllers')
     ]; 
     $scope.gridOptions = { 
       columnDefs: $scope.columns,
+      treeRowHeaderAlwaysVisible: false,
       enableColumnResizing: true,
       enableFiltering: true,
       enableCellEdit: false,
       //showFooter: true,
       exporterMenuCsv: true,
-      enableGridMenu: true
+      enableGridMenu: true,
+      onRegisterApi: function( gridApi ) {
+        $scope.gridApi = gridApi;
+        $scope.gridApi.grouping.groupColumn('campaign');
+      }
     };
+
     
     function doUpdateList(q)
     {
@@ -64,6 +70,7 @@ angular.module('tmtControllers')
     
     $scope.gridOptions.data = 'dataResults';
     
+
     
     $scope.$on('resultFilter', function(event, data) {
       var q = {}

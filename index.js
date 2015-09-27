@@ -20,10 +20,11 @@ function AddonGui (app, server, io, passport){
     global.pubsub.on('jenkins.jobs', function(data){
       status.now.jenkins.jobs.count = data.length;
       status.now.jenkins.jobs.active = data.length/2;
-      console.log(data);
+      console.log(status.now.jenkins);
     });
     global.pubsub.on('github', function(data){
       status.github = data;
+      status.github.total_repos = data.public_repos+data.private_repos;
       console.log(data);
     })
   }
@@ -63,7 +64,8 @@ function AddonGui (app, server, io, passport){
     },
     github: {
       public_repos: 0,
-      total_private_repos: 0
+      total_private_repos: 0,
+      total_repos: 0
     }
   };
   

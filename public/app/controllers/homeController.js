@@ -8,7 +8,6 @@ controller('HomeController',
     $scope.today = {
       passrate: 0,
       executed: 0,
-      max: 1,
       failures: {
         individual: {
           count: 10,
@@ -19,7 +18,7 @@ controller('HomeController',
     $scope.github = {
       public_repos: 0,
       private_repos: 0,
-      total_repos: 0,
+      total_repos: 500,
       disk_usage: 0
     }
     $scope.now = {
@@ -33,7 +32,7 @@ controller('HomeController',
         },
         jobs: {
           active: 0,
-          count: 0
+          count: 100
         }
       },
       racks: {
@@ -71,9 +70,7 @@ controller('HomeController',
     });
     $scope.$on('socket:home.github', function (ev, data) {
       $log.debug('server -> client: '+JSON.stringify(data));
-      data.total_repos = data.public_repos+data.private_repos;
       _.extend($scope.github, data);
-      
     });
 
   });

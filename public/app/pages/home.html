@@ -4,10 +4,10 @@
     <tab heading="Today Test Status">
       <div class="col">
 
-        <small><em>Today Passrate:</em></small>
-        <div class="row-sm-1"><progressbar value="today.passrate"><span style="color:white; white-space:nowrap;">{{today.passrate}} %</span></progressbar></div>
+        <small><em>Today Overall Passrate:</em></small>
+        <div class="row-sm-1"><progressbar max="100" value="today.passrate"><span style="color:white; white-space:nowrap;">{{today.passrate}} %</span></progressbar></div>
         
-        <small><em>Today Executed:</em></small>
+        <small><em>Today Overall Executed:</em></small>
         <div class="row-sm-2"><progressbar max="today.max" value="today.executed"><span style="color:white; white-space:nowrap;">{{today.executed}}</span></progressbar></div>
 
         <small><em>Individual Failures:</em></small>
@@ -30,7 +30,7 @@
       <small><em>Jenkins slave:</em></small>
       <div class="row-sm-2"><progressbar value="now.jenkins.slaves.active" max="now.jenkins.slaves.count"><span style="color:white; white-space:nowrap;">{{now.jenkins.slaves.active}} / {{now.jenkins.slaves.count}}</span></progressbar></div>
 
-      <small><em>Jenkins Jobs:</em></small>
+      <small><em>Jenkins Active Jobs:</em></small>
       <div class="row-sm-4"><progressbar max="now.jenkins.jobs.count" value="now.jenkins.jobs.active"><span style="color:white; white-space:nowrap;">{{now.jenkins.jobs.active}} / {{now.jenkins.jobs.count}}</span></progressbar></div>
 
       <small><em>Test Automation Clients:</em></small>

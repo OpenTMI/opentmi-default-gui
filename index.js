@@ -22,6 +22,10 @@ function AddonGui (app, server, io, passport){
       status.now.jenkins.jobs.active = data.length/2;
       console.log(data);
     });
+    global.pubsub.on('github', function(data){
+      status.github = data;
+      console.log(data);
+    })
   }
 
   this.unregister = function(){
@@ -56,6 +60,10 @@ function AddonGui (app, server, io, passport){
           max: 0
         }
       }
+    },
+    github: {
+      public_repos: 0,
+      total_private_repos: 0
     }
   };
   
@@ -99,6 +107,7 @@ function AddonGui (app, server, io, passport){
       var nowStatus = function() {
         client.emit('home.today', status.today);
         client.emit('home.now', status.now);
+        client.emit('home.github', status.github)
       }
       setInterval( nowStatus, 2000 );
 

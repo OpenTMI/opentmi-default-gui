@@ -16,6 +16,12 @@ controller('HomeController',
         }
       }
     }
+    $scope.github = {
+      public_repos: 0,
+      private_repos: 0,
+      total_repos: 0,
+      disk_usage: 0
+    }
     $scope.now = {
       jenkins: {
         master: {
@@ -44,6 +50,7 @@ controller('HomeController',
     socket.forward('home', $scope);
     socket.forward('home.today', $scope);
     socket.forward('home.now', $scope);
+    socket.forward('home.github', $scope);
     $scope.$on('socket:broadcast', function(event, data) {
       $log.debug('got a message', event.name);
     });
@@ -62,4 +69,11 @@ controller('HomeController',
       $log.debug('server -> client: '+JSON.stringify(data));
       _.extend($scope.now, data);
     });
+    $scope.$on('socket:home.github', function (ev, data) {
+      $log.debug('server -> client: '+JSON.stringify(data));
+      data.total_repos = data.public_repos+data.private_repos;
+      _.extend($scope.github, data);
+      
+    });
+
   });

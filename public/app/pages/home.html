@@ -5,14 +5,19 @@
       <div class="col">
 
         <small><em>Today Passrate:</em></small>
-        <div class="row-sm-1"><progressbar value="today.passrate"></progressbar></div>
+        <div class="row-sm-1"><progressbar value="today.passrate"><span style="color:white; white-space:nowrap;">{{today.passrate}} %</span></progressbar></div>
         
         <small><em>Today Executed:</em></small>
-        <div class="row-sm-2"><progressbar max="today.max" value="today.executed">{{today.executed}}</progressbar></div>
+        <div class="row-sm-2"><progressbar max="today.max" value="today.executed"><span style="color:white; white-space:nowrap;">{{today.executed}}</span></progressbar></div>
 
         <small><em>Individual Failures:</em></small>
         <div class="row-sm-3">
-          <progressbar max="today.failures.individual.max" value="today.failures.individual.count">{{today.failures.individual.count}}</progressbar>
+          <progressbar max="today.failures.individual.max" value="today.failures.individual.count"><span style="color:white; white-space:nowrap;">{{today.failures.individual.count}}</span></progressbar>
+        </div>
+
+        <small><em>Github Private / Public Repos:</em></small>
+        <div class="row-sm-4">
+          <progressbar max="github.total_repos" value="github.private_repos"><span style="color:white; white-space:nowrap;">{{github.private_repos}} / {{github.total_repos}}</span></progressbar>
         </div>
       
       </div>

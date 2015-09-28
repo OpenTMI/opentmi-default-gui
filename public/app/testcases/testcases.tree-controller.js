@@ -18,10 +18,10 @@ angular.module('tmtControllers')
     }
     $scope.treeModel = [];
 
-
-
     var addNode = function(node){
-      $scope.treeModel.push(node);
+      if( node.text !== '' ) {
+        $scope.treeModel.push(node);
+      }
     }
     var clearTree = function(){ $scope.treeModel = []; }
 
@@ -32,7 +32,9 @@ angular.module('tmtControllers')
     });
     
 
-    var ListOfTcs = []
+    var ListOfTcs = [];
+    var listOfComponents = [];
+    var listOfFeatures = [];
 
     var doRest = function(listOfTcs, component){
       if( component ) {
@@ -51,7 +53,14 @@ angular.module('tmtControllers')
           text: 'Unknown'
         });
         Testcase.query({t: 'distinct', f: 'tcid', s: {'tcid': -1}, 
-            q: { 'tcid': { $nin: [ listOfTcs] } }
+            q: { 
+                $and: [
+                {'other_info.components': 
+                    { $nin: [listOfComponents] } },
+                {'other_info.features':
+                    { $nin: [listOfFeatures] } }
+                ]
+            }
         }).$promise.then( function(tcs){
           _.each(tcs, doTc('', 'uncategory', true));
         });
@@ -60,7 +69,9 @@ angular.module('tmtControllers')
 
     var doTc = function(component, feature, rest){
       return function(tc){
-        if(!rest)ListOfTcs.push(tc);
+        if(!rest){
+            ListOfTcs.push(tc);
+        }
         var parent = component;
         if( feature ) parent += '.'+feature;
         addNode({
@@ -73,6 +84,7 @@ angular.module('tmtControllers')
     }
     var doFeature = function(component){
       return function(feature) {
+        listOfFeatures.push(feature);
         addNode({
           id: component+'.'+feature,
           parent: component,
@@ -87,11 +99,11 @@ angular.module('tmtControllers')
           }})
         .$promise.then( function(tcs){
           _.each(tcs, doTc(component, feature));
-          doRest(tcs, component);
         });
       }
     }
     var doComponent = function(component){
+      listOfComponents.push(component)
       addNode({
         id: component,
         parent: '#',
@@ -101,6 +113,7 @@ angular.module('tmtControllers')
       .$promise.then( function(features){
         _.each(features, doFeature(component) );
       });
+      doRest(ListOfTcs, component);
     }
 
     Testcase.query({t: 'distinct', f: "other_info.components"}).$promise.then( 

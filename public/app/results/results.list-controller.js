@@ -24,8 +24,9 @@ angular.module('tmtControllers')
           }
           return 'red';
         } },
-      { field: 'campaign', width:100, grouping: { groupPriority: 0 },
-        cellTemplate: defaultCellTemplate, displayName: 'Campaign' },
+      /*{ field: 'campaign', width:100, 
+        //grouping: { groupPriority: 0 },
+        cellTemplate: defaultCellTemplate, displayName: 'Campaign' },*/
       { field: 'exec.duration', width:100, 
         cellTemplate: defaultCellTemplate, displayName: 'Duration' },
       { field: 'exec.dut.type',  width:100, 
@@ -36,22 +37,27 @@ angular.module('tmtControllers')
     $scope.gridOptions = { 
       columnDefs: $scope.columns,
       treeRowHeaderAlwaysVisible: false,
+      enableRowSelection: false,
+      enableFullRowSelection: false,
       enableColumnResizing: true,
       enableFiltering: true,
       enableCellEdit: false,
-      //showFooter: true,
+      showFooter: true,
       exporterMenuCsv: true,
       enableGridMenu: true,
       onRegisterApi: function( gridApi ) {
         $scope.gridApi = gridApi;
-        $scope.gridApi.grouping.groupColumn('campaign');
+        //$scope.gridApi.grouping.groupColumn('campaign');
       }
     };
 
-    
     function doUpdateList(q)
     {
-      Result.query({q: JSON.stringify(q)}).$promise.then( 
+      Result.query({
+          q: JSON.stringify(q), 
+          s: { 'cre.time': -1},
+          l: 5000
+      }).$promise.then( 
         function(results){
           $scope.dataResults = results;
           var status = {

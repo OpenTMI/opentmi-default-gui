@@ -14,8 +14,12 @@ function AddonGui (app, server, io, passport){
   //Logger.call(this, 'GUI: ');
   //this.info('hepp');
   
-  var visitors = {};
+  var visitors = {'connected': {count: 0}};
+  global.pubsub.on('visitor_leave', function(data){
+      visitors.connected.count--;
+  });
   global.pubsub.on('new_visitor', function(data){
+        visitors.connected.count++;
         winston.info('new arrival: '+data.ip);
         if( !visitors[ data.ip ] ){
             visitors[ data.ip ] = {count: 0};
@@ -124,8 +128,9 @@ function AddonGui (app, server, io, passport){
   //setInterval( resultCount, 2000 );
 
   io.on('connection', function (client) {
+      var ip = client.request.connection.remoteAddress;
       global.pubsub.emit('new_visitor', 
-        {ip: client.request.connection.remoteAddress}
+        {ip: ip}
       );
       client.emit('home', 'hello client');
       client.on('home', function(data){
@@ -144,7 +149,11 @@ function AddonGui (app, server, io, passport){
       setInterval(function(){
         client.emit('home', 'test-'+i++);
       }, 1000);
+      client.on('disconnect', function () {
+          global.pubsub.emit('visitor_leave', {ip: ip});
+      });
   });
+   
 
   return this;
 }

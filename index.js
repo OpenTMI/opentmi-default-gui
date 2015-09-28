@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('util');
-var Logger = require('../Logger');
+//var Logger = require('../Logger');
 
 function AddonGui (app, server, io, passport){
 
@@ -125,6 +125,6 @@ function AddonGui (app, server, io, passport){
 
   return this;
 }
-util.inherits(AddonGui, Logger);
+//util.inherits(AddonGui, Logger);
 
 exports = module.exports = AddonGui;

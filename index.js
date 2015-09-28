@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('util');
+var dns = require('dns');
 //var Logger = require('../Logger');
 
 function AddonGui (app, server, io, passport){
@@ -11,11 +12,31 @@ function AddonGui (app, server, io, passport){
   this.name = 'default gui';
   this.description = 'Example GUI for TMT';
   //Logger.call(this, 'GUI: ');
-
   //this.info('hepp');
+  
+  var visitors = {};
+  global.pubsub.on('new_visitor', function(data){
+        winston.info('new arrival: '+data.ip);
+        if( !visitors[ data.ip ] ){
+            visitors[ data.ip ] = {count: 0};
+        }
+        visitors[ data.ip ].count ++;
+        dns.reverse(data.ip, function(err, hostnames){
+            if( err ) {
+                return;
+            }
+            if( hostnames.length == 1 ) {
+                visitors[ data.ip ].hostname = hostnames[0];
+            }
+        });
+  });
 
   this.register = function(){
     app.use( express.static(__dirname + '/public/') );
+    
+    app.get('/api/v0/gui/visitors', function(req, res){
+        res.json(visitors);
+    });
 
     global.pubsub.on('jenkins.computers', function(data){
       status.now.jenkins.slaves.count = data.totalExecutors;
@@ -103,7 +124,9 @@ function AddonGui (app, server, io, passport){
   //setInterval( resultCount, 2000 );
 
   io.on('connection', function (client) {
-      winston.info('new arrival: '+client.request.connection.remoteAddress);
+      global.pubsub.emit('new_visitor', 
+        {ip: client.request.connection.remoteAddress}
+      );
       client.emit('home', 'hello client');
       client.on('home', function(data){
         console.log(data);

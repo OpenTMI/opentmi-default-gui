@@ -8,6 +8,7 @@ controller('HomeController',
     $scope.today = {
       passrate: 0,
       executed: 0,
+      max: 100,
       failures: {
         individual: {
           count: 10,

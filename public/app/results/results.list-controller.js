@@ -50,6 +50,10 @@ angular.module('tmtControllers')
         //$scope.gridApi.grouping.groupColumn('campaign');
       }
     };
+    
+    $scope.update = function() {
+        doUpdateList({});
+    }
 
     function doUpdateList(q)
     {

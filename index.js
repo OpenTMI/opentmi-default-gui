@@ -83,8 +83,8 @@ function AddonGui (app, server, io, passport){
     },
     today: {
       passrate: 0,
-      max: 1,
       executed: 0,
+      max: 100,
       failures: {
         individual: {
           count: 0,
@@ -105,7 +105,7 @@ function AddonGui (app, server, io, passport){
     //q = {}
     Result.find( q , function(error, docs){
       if( error ) {
-        winston.error(error);
+        console.error(error);
         return;
       }
       passrate = 0;
@@ -119,7 +119,7 @@ function AddonGui (app, server, io, passport){
             failures[ doc.tcid ] = 1;
           }
         });
-        status.today.passrate = passrate / docs.length;
+        status.today.passrate = passrate / docs.length * 100;
       }
       status.today.failures.individual.count = Object.keys(failures).length;
     });

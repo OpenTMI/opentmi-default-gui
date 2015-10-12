@@ -48,8 +48,12 @@ angular.module('tmtApp.testcases', [
           url: '/tree',
           views: {
             'tcBody@testcases': {
-              templateUrl: 'app/testcases/testcases.tree.html',
-              controller: 'TestcaseTreeController'
+              controller: 'TestcaseTreeController',
+              templateUrl: 'app/testcases/testcases.tree.html'
+            },
+            'tcStatus@testcases': {
+              controller: 'TestcaseStatusController',
+              templateUrl: 'app/testcases/testcases.status.html'
             }
           }
         })

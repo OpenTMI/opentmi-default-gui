@@ -4,7 +4,11 @@
 
 <div>
     <div ui-view="columnTwo">
-      <js-tree tree-data="scope" tree-plugins="types" tree-types="typesConfig" tree-model="treeModel"></js-tree>
+      <js-tree  tree-data="scope" 
+                tree-plugins="types,contextmenu,dnd" 
+                tree-types="typesConfig"
+                tree-events="select_node:nodeSelected"
+                tree-model="treeModel"></js-tree>
     </div>
 </div>
 

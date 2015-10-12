@@ -7,6 +7,55 @@ angular.module('tmtControllers')
   
 
     $log.info('init TestcaseTreeController')
+    
+    /*$scope.contextMenu = {
+                    "items": function () {
+                        return {
+                            "Create": {
+                                "label": "Create",
+                                "action": function (data) {
+                                    var ref = $.jstree.reference(data.reference);
+                                        sel = ref.get_selected();
+                                    if(!sel.length) { return false; }
+                                    sel = sel[0];
+                                    sel = ref.create_node(sel, {"type":"file"});
+                                    if(sel) {
+                                        ref.edit(sel);
+                                    }
+
+                                }
+                            },
+                            "Rename": {
+                                "label": "Rename",
+                                "action": function (data) {
+                                    var inst = $.jstree.reference(data.reference);
+                                        obj = inst.get_node(data.reference);
+                                    inst.edit(obj);
+                                }
+                            },
+                            "Delete": {
+                                "label": "Delete",
+                                "action": function (data) {
+                                    var ref = $.jstree.reference(data.reference),
+                                        sel = ref.get_selected();
+                                    if(!sel.length) { return false; }
+                                    ref.delete_node(sel);
+
+                                }
+                            }
+                        };
+                    }
+                };*/
+    
+    $scope.nodeSelected = function(e, data) {
+        var _type = data.node.type;
+        if (_type === 'tc') {
+            showTcDetails(data.node.li_attr.tcid);
+        } else {
+            var node_info = {ChildCount: data.node.children.length};
+            $scope.$root.$broadcast('tcStatus', node_info);
+        }
+    }
 
     $scope.typesConfig = {
       /*"default": {
@@ -17,7 +66,19 @@ angular.module('tmtControllers')
       }
     }
     $scope.treeModel = [];
-
+    
+    var showTcDetails = function(tcid){
+        Testcase
+            .query({q: {tcid: tcid}})
+            .$promise.then( function(tcs){
+                console.log(tcs);
+                if( tcs.length === 1 ) {
+                    var tc_info = tcs[0];
+                    console.log(tc_info);
+                    $scope.$root.$broadcast('tcStatus', tc_info);
+                }
+            });
+    }
     var addNode = function(node){
       if( node.text !== '' ) {
         $scope.treeModel.push(node);
@@ -70,7 +131,8 @@ angular.module('tmtControllers')
           id: parent+'.'+tc,
           parent: parent,
           text: tc,
-          type: "tc"
+          type: "tc",
+          li_attr: {tcid: tc}
         });
       }
     }

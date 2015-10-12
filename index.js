@@ -125,7 +125,7 @@ function AddonGui (app, server, io, passport){
     });
   }
   resultCount();
-  //setInterval( resultCount, 2000 );
+  setInterval( resultCount, 10000 );
 
   io.on('connection', function (client) {
       var ip = client.request.connection.remoteAddress;

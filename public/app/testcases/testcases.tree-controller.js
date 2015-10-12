@@ -24,14 +24,6 @@ angular.module('tmtControllers')
       }
     }
     var clearTree = function(){ $scope.treeModel = []; }
-
-    addNode({
-      id: 'bluetooth',
-      parent: '#',
-      text: 'Bluetooth'
-    });
-    
-
     var ListOfTcs = [];
     var listOfComponents = [];
     var listOfFeatures = [];
@@ -82,7 +74,7 @@ angular.module('tmtControllers')
         });
       }
     }
-    var doFeature = function(component){
+    var doFeature = function(component, cb){
       return function(feature) {
         listOfFeatures.push(feature);
         addNode({
@@ -90,6 +82,7 @@ angular.module('tmtControllers')
           parent: component,
           text: feature,
         });
+        var _doTc = doTc(component, feature);
         Testcase.query({t: 'distinct', f: 'tcid', 
           q: { 
             $and: [ 
@@ -98,7 +91,8 @@ angular.module('tmtControllers')
             ]
           }})
         .$promise.then( function(tcs){
-          _.each(tcs, doTc(component, feature));
+          _.each(tcs, _doTc);
+          cb();
         });
       }
     }
@@ -111,9 +105,17 @@ angular.module('tmtControllers')
       });
       Testcase.query({t: 'distinct', f: "other_info.features", q: {'other_info.components': component}})
       .$promise.then( function(features){
-        _.each(features, doFeature(component) );
+        var len = features.length;
+        _.each(features, doFeature(component, function(){
+            /*len--;
+            if( len == 0 ) {
+                console.log('doRest');
+                console.log(ListOfTcs);
+                doRest(ListOfTcs, component);
+            }*/
+        }));
       });
-      doRest(ListOfTcs, component);
+      
     }
 
     Testcase.query({t: 'distinct', f: "other_info.components"}).$promise.then( 

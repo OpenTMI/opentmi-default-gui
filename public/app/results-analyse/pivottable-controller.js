@@ -107,9 +107,9 @@ angular.module('tmtControllers')
                           $.pivotUtilities.c3_renderers,
                           $.pivotUtilities.export_renderers);
         $("#pivottable").pivotUI($scope.results, {
-            rows: ["tcid"],
-            cols: ["exec.verdict"],
-            rendererName: "Table",
+            rows: ["component", "feature"],
+            cols: ["Week number", "exec.verdict"],
+            rendererName: "Heatmap",
             renderers: renderers,
             derivedAttributes: {
                 "year":       dateFormat("cre.time", "%y", true),

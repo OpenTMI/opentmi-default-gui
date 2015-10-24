@@ -8,7 +8,7 @@ angular.module('tmtControllers')
     $log.info('init CampaignController')
     
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
-                       '<a href="#/campaigns/{{ row.entity.id }}">{{ row.entity[col.field] }}</a>' +
+                       '<a href="#/campaigns/{{ row.entity._id }}">{{ row.entity[col.field] }}</a>' +
                        '</div>';
     var checkBoxTemplate = '<input type="checkbox" ng-model="row.entity.dude" ng-click="toggle(row.entity.name,row.entity.dude)">'
 
@@ -21,6 +21,7 @@ angular.module('tmtControllers')
       enableColumnResizing: true,
       //enableFiltering: true,
       //exporterMenuCsv: true,
+      enableFullRowSelection: true,
       enableGridMenu: true
     };
     
@@ -32,7 +33,6 @@ angular.module('tmtControllers')
       $scope.dataCampaigns = campaigns;
     });
     
-    
     $scope.gridOptions.onRegisterApi = function(gridApi){
       //set gridApi on scope
       $scope.gridApi = gridApi;
@@ -40,7 +40,7 @@ angular.module('tmtControllers')
         
         //Somewhy this not working property!
         //$scope.msg.lastCellEdited = 'edited row id:' + rowEntity._id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
-        //$scope.$apply();
+        $scope.$apply();
         
         rowEntity.$update( function( response ) {
           //$scope.msg.error = null;

@@ -5,9 +5,10 @@
 <div>
     <div ui-view="columnTwo">
       <js-tree  tree-data="scope" 
-                tree-plugins="types,contextmenu,dnd" 
+                tree-plugins="types,unique,contextmenu,dnd,json_data" 
                 tree-types="typesConfig"
-                tree-events="select_node:nodeSelected"
+                tree-unique="uniqueConfig"
+                tree-events="select_node:select_node"
                 tree-model="treeModel"></js-tree>
     </div>
 </div>

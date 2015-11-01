@@ -129,9 +129,11 @@ function AddonGui (app, server, io, passport){
 
   io.on('connection', function (client) {
       var ip = client.request.connection.remoteAddress;
-      global.pubsub.emit('new_visitor', 
-        {ip: ip}
-      );
+      if(ip) {
+        global.pubsub.emit('new_visitor', 
+          {ip: ip}
+        );
+      }
       client.emit('home', 'hello client');
       client.on('home', function(data){
         console.log(data);

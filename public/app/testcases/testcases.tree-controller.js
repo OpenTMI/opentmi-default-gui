@@ -45,18 +45,49 @@ angular.module('tmtControllers')
       "tc": {
         "icon": "jstree-icon jstree-file"
       }
-    }/*
+    }
     $scope.contextmenuConfig = {
       items: function(node){
-        console.log(node);
-        var tmp = $.jstree.defaults.contextmenu.items.call(this, node);
-        //delete tmp.ccp.submenu.copy;
-        console.log(tmp);
-        return tmp;
-          { "new__": {
+        var items = {};
+        switch(node.type){
+          case("component"):
+          case("feature"):
+            items["rename"] = {
+              "label": "Rename",
+              "action": function (data) {
+                  var inst = $.jstree.reference(data.reference),
+                      obj = inst.get_node(data.reference);
+                  inst.edit(obj);
+              }
+            }
+            break;
+          case("tc"):
+            items["rename"] = {
+              "label": "Rename",
+              "action": function (data) {
+                  var inst = $.jstree.reference(data.reference),
+                      obj = inst.get_node(data.reference);
+                  inst.edit(obj);
+              }
+            }
+            items["campaign"] = {
+              "label": "Campaign",
+              "separator_before": true,
+              "submenu": {
+                "Add": {
+                  "label": "Add to existing campaign",
+                }
+              }
+            }
+          default:
+            break;
+        }
+        /*
+        items = { 
+          "new": {
               "label": "Create",
               "action": function (data) {
-                  var ref = $.jstree.reference(data.reference);
+                  var ref = $.jstree.reference(data.reference),
                       sel = ref.get_selected();
                   if(!sel.length) { return false; }
                   sel = sel[0];
@@ -67,15 +98,15 @@ angular.module('tmtControllers')
 
               }
           },
-          "Rename__": {
+          "rename": {
               "label": "Rename",
               "action": function (data) {
-                  var inst = $.jstree.reference(data.reference);
+                  var inst = $.jstree.reference(data.reference),
                       obj = inst.get_node(data.reference);
                   inst.edit(obj);
               }
           },
-          "Delete__": {
+          "delete": {
               "label": "Delete",
               "action": function (data) {
                   var ref = $.jstree.reference(data.reference),
@@ -85,9 +116,10 @@ angular.module('tmtControllers')
 
               }
           }
-        }
+        }*/
+        return items;
       }
-    };*/
+    };
     $scope.counter = 0
     $scope.uniqueConfig = {
       'duplicate' : function (name, counter) {
@@ -96,9 +128,16 @@ angular.module('tmtControllers')
       }
     }
 
-    $scope.searchConfig = {
-
-    }
+    $scope.searchConfig = {}
+    /*
+    $scope.bind("move_node.jstree", function (e, data) {
+      if(data.rslt.ot != data.rslt.rt) {
+        console.log("Node was moved to a different tree-instance");
+      }
+      else {
+        console.log("Node was moved inside the same tree-instance");
+      }
+    });*/
 
     var loadComponents = function(cb){
       Testcase.query({t: 'distinct', f: "other_info.components"})
@@ -287,5 +326,17 @@ angular.module('tmtControllers')
     $scope.search = function(nodes, str, res){
       console.log(str.str);
     }
+
+    $scope.$on('tcFilter', function(event, data) {
+      console.log("tcFilter event");
+      var tree = angular.element(document.querySelector('#tcDir'));
+      
+      var q = {}
+      data.tags.forEach( function(tag){
+        console.log(tag);
+        console.log($scope);
+        //$scope
+      });
+    });
   }])
 ;

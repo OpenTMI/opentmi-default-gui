@@ -4,12 +4,14 @@
 
 <div>
     <div ui-view="columnTwo">
-      <js-tree  tree-data="scope"
+      <js-tree  id="tcDir"
+                tree-data="scope"
                 tree-core="coreConfig"
-                tree-plugins="types,unique,contextmenu,dnd,json_data,state,search"
+                tree-plugins="types,unique,contextmenu,dnd,json_data,state"
                 tree-search="searchConfig"
                 tree-types="typesConfig"
                 tree-unique="uniqueConfig"
+                tree-contextmenu="contextmenuConfig"
                 tree-events="select_node:select_node;search:search"
                 tree-model="treeModel"></js-tree>
     </div>

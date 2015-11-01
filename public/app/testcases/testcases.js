@@ -47,6 +47,10 @@ angular.module('tmtApp.testcases', [
         .state('testcases.tree', {
           url: '/tree',
           views: {
+            'tcFilters@testcases': { 
+              templateUrl: 'app/testcases/testcases.filters.html',
+              controller: 'TestcaseFilterController'
+            },
             'tcBody@testcases': {
               controller: 'TestcaseTreeController',
               templateUrl: 'app/testcases/testcases.tree.html'

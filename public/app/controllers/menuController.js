@@ -12,7 +12,8 @@ angular.module('tmtControllers')
         {  title: "Testcase Tree", action: '#/testcases/tree'},
         {  title: "Campaigns", tooltip: '', action: "#/campaigns" },
         {  title: "Plans", tooltip: '', action: "#/plans" },
-        {  title: "Automation", tooltip: '', action: "#/automation" }
+        {  title: "Automation", tooltip: '', action: "#/automation" },
+        {  title: "Yotta", tooltip: '', action: "#/yotta#sal-stack-nanostack-eventloop" }
         /*{
           title: "Submenu 1b",
           action: "moreStuff",

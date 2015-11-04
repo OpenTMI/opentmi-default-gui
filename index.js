@@ -48,14 +48,24 @@ function AddonGui (app, server, io, passport){
       status.now.jenkins.master.alive = 1;
     });
     global.pubsub.on('jenkins.jobs', function(data){
+      //console.log(data);
       status.now.jenkins.jobs.count = data.length;
-      status.now.jenkins.jobs.active = data.length/2;
-      console.log(status.now.jenkins);
+      status.now.jenkins.jobs.active = 0;
+      status.now.jenkins.jobs.failure = 0;
+      _.each(data, function(item) { 
+        if( item.color=='yellow') {
+            status.now.jenkins.jobs.active++
+        }
+        if( item.color=='red') {
+            status.now.jenkins.jobs.failure++
+        }
+      });
+      console.log("jenkins.jobs: "+JSON.stringify(status.now.jenkins));
     });
     global.pubsub.on('github', function(data){
       status.github = data;
       status.github.total_repos = data.public_repos+data.private_repos;
-      console.log(data);
+      console.log("github-data: "+JSON.stringify(data));
     })
   }
 
@@ -136,7 +146,7 @@ function AddonGui (app, server, io, passport){
       }
       client.emit('home', 'hello client');
       client.on('home', function(data){
-        console.log(data);
+        console.log("home: "+JSON.stringify(data));
       });
       client.broadcast.emit('home', 'new client arrived :)');
       var i=0;

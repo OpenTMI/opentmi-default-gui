@@ -3,6 +3,11 @@
 </style>
 
 <div>
+    <div ui-view="columnOne">
+      <label>Module:</label>
+      <input type="text" ng-model="theModule" ng-change="moduleChange()" size="100">
+      <br/>
+    </div>
     <div ui-view="columnTwo">
       <js-tree  tree-data="scope" 
                 tree-plugins="" 

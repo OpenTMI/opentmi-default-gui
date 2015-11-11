@@ -10,6 +10,7 @@ angular.module('tmtApp', [
   'tmtApp.results',
   'tmtApp.resultsAnalyse',
   'tmtApp.wizard',
+  'tmtApp.yotta',
   'tmtControllers', 
   'tmtServices',
   'ui.bootstrap', 

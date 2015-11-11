@@ -12,31 +12,25 @@ angular.module('tmtControllers')
         {  title: "Testcase Tree", action: '#/testcases/tree'},
         {  title: "Campaigns", tooltip: '', action: "#/campaigns" },
         {  title: "Plans", tooltip: '', action: "#/plans" },
-        {  title: "Automation", tooltip: '', action: "#/automation" },
-        {  title: "Yotta", tooltip: '', action: "#/yotta#sal-stack-nanostack-eventloop" }
-        /*{
-          title: "Submenu 1b",
-          action: "moreStuff",
-          menus: [
-            {
-              title: "Submenu 1b 1",
-              action: "stuff"
-            },
-            {
-              title: "Submenu 1b 2",
-              action: "moreStuff"
-            }
-          ]
-        }*/
+        {  title: "Automation", tooltip: '', action: "#/automation" }
+      ]
+    },
+    {
+      title: 'SUT', tooltip: 'Software Under Test', icon: 'cogs',
+      menus: [
+        { title: "Modules", tooltip: 'Yotta Modules', action: "#/yotta#sal-stack-nanostack-eventloop"},
+        { title: "Builds", action: "#/duts/builds" },
+        { title: "Builds-Tree", action: "#/duts/builds/tree" }
       ]
     },
     {
       title: "DUT", tooltip: 'Device Under Test',
       menus: [
         { title: "Devices", action: "#/resources?type=dut" },
-        { title: "Features", action: "#/duts/features" },
-        { title: "Features Tree", action: "#/duts/features/tree" },
-        { title: "Specifications", action: "#/duts/specifications" },
+        //{ title: "Features", action: "#/duts/features" },
+        //{ title: "Features Tree", action: "#/duts/features/tree" },
+        { title: "Types", action: "#/duts/types"},
+        //{ title: "Specifications", action: "#/duts/specifications" },
       ]
     },
     {
@@ -45,13 +39,6 @@ angular.module('tmtControllers')
         { title: "Resources", action: "#/resources" },
         { title: "Specifications", action: "#/specifications" },
         { title: "Features", action: "#/features" }
-      ]
-    },
-    {
-      title: "Builds", tooltip: 'Build informations',
-      menus: [
-        { title: "Builds", action: "#/duts/builds" },
-        { title: "Tree", action: "#/duts/builds/tree" }
       ]
     },
     {

@@ -7,13 +7,16 @@ angular.module('tmtControllers')
   
 
     $log.info('init YottaTreeController')
+    $scope.theModule = ""+$location.hash();
 
-    $scope.check_callback = true;
+    $scope.moduleChange = function() {
+      $scope.theModule = this.theModule;
+      console.log("Module: "+$scope.theModule);
+    }
     var onData = function (obj, cb) {
       console.log(obj);
       if( obj.parent == null) {
-          var module = $location.hash()
-          loadModule("#", module, cb);
+          loadModule("#", $scope.theModule, cb);
       }
       else {
         loadModule(obj.id, obj.li_attr.module, cb);
@@ -22,7 +25,7 @@ angular.module('tmtControllers')
     $scope.coreConfig = {
       multiple: false 
     };
-    $scope.treeModel =  onData;
+    $scope.treeModel = onData;
     var loadModule = function(parent_id, module_name, cb) {
         console.log("Loading module: "+module_name);
         Yotta.get({module: module_name})

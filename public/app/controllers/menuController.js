@@ -29,7 +29,7 @@ angular.module('tmtControllers')
         { title: "Devices", action: "#/resources?type=dut" },
         //{ title: "Features", action: "#/duts/features" },
         //{ title: "Features Tree", action: "#/duts/features/tree" },
-        { title: "Types", action: "#/duts/types"},
+        { title: "Targets", action: "#/duts/targets"},
         //{ title: "Specifications", action: "#/duts/specifications" },
       ]
     },

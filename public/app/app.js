@@ -1,6 +1,6 @@
 'use strict';	
 
-// create the module and name it scotchApp
+// create the module and name it tmtApp
 angular.module('tmtApp', [
   'tmtApp.testcases',
   'tmtApp.testcasesAnalyse',
@@ -9,6 +9,7 @@ angular.module('tmtApp', [
   'tmtApp.configures',
   'tmtApp.results',
   'tmtApp.resultsAnalyse',
+  'tmtApp.resources',
   'tmtApp.wizard',
   'tmtApp.yotta',
   'tmtControllers', 
@@ -69,11 +70,7 @@ angular.module('tmtApp', [
           if(title){ console.log(title) }
         }*/
       })
-      .state('resources', {
-        url: '/resources',
-        templateUrl: 'app/resources/resources.html',
-        //controller: 'ResourcesController'
-      })/*
+      /*
       .state('settings', {
         url: '/settings',
         templateUrl: 'app/configures/configure.html',

@@ -16,12 +16,6 @@ controller('HomeController',
         }
       }
     }
-    $scope.github = {
-      public_repos: 0,
-      private_repos: 0,
-      total_repos: 500,
-      disk_usage: 0
-    }
     $scope.now = {
       jenkins: {
         master: {
@@ -43,7 +37,13 @@ controller('HomeController',
       duts: {
         count: 50,
         active: 2
-      } 
+      },
+      github: {
+        public_repos: 0,
+        private_repos: 0,
+        total_repos: 500,
+        disk_usage: 0
+      }
     }
     $log.info('connecting to ws..');
     

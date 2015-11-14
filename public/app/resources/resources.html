@@ -1,15 +1,30 @@
-<div class="row">
+<style type="text/css">
+/*style.css*/
+.grid {
+  width: 700px;
+  height: 800px;
+}
+.my-custom-menu {
+  position: absolute;
+}
+ 
+.my-custom-menu .ui-grid-menu {
+  padding: 0px;
+}
+ 
+.my-custom-menu .ui-grid-menu-inner {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+</style>
 
-    <div class="col-sm-2">
-        <div ui-view="rFilters">filters..</div>
-    </div>
-    
-    <div class="col-sm-8">
-        <div ui-view="rBody">resources-table</div>
-    </div>
-    
-    <div class="col-sm-1">
-        <div ui-view="rStatus">status..</div>
+<div>
+    <div ui-view="columnTwo">
+      <div class="text-center">
+        <div>
+          <div id="grid1" ui-grid="gridOptions" ui-grid-pinning ui-grid-edit ui-grid-exporter ui-grid-selection class="grid"></div>
+        </div>
+      </div>
     </div>
 </div>
 

@@ -42,31 +42,14 @@ function AddonGui (app, server, io, passport){
         res.json(visitors);
     });
 
-    global.pubsub.on('jenkins.computers', function(data){
-      status.now.jenkins.slaves.count = data.totalExecutors;
-      status.now.jenkins.slaves.active = data.busyExecutors;
-      status.now.jenkins.master.alive = 1;
-    });
-    global.pubsub.on('jenkins.jobs', function(data){
-      //console.log(data);
-      status.now.jenkins.jobs.count = data.length;
-      status.now.jenkins.jobs.active = 0;
-      status.now.jenkins.jobs.failure = 0;
-      _.each(data, function(item) { 
-        if( item.color=='yellow') {
-            status.now.jenkins.jobs.active++
-        }
-        if( item.color=='red') {
-            status.now.jenkins.jobs.failure++
-        }
-      });
-      console.log("jenkins.jobs: "+JSON.stringify(status.now.jenkins));
-    });
-    global.pubsub.on('github', function(data){
-      status.github = data;
-      status.github.total_repos = data.public_repos+data.private_repos;
-      console.log("github-data: "+JSON.stringify(data));
+    global.pubsub.on('status.now', function(change){
+      _.extend(status.now, change);
     })
+    global.pubsub.on('status.now.init', function(data){
+      console.log("initialize status.now values from extrernal sources");
+      _.extend(status.now, data);
+      console.log(status.now);
+    });
   }
 
   this.unregister = function(){
@@ -75,23 +58,10 @@ function AddonGui (app, server, io, passport){
 
   var Result = mongoose.model('Result');
 
-  var status = {
-    now: {
-      jenkins: {
-        master: {
-          alive: 0
-        },
-        slaves: { 
-          active: 0,
-          count: 0
-        },
-        jobs: {
-          count: 0,
-          active: 0   
-        }
-      }
-    },
-    today: {
+  var status = { now: {}, today: {} };
+
+  //init today object
+  _.extend(status.today, {
       passrate: 0,
       executed: 0,
       max: 100,
@@ -101,13 +71,7 @@ function AddonGui (app, server, io, passport){
           max: 0
         }
       }
-    },
-    github: {
-      public_repos: 0,
-      total_private_repos: 0,
-      total_repos: 0
-    }
-  };
+    });
   
   var resultCount = function() {
     var _today = moment().startOf('day');
@@ -154,14 +118,12 @@ function AddonGui (app, server, io, passport){
       var nowStatus = function() {
         client.emit('home.today', status.today);
         client.emit('home.now', status.now);
-        client.emit('home.github', status.github)
       }
-      setInterval( nowStatus, 2000 );
+      var statusTimer = setInterval( nowStatus, 2000 );
 
-      setInterval(function(){
-        client.emit('home', 'test-'+i++);
-      }, 1000);
+      /*client.emit('home', 'test-'+i++);*/
       client.on('disconnect', function () {
+          clearTimeout(statusTimer);
           global.pubsub.emit('visitor_leave', {ip: ip});
       });
   });

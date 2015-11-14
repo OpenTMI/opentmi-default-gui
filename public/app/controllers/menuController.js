@@ -7,12 +7,18 @@ angular.module('tmtControllers')
     {
       title: "Test Management", tooltip: 'test', icon: 'cogs',
       menus: [
-        {  title: "Testcases", tooltip: 'test', action: "#/testcases" },
-        {  title: "Testcase Analyse", tooltip: 'test analyse', action: "#/testcases-analyse" },
-        {  title: "Testcase Tree", action: '#/testcases/tree'},
-        {  title: "Campaigns", tooltip: '', action: "#/campaigns" },
-        {  title: "Plans", tooltip: '', action: "#/plans" },
-        {  title: "Automation", tooltip: '', action: "#/automation" }
+        { title: "Testcases", tooltip: 'test', action: "#/testcases" },
+        { title: "Testcase Analyse", tooltip: 'test analyse', action: "#/testcases-analyse" },
+        { title: "Testcase Tree", action: '#/testcases/tree'},
+        { title: "Campaigns", tooltip: '', action: "#/campaigns" },
+      ]
+    },
+    {
+      title: "Test Automation", tooltip: 'test', icon: 'cogs',
+      menus: [
+        { title: "Plans", tooltip: 'Automation Plans', action: "#/automation/plans" },
+        { title: "Tasks", tooltip: 'Generated Automation Tasks', action: "#/automation/tasks" },
+        { title: "Configuration", tooltip: 'Scheduler Configuration', action: "#/automation/config" },
       ]
     },
     {

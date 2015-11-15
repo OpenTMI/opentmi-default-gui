@@ -1,0 +1,36 @@
+
+{
+  "name": "tmt-gui",
+  "version": "0.1.0",
+  "description": "TMT default GUI",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.com/_tmt_/tmt-gui.git"
+  },
+  "keywords": [
+    "TMT",
+    "test",
+    "automation",
+    "management",
+    "gui"
+  ],
+  "author": "Jussi Vatjus-Anttila <jussiva@gmail.com>",
+  "license": "MIT",
+  "readmeFilename": "Readme.md",
+  "tmt": {
+    "id": "gui",
+    "title": "Gui",
+    "type": "provider",
+    "hosted": true,
+    "config": {
+    }
+  },
+  "devDependencies": {
+  },
+  "dependencies": {
+    "moment": "*"
+  }
+}

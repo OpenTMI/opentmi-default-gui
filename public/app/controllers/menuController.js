@@ -10,7 +10,14 @@ angular.module('tmtControllers')
         { title: "Testcases", tooltip: 'test', action: "#/testcases" },
         { title: "Testcase Analyse", tooltip: 'test analyse', action: "#/testcases-analyse" },
         { title: "Testcase Tree", action: '#/testcases/tree'},
-        { title: "Campaigns", tooltip: '', action: "#/campaigns" },
+        { title: "Campaigns", tooltip: '', action: "#/campaigns" }
+      ]
+    },
+    {
+      title: "Mesh", tooltip: 'Mesh', icon: 'cogs',
+      menus: [
+        { title: "Topologies", action: "#/topology" },
+        { title: "Create Topology", action: "#/topology/new" }
       ]
     },
     {
@@ -18,6 +25,7 @@ angular.module('tmtControllers')
       menus: [
         { title: "Plans", tooltip: 'Automation Plans', action: "#/automation/plans" },
         { title: "Tasks", tooltip: 'Generated Automation Tasks', action: "#/automation/tasks" },
+        { title: "Schedule", tooltip: 'Task Schedule', action: "#/automation/tasks/schedule" },
         { title: "Configuration", tooltip: 'Scheduler Configuration', action: "#/automation/config" },
       ]
     },

@@ -59,19 +59,15 @@ controller('HomeController',
       $log.error('ws error');
     });
     $scope.$on('socket:home', function (ev, data) {
-      $log.debug('server -> client: '+data);
+      $log.debug('socket:home: server -> client: '+data);
     });
     $scope.$on('socket:home.today', function (ev, data) {
-      $log.debug('server -> client: '+JSON.stringify(data));
+      $log.debug('socket:home.today: server -> client: '+JSON.stringify(data));
       _.extend($scope.today, data);
     });
     $scope.$on('socket:home.now', function (ev, data) {
-      $log.debug('server -> client: '+JSON.stringify(data));
+      $log.debug('socket:home.now: server -> client: '+JSON.stringify(data));
       _.extend($scope.now, data);
-    });
-    $scope.$on('socket:home.github', function (ev, data) {
-      $log.debug('server -> client: '+JSON.stringify(data));
-      _.extend($scope.github, data);
     });
 
   });

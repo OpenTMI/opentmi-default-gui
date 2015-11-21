@@ -10,7 +10,7 @@ angular.module('tmtApp.testcases', [
         .state('testcases', {
           abstract: true,
           url: '/testcases',
-          templateUrl: 'app/testcases/testcases.html'
+          templateUrl: 'app/testcases/testcases.html',
         })
         .state('testcases.list', {
           url: '',
@@ -31,21 +31,20 @@ angular.module('tmtApp.testcases', [
         })
         .state('testcases.detail', {
           url: '/{testcaseId:[0-9a-fA-F]{24}}',
-          controller: 'TestcaseDetailsController',
           views: {
-              'tcFilters@testcases': { 
-                templateUrl: 'app/testcases/testcases.details.filters.html',
-              },
               'tcBody@testcases': { 
-                templateUrl: 'app/testcases/testcases.details.html'
+                templateUrl: 'app/testcases/testcase.details.html',
+                controller: 'TestcaseDetailsController'
               },
               'tcStatus@testcases': { 
-                templateUrl: 'app/testcases/testcases.details.status.html'
+                templateUrl: 'app/testcases/testcase.details.status.html',
+                controller: 'TestcaseHistoryController',
               }
           }
         })
         .state('testcases.tree', {
           url: '/tree',
+          templateUrl: 'app/testcases/testcases.html',
           views: {
             'tcFilters@testcases': { 
               templateUrl: 'app/testcases/testcases.filters.html',

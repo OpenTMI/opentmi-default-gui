@@ -1,0 +1,51 @@
+<div class="jumbotron">
+  <strong>{{ testcase.tcid }} v{{testcase.ver.cur}}</strong> 
+  <br>
+  <br>
+  <uib-tabset>
+    <uib-tab heading="Info">
+      <br>
+      <table>
+        <tr style="width: 100px">
+          <th>Status</th>
+          <td>{{testcase.status.value}}</td>
+        </tr>
+        <tr>
+          <th>Type</th>
+          <td>{{testcase.other_info.type}}</td>
+        </tr>
+      </table>
+      <br>
+      {{testcase}}
+    </uib-tab>
+    <uib-tab heading="Execution">
+      Compatible: 
+      <div class="btn-group">
+        <label class="btn btn-primary" ng-model="testcase.compatible.simulation.yes" uib-btn-checkbox>Simulation</label>
+        <label class="btn btn-primary" ng-model="testcase.compatible.hardware.yes" uib-btn-checkbox>Hardware</label>
+        <label class="btn btn-primary" ng-model="testcase.compatible.automation.yes" uib-btn-checkbox>Automation</label>
+      </div>
+      <br>
+
+      <label class="btn btn-primary" ng-model="testcase.execution.skio.value" uib-btn-checkbox>Skip</label>
+    </uib-tab>
+
+    <uib-tab heading="Specification">
+    <form method="post">
+      <textarea ui-tinymce="tinymceOptions" ng-model="testcase.specification.inline"></textarea>
+    </form>
+    </uib-tab>
+
+    <uib-tab heading="Results">
+      <div>
+          <div id="gridApi" ui-grid="gridOptions" ui-grid-pinning ui-grid-edit ui-grid-exporter ui-grid-grouping ui-grid-selection class="grid"></div>
+        </div>
+    </uib-tab>
+
+    <uib-tab heading="Version">
+      <a href="#/testcases/{{ testcases.ver.prev }}">Previous Version</a>
+      <br>
+      <a href="#/testcases/{{ testcases.ver.next }}">Next Version</a>
+    </uib-tab>
+  </uib-tabset>
+</div>

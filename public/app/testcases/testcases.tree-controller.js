@@ -2,8 +2,8 @@
 
 angular.module('tmtControllers')
   .controller('TestcaseTreeController', 
-             ['$scope', 'Testcase', '$stateParams', '$log', 
-    function ( $scope,   Testcase,   $stateParams,   $log) {
+             ['$scope', 'Testcase', '$stateParams', '$log', '$location', 
+    function ( $scope,   Testcase,   $stateParams,   $log, $location) {
   
 
     $log.info('init TestcaseTreeController')
@@ -62,6 +62,16 @@ angular.module('tmtControllers')
             }
             break;
           case("tc"):
+            items['tc'] = {
+              "label": "Open",
+              "action": function(data){
+                var inst = $.jstree.reference(data.reference),
+                      obj = inst.get_node(data.reference);
+                var new_path = '/testcases/'+obj.li_attr.tcid;
+                console.log(new_path)
+                $location.path(new_path);
+              }
+            }
             items["rename"] = {
               "label": "Rename",
               "action": function (data) {
@@ -79,6 +89,7 @@ angular.module('tmtControllers')
                 }
               }
             }
+            
           default:
             break;
         }

@@ -26,6 +26,7 @@ angular.module('tmtApp', [
   'ui.grid.selection',
   'ui.grid.exporter',
   'ui.grid.grouping',
+  'ui.tinymce',
   'btford.socket-io',
   'angularMoment',
   'jsTree.directive',

@@ -14,13 +14,6 @@ angular.module('tmtControllers')
         ]
       },
       {
-        title: "Mesh", tooltip: 'Mesh', icon: 'cogs',
-        menus: [
-          { title: "Topologies", action: "#/topology" },
-          { title: "Create Topology", action: "#/topology/new" }
-        ]
-      },
-      {
         title: "Test Automation", tooltip: 'test', icon: 'cogs',
         menus: [
           { title: "Plans", tooltip: 'Automation Plans', action: "#/automation/plans" },
@@ -40,10 +33,10 @@ angular.module('tmtControllers')
       {
         title: "DUT", tooltip: 'Device Under Test',
         menus: [
+          { title: "Targets", action: "#/duts/targets"},
           { title: "Devices", action: "#/resources?type=dut" },
           //{ title: "Features", action: "#/duts/features" },
           //{ title: "Features Tree", action: "#/duts/features/tree" },
-          { title: "Targets", action: "#/duts/targets"},
           //{ title: "Specifications", action: "#/duts/specifications" },
         ]
       },
@@ -93,7 +86,15 @@ angular.module('tmtControllers')
     $scope.message = 'Look! I am an about page.';
   })
 
-  .controller('ContactController', function($scope) {
+  .controller('ContactController', function($scope, $http) {
     $scope.message = 'Jussi Vatjus-Anttila';
+    $http({
+      method: 'GET',
+      url: 'https://api.github.com/repos/OpenTMI/opentmi-github/contributors'
+    }).then(function successCallback(response) {
+      console.log(response);
+      $scope.contributors = response.data;
+    });
+    
   });
  

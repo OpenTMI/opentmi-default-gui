@@ -1,36 +1,38 @@
-
 {
-  "name": "tmt-gui",
+  "name": "opentmi-default-gui",
   "version": "0.1.0",
-  "description": "TMT default GUI",
+  "description": "OpenTMI webGUI addon",
   "main": "index.js",
   "scripts": {
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.com/_tmt_/tmt-gui.git"
+    "url": "https://github.com/OpenTMI/opentmi-default-gui.git"
   },
   "keywords": [
-    "TMT",
+    "opentmi",
     "test",
     "automation",
     "management",
     "gui"
   ],
   "author": "Jussi Vatjus-Anttila <jussiva@gmail.com>",
-  "license": "MIT",
-  "readmeFilename": "Readme.md",
-  "tmt": {
-    "id": "gui",
-    "title": "Gui",
+  "license": "GPLv3",
+  "readmeFilename": "README.md",
+  "opentmi": {
+    "id": "default-gui",
+    "title": "Defaut Gui",
     "type": "provider",
     "hosted": true,
     "config": {
+      "controller": "tmtApp"
     }
   },
   "devDependencies": {
   },
   "dependencies": {
-    "moment": "*"
+    "winston": "*",
+    "nconf": "*",
+    "underscore": "*"
   }
 }

@@ -5,15 +5,15 @@
 angular.module('tmtControllers', ['ngStorage'])
 
   .controller('defaultController', 
-    ['$scope', '$localStorage',
-    function($scope, $localStorage, $sessionStorage) {
+            ['$scope', '$localStorage', '$sessionStorage', '$log',
+    function($scope,    $localStorage,   $sessionStorage,   $log ) {
     
-    //$log.info('Init defaultController');
+    $log.info('Init defaultController');
+    
     $scope.$storage = $localStorage.$default(
-        {counter: 'hello'}
+        {counter: 0}
     );
-    console.log($scope.$storage)
-    $scope.$storage.counter = 3;
+    $log.debug($scope.$storage)
     
     $scope.keypressCallback = function ($event) {
       alert('Voila!');

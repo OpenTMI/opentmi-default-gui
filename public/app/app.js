@@ -33,7 +33,6 @@ angular.module('tmtApp', [
   'jsonFormatter',
   'mgo-angular-wizard'
 ])
-
 .run(
   [          '$rootScope', '$state', '$stateParams',
     function ($rootScope,   $state,   $stateParams) {
@@ -43,9 +42,8 @@ angular.module('tmtApp', [
   ]
 )
 // configure our routes
-.config(['$stateProvider', '$urlRouterProvider',  'RestangularProvider',
-  function($stateProvider,  $urlRouterProvider, RestangularProvider ) {
-
+.config(  ['$stateProvider', '$urlRouterProvider',  'RestangularProvider',
+  function($stateProvider,    $urlRouterProvider,    RestangularProvider ) {
 
     // Redirects and Otherwise //
     
@@ -58,7 +56,8 @@ angular.module('tmtApp', [
       // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
       .otherwise('/');
     
-    // State Configurations 
+    // Basic State Configurations
+    // other states come from submodules 
     $stateProvider
       .state('home', {
         url: '',
@@ -71,12 +70,6 @@ angular.module('tmtApp', [
           if(title){ console.log(title) }
         }*/
       })
-      /*
-      .state('settings', {
-        url: '/settings',
-        templateUrl: 'app/configures/configure.html',
-        controller: 'ConfigController'
-      })*/
       .state('about', {
         url: '/about',
         templateUrl: 'app/pages/about.html',

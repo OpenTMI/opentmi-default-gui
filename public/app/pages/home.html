@@ -1,9 +1,14 @@
 <div class="jumbotron text-center" ng-controller="HomeController">
-  <h2>Test Management and Automation Cloud</h2>
+  <h2>OpenTMI</h2>
   <tabset style="height: 480px">
+    <tab heading="Frontpage">
+      <h3>
+        Welcome to OpenTMI - frontpage.
+      </h3>
+      There is still a lot of todo, but something exists already. Plase be patient, or help me to develop this system to more better, thank you.
+    </tab>
     <tab heading="Today Test Status">
       <div class="col">
-
         <small><em>Today Overall Passrate:</em></small>
         <div class="row-sm-1"><progressbar max="100" value="today.passrate"><span style="color:white; white-space:nowrap;">{{today.passrate}} %</span></progressbar></div>
         
@@ -40,10 +45,10 @@
       <div class="row-sm-6"><progressbar max="now.duts.count" value="now.duts.active">{{now.duts.active}}</progressbar></div>
     </tab>
     <tab heading="This week">
-      
+      TODO
     </tab>
     <tab heading="This Month">
-      
+      TODO
     </tab>
   </tabset>
 </div>

@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   <!-- SCROLLS -->
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" />
   <link rel="stylesheet" href="/vendor/ui-grid/3.0.6/ui-grid.min.css" />
   <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.0.1/ng-tags-input.min.css" />
@@ -24,12 +24,14 @@
 
   <!-- SPELLS -->
   <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
   
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular-resource.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular-touch.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular-animate.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular-sanitize.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular-cookies.js"></script>
   
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
  <!-- <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>-->
@@ -64,6 +66,13 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js"></script>
 
+  <!-- schema-form -->
+  <script type="text/javascript" src="vendor/objectpath/ObjectPath.js"></script>
+  <script type="text/javascript" src="vendor/tv4/tv4.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-schema-form/0.8.12/schema-form.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-schema-form/0.8.12/bootstrap-decorator.min.js"></script>
+
+  <!-- other 3rd party libraries -->
   <script src="/socket.io/socket.io.js"></script>
   <script src="/vendor/socket/socket.min.js"></script>
   <script src="/vendor/tinymce/tinymce.js"></script>
@@ -96,6 +105,7 @@
   <script src="app/controllers/homeController.js"></script>
   <script src="app/controllers/menuController.js"></script>
   <script src="app/controllers/socketController.js"></script>
+  <script src="app/controllers/loginController.js"></script>
   <script src="app/wizard/wizard-controller.js"></script>
   <script src="app/builds/builds.filters-controller.js"></script>
   <script src="app/builds/builds.list-controller.js"></script>
@@ -123,6 +133,7 @@
   
   
   <!-- Services -->
+  <script src="app/controllers/authenticationService.js"></script>
   <script src="app/services.js"></script>
   <script src="app/wizard/wizard-service.js"></script>
   <script src="app/testcases/testcase-service.js"></script>
@@ -193,8 +204,8 @@
         <li><a href="#about"><i class="fa fa-info"></i></a></li>
         <li><a href="#contact"><i class="fa fa-comment"></i></a></li>
         
-        <li ng-if="!loggedIn"><a href="#login"><i class="fa fa-sign-in"></i></a></li>
-        <li ng-if="loggedIn"><a href="#logout"><i class="fa fa-sign-out"></i></a></li>
+        <li ng-if="!loggedIn"><a href="#login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li ng-if="loggedIn"><a href="#logout"><span class="glyphicon glyphicon-log-out"></span> </a></li>
       </ul>
     </div>
   </div>
@@ -208,7 +219,7 @@
   </div>
   <hr>
   <footer class="text-center">
-    <p>OpenTMI - 
+    <p><a href="https://github.com/OpenTMI/opentmi">OpenTMI</a> - 
     <a href="https://github.com/OpenTMI/opentmi-default-gui"><i class="fa fa-github"></i></a>
     </p>
     <pre>

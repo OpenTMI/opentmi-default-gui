@@ -15,6 +15,7 @@ angular.module('tmtControllers')
     $scope.columns = [ 
       { field: 'cre.time', width: 140, type: 'date', 
         cellFilter: 'date:"yy/MM/dd HH:mm"', displayName: 'Date'  }, 
+      { field: 'job.id', displayName: 'JobId'  }, 
       { field: 'tcid', cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
       //{ field: 'other_info.component', width:100, displayName: 'Component' },
       { field: 'exec.verdict',  width:100, displayName: 'Verdict',

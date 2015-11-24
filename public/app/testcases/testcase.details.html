@@ -4,6 +4,12 @@
   <br>
   <uib-tabset>
     <uib-tab heading="Info">
+      <form 
+            sf-schema="infoSchema" 
+            sf-model="testcase"
+            sf-form="infoForm"
+            ng-submit="submitForm(ngform, modelData)">
+      </form>
       <br>
       <table>
         <tr style="width: 100px">
@@ -16,7 +22,7 @@
         </tr>
       </table>
       <br>
-      {{testcase}}
+      <!-- {{testcase}} -->
     </uib-tab>
     <uib-tab heading="Execution">
       Compatible: 

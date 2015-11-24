@@ -1,7 +1,8 @@
 'use strict';	
 
-angular.module('tmtControllers').
-controller('HomeController', 
+angular
+.module('tmtControllers')
+.controller('HomeController', 
   function ($scope, $log, socket) {
 
     var wsKey = 'home';

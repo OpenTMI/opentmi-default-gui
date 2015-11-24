@@ -2,7 +2,7 @@
 
 angular.module('tmtControllers')
   .controller('TestcaseDetailsController', 
-             ['$scope', 'Testcase', 'Result', '$stateParams', '$log',
+             ['$scope', 'Testcase', 'Result', '$stateParams', '$log', 'schemaForm',
     function ($scope,    Testcase,  Result, $stateParams,   $log) {
 
     $scope.oneAtATime = true;
@@ -11,7 +11,60 @@ angular.module('tmtControllers')
 
     $scope.$root.$broadcast('testcase.id', $stateParams.testcaseId);
 
-     $scope.tinymceOptions = {
+    $scope.infoSchema = {
+      type: "object",
+      properties: {
+        tcid: { 
+          type: "string", 
+          minLength: 2, 
+          readonly: true,
+          title: "Name",
+          description: "Test case Name" 
+        },
+        status: {
+          type: 'object',
+          properties: {
+            'value': {
+              type: 'string',
+              title: 'Status',
+              enum: [ 'unknown', 'released', 'development', 'maintenance', 'broken' ], 
+              description: 'Implementation Status'
+            }
+          }
+        },
+        other_info: {
+          type: 'object',
+          properties: {
+            type: 'string',
+            title: 'Type',
+            enum: [
+              "installation",
+              "compatibility",
+              "smoke",
+              "regression",
+              "acceptance",
+              "alpha",
+              "beta",
+              "stability",
+              "functional",
+              "destructive",
+              "performance",
+              "reliability"
+            ]
+          }
+        }
+      }
+    };
+
+    $scope.infoForm = [
+      "*",
+      {
+        type: "submit",
+        title: "Save"
+      }
+    ];
+
+    $scope.tinymceOptions = {
       onChange: function(e) {
         // put logic here for keypress and cut/paste changes
       },

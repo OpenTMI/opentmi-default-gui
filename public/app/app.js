@@ -19,6 +19,7 @@ angular.module('tmtApp', [
   'ngTagsInput', 
   'ngAnimate',
   'ngStorage',
+  'ngCookies',
   'restangular',
   'ui.grid', 
   'ui.grid.edit', 
@@ -26,6 +27,7 @@ angular.module('tmtApp', [
   'ui.grid.selection',
   'ui.grid.exporter',
   'ui.grid.grouping',
+  'schemaForm',
   'ui.tinymce',
   'btford.socket-io',
   'angularMoment',
@@ -69,6 +71,11 @@ angular.module('tmtApp', [
         onExit: function(title){
           if(title){ console.log(title) }
         }*/
+      })
+      .state('login', {
+        url: '/login',
+        templateUrl: 'app/pages/login.html',
+        controller: 'LoginController'
       })
       .state('about', {
         url: '/about',

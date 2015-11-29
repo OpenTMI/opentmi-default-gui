@@ -2,10 +2,20 @@
 
 angular.module('tmtControllers')
   .controller('ResultListController', 
-             ['$scope', 'Result', '$stateParams', '$log',
-    function ($scope,   Result,   $stateParams,    $log) {
+             ['$scope', 'Result', 'Testcase', '$stateParams', '$log', 'uiGridGroupingConstants',
+    function ($scope,   Result,    Testcase,   $stateParams,   $log, uiGridGroupingConstants) {
   
-    $log.info('init ResultListController')
+    $log.info('init ResultListController');
+    $scope.gridMode = 'plain';
+
+    $scope.query = {};
+
+    $scope.setMode = function(value){
+      console.log('mode change: '+value);
+      doUpdateList = 
+      value==='plain'?updateRawValues:updateLatest;
+      doUpdateList();
+    }
     
     
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
@@ -15,8 +25,8 @@ angular.module('tmtControllers')
     $scope.columns = [ 
       { field: 'cre.time', width: 140, type: 'date', 
         cellFilter: 'date:"yy/MM/dd HH:mm"', displayName: 'Date'  }, 
-      { field: 'job.id', displayName: 'JobId'  }, 
-      { field: 'tcid', cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
+      { field: 'job.id', width:200, displayName: 'JobId'  }, 
+      { field: 'tcid', cellTemplate: linkCellTemplate, width:200, displayName: 'TC' }, 
       //{ field: 'other_info.component', width:100, displayName: 'Component' },
       { field: 'exec.verdict',  width:100, displayName: 'Verdict',
         cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
@@ -24,15 +34,41 @@ angular.module('tmtControllers')
             return 'green';
           }
           return 'red';
-        } },
+        }, 
+        customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
+          if ( typeof aggregation.summary === 'undefined' ) { 
+            aggregation.summary = {
+              count: 0,
+              passCount: 0,
+              failCount: 0
+            }; 
+          }
+          aggregation.summary.count++;
+          if(fieldValue == 'pass'){
+            aggregation.summary.passCount++;
+          } else {
+            aggregation.summary.failCount++;
+          }
+        },
+        customTreeAggregationFinalizerFn: function(aggregation){
+          var passrate = 0;
+          if(aggregation.summary.count>0){
+            passrate = aggregation.summary.passCount /
+                       aggregation.summary.count*100;
+          }
+          console.log(aggregation);
+          aggregation.rendered = 'PR: '+passrate.toFixed(0) + '%';
+        }
+      },
       /*{ field: 'campaign', width:100, 
         //grouping: { groupPriority: 0 },
         cellTemplate: defaultCellTemplate, displayName: 'Campaign' },*/
       { field: 'exec.duration', width:100, 
-        cellTemplate: defaultCellTemplate, displayName: 'Duration' },
+        cellTemplate: defaultCellTemplate, displayName: 'Duration',
+        treeAggregationType: uiGridGroupingConstants.aggregation.AVG },
       { field: 'exec.dut.type',  width:100, 
         cellTemplate: defaultCellTemplate, displayName: 'DutType' },
-      { field: 'exec.sut.cut', 
+      { field: 'exec.sut.cut', width:100, 
         cellTemplate: defaultCellTemplate, displayName: 'Components' },
     ]; 
     $scope.gridOptions = { 
@@ -53,13 +89,40 @@ angular.module('tmtControllers')
     };
     
     $scope.update = function() {
-        doUpdateList({});
+        doUpdateList();
     }
 
-    function doUpdateList(q)
-    {
+    var doUpdateList = updateRawValues;
+
+    function updateLatest(){
+        Testcase.query({
+          q: {'status.value': 'released'},
+          t: 'distinct',
+          f: 'tcid'
+        }).$promise.then( function(tests){
+          var results = []
+          _.each(tests, function(tcid){
+            var result = {tcid: tcid};
+            console.log(tcid);
+            Result.query({
+              q: {tcid: tcid},
+              s: {'cre.time': -1},
+              l: 5000
+            }).$promise.then( function(results){
+              console.log('results available');
+              if(results.length > 0)
+                angular.extend(result, results[0]);
+            });
+            results.push(result)
+          });
+          $scope.dataResults = results;
+        }); 
+    }
+
+    function updateRawValues(){
+      $log.debug("doUpdateList");
       Result.query({
-          q: JSON.stringify(q), 
+          q: JSON.stringify($scope.query), 
           s: { 'cre.time': -1},
           l: 5000
       }).$promise.then( 
@@ -93,7 +156,9 @@ angular.module('tmtControllers')
           //{'exec.duration': tag}},
           {'exec.sut.fut': {"$regex": ("/"+tag+"/"), "$options":"i"}},
           {'exec.sut.cut': {"$regex": ("/"+tag+"/"), "$options":"i"}},
-          {'exec.verdict': tag}
+          {'exec.verdict': tag},
+          {'campaign': {"$regex": ("/"+tag+"/"), "$options":"i"}},
+          {'job.id': {"$regex": ("/"+tag+"/"), "$options":"i"}}
           //{'exec.dut.type': {"$regex": ("/"+tag+"/"), "$options":"i"}},
           //{'exec.dut.model': {"$regex": ("/"+tag+"/"), "$options":"i"}},
           //{'campaign': {"$regex": ("/"+tag+"/"), "$options":"i"}},
@@ -101,10 +166,11 @@ angular.module('tmtControllers')
         ]
         q.$and.push( {$or: or} );
       });
-      doUpdateList(q);
+      $scope.query = q;
+      doUpdateList();
       
     });
-    doUpdateList({});
+    doUpdateList();
     /*
     $scope.gridOptions.onRegisterApi = function(gridApi){
       //set gridApi on scope

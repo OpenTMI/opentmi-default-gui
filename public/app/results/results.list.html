@@ -26,7 +26,11 @@
 
 <div>
     <div ui-view="columnTwo">
-      <button ng-click="update()">Update</button>
+      <button type="button"  class="btn btn-primary" ng-click="update()">Update</button>
+      <div class="btn-group" >
+        <label class="btn btn-primary" ng-model="gridMode" uib-btn-radio="'plain'" ng-click="setMode('plain')">Plain</label>
+        <label class="btn btn-primary" ng-model="gridMode" uib-btn-radio="'latest'"  ng-click="setMode('latest')">Latest</label>
+    </div>
       <div class="text-center">
         <div>
           <div id="gridApi" ui-grid="gridOptions" ui-grid-pinning ui-grid-edit ui-grid-exporter ui-grid-grouping ui-grid-selection class="grid"></div>

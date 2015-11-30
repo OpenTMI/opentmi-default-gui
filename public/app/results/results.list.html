@@ -1,8 +1,7 @@
 <style type="text/css">
 /*style.css*/
 .grid {
-  width: 720px;
-  height: 800px;
+  height: 600px;
 }
 .green {
   color: green;
@@ -23,19 +22,21 @@
   box-shadow: none;
 }
 </style>
-
+<!--
 <div>
     <div ui-view="columnTwo">
-      <button type="button"  class="btn btn-primary" ng-click="update()">Update</button>
-      <div class="btn-group" >
-        <label class="btn btn-primary" ng-model="gridMode" uib-btn-radio="'plain'" ng-click="setMode('plain')">Plain</label>
-        <label class="btn btn-primary" ng-model="gridMode" uib-btn-radio="'latest'"  ng-click="setMode('latest')">Latest</label>
-    </div>
       <div class="text-center">
-        <div>
-          <div id="gridApi" ui-grid="gridOptions" ui-grid-pinning ui-grid-edit ui-grid-exporter ui-grid-grouping ui-grid-selection class="grid"></div>
-        </div>
+        <div>-->
+          <button type="button"  class="btn btn-primary" ng-click="reset()">Reset</button>
+          <div class="btn-group" >
+            <label class="btn btn-primary" ng-model="gridMode" uib-btn-radio="'plain'" ng-click="setMode('plain')">Plain</label>
+            <label class="btn btn-primary" ng-model="gridMode" uib-btn-radio="'latest'"  ng-click="setMode('latest')">Latest</label>
+          </div>
+          <span> &nbsp; &nbsp; First page: {{ firstPage }} &nbsp; &nbsp; Last page: {{ lastPage }}  &nbsp; &nbsp; data.length: {{ data.length }} </span>
+
+          <div id="gridApi" ui-grid="gridOptions" ui-grid-pinning ui-grid-exporter ui-grid-grouping ui-grid-infinite-scroll class="grid"></div>
+        <!--</div>
       </div>
     </div>
 </div>
-
+-->

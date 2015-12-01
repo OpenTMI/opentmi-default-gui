@@ -275,7 +275,7 @@ angular.module('tmtControllers')
           q: JSON.stringify($scope.query.q), 
           s: $scope.query.s,
           l: $scope.pageSize,
-          sk: ($scope.firstPage-1)*$scope.pageSize
+          sk: $scope.firstPage*$scope.pageSize
       })
       .$promise.then(function(newData){
         $scope.firstPage--;
@@ -295,6 +295,7 @@ angular.module('tmtControllers')
       return promise.promise;
     };
     $scope.checkDataLength = function( discardDirection) {
+      return; /// @todo logic not working yet
       // work out whether we need to discard a page, if so discard from the direction passed in
       if( $scope.lastPage - $scope.firstPage > 3 ){
         // we want to remove a page

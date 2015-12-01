@@ -27,6 +27,7 @@ angular.module('tmtApp', [
   'ui.grid.selection',
   'ui.grid.exporter',
   'ui.grid.grouping',
+  'ui.grid.resizeColumns',
   'ui.grid.infiniteScroll',
   'schemaForm',
   'ui.tinymce',

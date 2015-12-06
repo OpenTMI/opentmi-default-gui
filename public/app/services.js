@@ -2,12 +2,7 @@
 
 /* Services */
 angular.module('tmtServices', ['ngResource'])
-  /*.factory('Device', function($resource) {
-    return $resource(
-	    "/api/v0/device/:id", {id: '@uuid'},
-	    {update: {method: "PUT"}}
-    );
-  })
+  /*
   .factory('Event', function($resource) {
     return $resource(
 	    "/api/v0/event/:id", {id: '@uuid'},

@@ -71,14 +71,14 @@ angular.module('tmtControllers')
           }
         } 
       }, 
-      //{ field: 'other_info.component', width:100, displayName: 'Component' },
       { field: 'exec.verdict',  width:100, displayName: 'Verdict',
         cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
-          if (grid.getCellValue(row,col).match(/pass/)) {
+          var value = grid.getCellValue(row,col)
+          if (value.match(/pass/) || value.match(/100%/)) {
             return 'green';
-          }
+          } //else if( value.match())
           return 'red';
-        }, 
+        },
         customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
           if ( typeof aggregation.summary === 'undefined' ) { 
             aggregation.summary = {
@@ -113,9 +113,9 @@ angular.module('tmtControllers')
       /*{ field: 'campaign', width:150, 
         //grouping: { groupPriority: 0 },
         cellTemplate: defaultCellTemplate, displayName: 'Campaign' }, */
-      { field: 'exec.duration', width:100, 
-        cellTemplate: defaultCellTemplate, displayName: 'Duration',
+      { field: 'exec.duration', width:100, displayName: 'Duration',
         aggregationType: uiGridConstants.aggregationTypes.avg,
+        cellFilter: 'durationFilter',
         treeAggregationType: uiGridGroupingConstants.aggregation.AVG },
       { field: 'exec.dut.type',  width:100, 
         cellTemplate: defaultCellTemplate, displayName: 'DutType' },
@@ -374,6 +374,20 @@ angular.module('tmtControllers')
     });
     */
   }])
+  .filter('durationFilter', function () {
+    return function (value) {
+      var duration = moment.duration(value, 'seconds')
+      var durationStr = '';
+      function fixedInt(val){
+        return ("0" + val).slice(-2);
+      }
+      if( duration.hours()>0) {
+        durationStr += fixedInt(duration.hours())+':';
+      }
+      durationStr += fixedInt(duration.minutes())+':'+fixedInt(duration.seconds());
+      return durationStr;
+    };
+  })
   .directive('datePicker', function(){
     return {
         restrict : "A",

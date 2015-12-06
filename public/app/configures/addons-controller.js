@@ -2,11 +2,11 @@
 
 angular.module('tmtControllers')
   .controller('AddonsController', 
-             ['$scope', 'Addons', '$stateParams', '$log', 
-    function ($scope,   Addons,   $stateParams,    $log) {
+             ['$scope', 'Addon', '$stateParams', '$log', 
+    function ($scope,   Addon,   $stateParams,    $log) {
   
     $log.info('init AddonsController')
     
-    $scope.addons = Addons.query({fl: true /*, _id: $stateParams.accountId*/});
+    $scope.addons = Addon.query({fl: true});
     
   }]);

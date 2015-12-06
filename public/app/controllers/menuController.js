@@ -17,8 +17,8 @@ angular.module('tmtControllers')
         title: "Test Automation", tooltip: 'test', icon: 'cogs',
         menus: [
           { title: "Plans", tooltip: 'Automation Plans', action: "#/automation/plans" },
-          { title: "Tasks", tooltip: 'Generated Automation Tasks', action: "#/automation/tasks" },
-          { title: "Schedule", tooltip: 'Task Schedule', action: "#/automation/tasks/schedule" },
+          { title: "Jobs", tooltip: 'Generated Automation Jobs', action: "#/automation/jobs" },
+          { title: "Schedule", tooltip: 'Jobs Schedule', action: "#/automation/jobs/schedule" },
           { title: "Configuration", tooltip: 'Scheduler Configuration', action: "#/automation/config" },
         ]
       },

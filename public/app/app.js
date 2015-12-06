@@ -14,6 +14,7 @@ angular.module('tmtApp', [
   'tmtApp.yotta',
   'tmtControllers', 
   'tmtServices',
+  'angularLoad',
   'ui.bootstrap', 
   'ui.router', 
   'ngTagsInput', 
@@ -35,6 +36,7 @@ angular.module('tmtApp', [
   'angularMoment',
   'jsTree.directive',
   'jsonFormatter',
+  'd3-multi-parent',
   'mgo-angular-wizard'
 ])
 .run(

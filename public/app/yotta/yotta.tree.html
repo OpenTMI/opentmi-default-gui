@@ -1,5 +1,44 @@
 <style type="text/css">
+.link {
+  stroke-width: 1px;
+  stroke: #ddd;
+  fill: none; }
 
+.text {
+  font-family: "Lucida Grande", "Helvetica Nueue", Arial, sans-serif;
+  font-size: 10px; }
+
+.hover {
+  stroke: darkblue; }
+
+.root {
+  visibility: hidden; }
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    max-width: 160px;
+    padding: 7px 10px;
+    font: 12px sans-serif;
+    color: white;
+    background: #111;
+    border: 0px;
+    border-radius: 2px;
+    pointer-events: none;
+    margin-top: 2px;
+}
+div.tooltip:before {
+   content: '';
+   position: absolute;
+   top: 0%;
+   left: 50%;
+   margin-left: -8px;
+   margin-top: -8px;
+   width: 0; height: 0;
+   border-bottom: 8px solid #111;
+   border-right: 8px solid transparent;
+   border-left: 8px solid transparent;
+}
 </style>
 
 <div>
@@ -13,6 +52,10 @@
                 tree-plugins="" 
                 tree-events="select_node:nodeSelected"
                 tree-model="treeModel"></js-tree>
+      <div id='chart'></div>
+      <br/>
+      <tree-multi-parent data="data" width="800" height="800"></tree-multi-parent>
+      
     </div>
 </div>
 

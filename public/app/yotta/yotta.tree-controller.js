@@ -2,19 +2,90 @@
 
 angular.module('tmtControllers')
   .controller('YottaTreeController', 
-             ['$scope', 'Yotta', '$stateParams', '$log', '$location', 
-    function ( $scope,   Yotta,   $stateParams,   $log, $location) {
+             ['$scope', '$http', 'Yotta', '$stateParams', '$log', '$location', 
+    function ( $scope,   $http,   Yotta,   $stateParams,   $log, $location) {
   
 
     $log.info('init YottaTreeController')
     $scope.theModule = ""+$location.hash();
+
+    
+    var target = new Object({ name: 'module', id: 'module',
+              description: 'Modules', children: [] });
+    var module = new Object({ name: 'target', id: 'target', 
+              description: 'Targets', children: [] });
+    
+    var registry = [];
+    var page = 0;
+    var pageSize = 100;
+    function getNext(cb){
+      var skip = page*pageSize;
+      var limit = pageSize;
+      $http({
+        method: 'GET',
+        url: 'https://registry.yottabuild.org/search?skip='+skip
+      }).then(function successCallback(response) {
+        cb(null, response.data, response.data.length === pageSize);
+      }, function errorCallback(response) {
+        cb(response);
+      });
+    }
+
+    function gotPage(err, data, moreAvailable){
+      if(err){ 
+        $log.error(err);
+        return;
+      }
+      $log.info("Got 100 modules more..");
+      page++;
+      $.merge(registry, data);
+      if(moreAvailable){ 
+        getNext( gotPage );
+      } else {
+        console.log("Got last "+data.length+" module");
+        doTreeChart()
+      }
+    }
+
+    var types = {}
+    types['module'] = module;
+    types['target'] = target;
+
+    function doTreeChart(){
+      $log.debug("generate chart..");
+      _.each(registry, function(reg){
+        var child = {
+          name: reg.name,
+          id: reg.name,
+          description: reg.description || reg.name,
+        };
+
+        if( reg.type === 'module' ){
+          if( reg.dependencies ){
+            var keys = Object.keys(reg.dependencies);
+            child.children = _.map(keys, function(dep){
+              return {name: dep, id: dep}
+            })
+          }
+          types[reg.type].children.push(child);
+        }
+      });
+      $scope.data = {
+          name: 'ROOT', id: 'root', children: [module, target]
+      };
+      console.log("Modules in Yotta: "+types.module.children.length);
+    }
+    
+    
+    getNext( gotPage )
+    
 
     $scope.moduleChange = function() {
       $scope.theModule = this.theModule;
       console.log("Module: "+$scope.theModule);
     }
     var onData = function (obj, cb) {
-      console.log(obj);
+      //console.log(obj);
       if( obj.parent == null) {
           loadModule("#", $scope.theModule, cb);
       }

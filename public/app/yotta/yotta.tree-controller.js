@@ -9,49 +9,62 @@ angular.module('tmtControllers')
     $log.info('init YottaTreeController')
     $scope.theModule = ""+$location.hash();
 
-    
-    var target = new Object({ name: 'module', id: 'module',
-              description: 'Modules', children: [] });
-    var module = new Object({ name: 'target', id: 'target', 
-              description: 'Targets', children: [] });
-    
-    var registry = [];
-    var page = 0;
-    var pageSize = 100;
-    function getNext(cb){
-      var skip = page*pageSize;
-      var limit = pageSize;
+    function fetchPackagesFromGithub(cb){
       $http({
         method: 'GET',
-        url: 'https://registry.yottabuild.org/search?skip='+skip
-      }).then(function successCallback(response) {
-        cb(null, response.data, response.data.length === pageSize);
-      }, function errorCallback(response) {
-        cb(response);
-      });
+        url: '/github/yotta'
+      }).then(function successCallback(response){
+        for(var i=0;i<response.data.length;i++){
+          response.data[i].type = 'module';
+        }
+        cb(response.data);
+      })
     }
+    function fetchPackages(cb){
+      var registry = [];
+      var page = 0;
+      var pageSize = 100;
+      function getNext(cb){
+        var skip = page*pageSize;
+        var limit = pageSize;
+        $http({
+          method: 'GET',
+          url: 'https://registry.yottabuild.org/search?skip='+skip
+        }).then(function successCallback(response) {
+          cb(null, response.data, response.data.length === pageSize);
+        }, function errorCallback(response) {
+          cb(response);
+        });
+      }
 
-    function gotPage(err, data, moreAvailable){
-      if(err){ 
-        $log.error(err);
-        return;
+      function gotPage(err, data, moreAvailable){
+        if(err){ 
+          $log.error(err);
+          return;
+        }
+        $log.info("Got 100 modules more..");
+        page++;
+        $.merge(registry, data);
+        if(moreAvailable){ 
+          getNext( gotPage );
+        } else {
+          console.log("Got last "+data.length+" module");
+          cb(registry)
+        }
       }
-      $log.info("Got 100 modules more..");
-      page++;
-      $.merge(registry, data);
-      if(moreAvailable){ 
-        getNext( gotPage );
-      } else {
-        console.log("Got last "+data.length+" module");
-        doTreeChart()
-      }
+      getNext( gotPage );
     }
+    function doTreeChart(registry){
 
-    var types = {}
-    types['module'] = module;
-    types['target'] = target;
+      var target = new Object({ name: 'module', id: 'module',
+              description: 'Modules', children: [] });
+      var module = new Object({ name: 'target', id: 'target', 
+              description: 'Targets', children: [] });
+    
+      var types = {}
+      types['module'] = module;
+      types['target'] = target;
 
-    function doTreeChart(){
       $log.debug("generate chart..");
       _.each(registry, function(reg){
         var child = {
@@ -76,9 +89,8 @@ angular.module('tmtControllers')
       console.log("Modules in Yotta: "+types.module.children.length);
     }
     
-    
-    getNext( gotPage )
-    
+    //fetchPackages( doTreeChart );
+    fetchPackagesFromGithub( doTreeChart );
 
     $scope.moduleChange = function() {
       $scope.theModule = this.theModule;

@@ -9,11 +9,6 @@ var dns = require('dns');
 
 function AddonGui (app, server, io, passport){
 
-  this.name = 'default gui';
-  this.description = 'Example GUI for TMT';
-  //Logger.call(this, 'GUI: ');
-  //this.info('hepp');
-  
   var visitors = {'connected': {count: 0}};
   global.pubsub.on('visitor_leave', function(data){
       visitors.connected.count--;

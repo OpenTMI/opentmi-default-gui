@@ -3,7 +3,7 @@
 angular
 .module('tmtControllers')
 .controller('HomeController', 
-  function ($scope, $log, socket) {
+  function ($scope, $log, socket, noty) {
 
     var wsKey = 'home';
     $scope.today = {
@@ -48,10 +48,26 @@ angular
     }
     $log.info('connecting to ws..');
     
+    
+    
     socket.forward('home', $scope);
     socket.forward('home.today', $scope);
     socket.forward('home.now', $scope);
     socket.forward('home.github', $scope);
+    socket.forward('github.webhook', $scope);
+    
+    $scope.$on('socket:github.webhook', function (ev, data) {
+      $log.debug('socket:github.webhook: '+JSON.stringify(data));
+      if( data.ref == 'refs/for/master' && data.before && data.after ) {
+          noty.noty({ 
+            text: 'New commit received to '+data.url,
+            type: "success",
+            timeout: 1000,
+            maxVisible: 1,
+            layout: 'bottom'
+          });
+      }
+    });
     $scope.$on('socket:broadcast', function(event, data) {
       $log.debug('got a message', event.name);
     });

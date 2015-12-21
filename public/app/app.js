@@ -37,7 +37,8 @@ angular.module('tmtApp', [
   'jsTree.directive',
   'jsonFormatter',
   'd3-multi-parent',
-  'mgo-angular-wizard'
+  'mgo-angular-wizard',
+  'notyModule'
 ])
 .run(
   [          '$rootScope', '$state', '$stateParams',

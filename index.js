@@ -29,6 +29,9 @@ function AddonGui (app, server, io, passport){
             }
         });
   });
+  global.pubsub.on('notify', function(data) {
+     io.emit('notify', data);
+  });
 
   this.register = function(){
     app.use( express.static(__dirname + '/public/') );

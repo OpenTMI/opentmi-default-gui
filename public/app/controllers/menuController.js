@@ -1,7 +1,7 @@
 'use strict';	
 
 angular.module('OpenTMIControllers')
-  .controller("MenuController", function($scope, $http) {
+  .controller("MenuController", function($scope, $http, $auth) {
     //http://quarktheme.com/typography-icons/
     $scope.menus = [
       {
@@ -73,6 +73,10 @@ angular.module('OpenTMIControllers')
         {  title: "Addons", action: "#/addons" },
       ]
     }
+
+    $scope.isAuthenticated = function() {
+      return $auth.isAuthenticated();
+    };
     
   })
   .controller('MainController', function($scope, $http) {

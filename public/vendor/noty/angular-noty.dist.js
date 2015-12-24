@@ -21,8 +21,16 @@
 
 				return {
 					show: function (message, type) {
-						callNoty({text: message || settings.text, type: type || settings.type});
+						callNoty({
+              text: message || settings.text, 
+              type: type || settings.type});
 					},
+          success: function (message, delay) {
+            callNoty({text: message, type: 'success', delay: delay || 3000});
+          },
+          error: function (message, delay){
+            callNoty({text: message, type: 'error', delay: delay || 3000});
+          },
 					noty: function (_settings) {
 						callNoty(_settings);
 					},

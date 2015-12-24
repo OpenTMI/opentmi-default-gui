@@ -38,6 +38,7 @@ angular.module('OpenTMI', [
   'jsonFormatter',
   'd3-multi-parent',
   'mgo-angular-wizard',
+  'satellizer',
   'notyModule'
 ])
 .run(
@@ -49,11 +50,10 @@ angular.module('OpenTMI', [
   ]
 )
 // configure our routes
-.config(  ['$stateProvider', '$urlRouterProvider',  'RestangularProvider',
-  function($stateProvider,    $urlRouterProvider,    RestangularProvider ) {
+.config(  ['$stateProvider', '$urlRouterProvider',  'RestangularProvider', '$authProvider',
+  function($stateProvider,    $urlRouterProvider,    RestangularProvider, $authProvider ) {
 
     // Redirects and Otherwise //
-    
     // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
     $urlRouterProvider
       // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
@@ -67,7 +67,7 @@ angular.module('OpenTMI', [
     // other states come from submodules 
     $stateProvider
       .state('home', {
-        url: '',
+        url: '/',
         templateUrl: 'app/pages/home.html'
         /*onEnter: function(){
           console.log('title')
@@ -80,6 +80,16 @@ angular.module('OpenTMI', [
         url: '/login',
         templateUrl: 'app/pages/login.html',
         controller: 'LoginController'
+      })
+      .state('logout', {
+        url: '/logout',
+        template: null,
+        controller: 'LogoutController'
+      })
+      .state('signup', {
+        url: '/signup',
+        templateUrl: 'app/pages/signup.html',
+        controller: 'SignupController'
       })
       .state('about', {
         url: '/about',
@@ -94,4 +104,23 @@ angular.module('OpenTMI', [
 
     RestangularProvider.setRequestSuffix('.json');
     RestangularProvider.setBaseUrl('/api/v0');
+
+    /*
+    $authProvider.google({
+      clientId: ''
+    });*/
+    $authProvider.github({
+      clientId: '3d495d811f39e0e888fd'
+    });
+
+    function loginRequired($q, $location, $auth) {
+      var deferred = $q.defer();
+      if ($auth.isAuthenticated()) {
+        deferred.resolve();
+      } else {
+        $location.path('/login');
+      }
+      return deferred.promise;
+    }
+
 }]);

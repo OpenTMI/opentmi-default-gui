@@ -46,8 +46,7 @@ angular
         disk_usage: 0
       }
     }
-    $log.info('connecting to ws..');
-    
+
     
     
     socket.forward('home', $scope);
@@ -55,14 +54,9 @@ angular
     socket.forward('home.now', $scope);
     socket.forward('home.github', $scope);
     
-    
     $scope.$on('socket:broadcast', function(event, data) {
       $log.debug('got a message', event.name);
-    });
-
-    $scope.$on('socket:error', function (ev, data) {
-      $log.error('ws error');
-    });
+    });    
     $scope.$on('socket:home', function (ev, data) {
       $log.debug('socket:home: server -> client: '+data);
     });

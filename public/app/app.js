@@ -1,17 +1,17 @@
 'use strict';	
 
-// create the module and name it tmtApp
-angular.module('tmtApp', [
-  'tmtApp.testcases',
-  'tmtApp.testcasesAnalyse',
-  'tmtApp.campaigns',
-  'tmtApp.builds',
-  'tmtApp.configures',
-  'tmtApp.results',
-  'tmtApp.resultsAnalyse',
-  'tmtApp.resources',
-  'tmtApp.wizard',
-  'tmtApp.yotta',
+// create the module and name it OpenTMI
+angular.module('OpenTMI', [
+  'OpenTMI.testcases',
+  'OpenTMI.testcasesAnalyse',
+  'OpenTMI.campaigns',
+  'OpenTMI.builds',
+  'OpenTMI.configures',
+  'OpenTMI.results',
+  'OpenTMI.resultsAnalyse',
+  'OpenTMI.resources',
+  'OpenTMI.wizard',
+  'OpenTMI.yotta',
   'tmtControllers', 
   'tmtServices',
   'angularLoad',

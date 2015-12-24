@@ -1,4 +1,4 @@
-angular.module('tmtApp.wizard', [
+angular.module('OpenTMI.wizard', [
   'ui.router'
 ])
   

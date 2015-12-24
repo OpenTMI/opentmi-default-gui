@@ -1,4 +1,4 @@
-angular.module('tmtApp.resources', [
+angular.module('OpenTMI.resources', [
   'ui.router'
 ])
   

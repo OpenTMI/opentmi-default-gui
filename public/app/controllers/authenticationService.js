@@ -2,7 +2,7 @@
     'use strict';
  
     angular
-        .module('tmtApp')
+        .module('OpenTMI')
         .factory('AuthenticationService', AuthenticationService);
  
     AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$timeout', 'Account'];

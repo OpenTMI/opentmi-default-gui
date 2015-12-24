@@ -1,4 +1,4 @@
-angular.module('tmtApp.tasks', [
+angular.module('OpenTMI.tasks', [
   'ui.router'
 ])
   

@@ -1,4 +1,4 @@
-angular.module('tmtApp.yotta', [
+angular.module('OpenTMI.yotta', [
   'ui.router'
 ])
   

@@ -1,4 +1,4 @@
-angular.module('tmtApp.campaigns', [
+angular.module('OpenTMI.campaigns', [
   'ui.router'
 ])
   

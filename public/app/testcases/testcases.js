@@ -1,4 +1,4 @@
-angular.module('tmtApp.testcases', [
+angular.module('OpenTMI.testcases', [
   'ui.router'
 ])
   

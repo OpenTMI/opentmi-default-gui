@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('SettingsController', 
              ['$scope', 'Settings', '$stateParams', '$log', 
     function ($scope,   Settings,   $stateParams,    $log) {

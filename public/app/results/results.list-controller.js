@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('ResultListController', 
              ['$scope', 'Result', 'Testcase', '$stateParams', '$timeout', '$log', '$q', 'uiGridConstants', 'uiGridGroupingConstants',
     function ($scope,   Result,    Testcase,   $stateParams,   $timeout, $log,   $q,   uiGridConstants, uiGridGroupingConstants) {

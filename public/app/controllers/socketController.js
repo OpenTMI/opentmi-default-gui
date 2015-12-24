@@ -1,7 +1,7 @@
 'use strict';
 
 angular
-  .module('tmtControllers')
+  .module('OpenTMIControllers')
   .factory('socket', function (socketFactory) {
     var socket = socketFactory();
     socket.forward('broadcast');

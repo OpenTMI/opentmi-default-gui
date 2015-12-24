@@ -1,7 +1,7 @@
 'use strict';
 
 angular
-  .module('tmtControllers')
+  .module('OpenTMIControllers')
   .controller("LoginController", LoginController);
 
   LoginController.$inject = ['$location', 'AuthenticationService'];

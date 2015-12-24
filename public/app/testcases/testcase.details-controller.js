@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('TestcaseDetailsController', 
              ['$scope', 'Testcase', 'Result', '$stateParams', '$log', 'schemaForm',
     function ($scope,    Testcase,  Result, $stateParams,   $log) {

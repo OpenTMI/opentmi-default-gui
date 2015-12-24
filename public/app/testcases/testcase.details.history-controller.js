@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('TestcaseHistoryController', 
              ['$scope', '$stateParams', '$log', 
     function ($scope,    $stateParams,    $log) {

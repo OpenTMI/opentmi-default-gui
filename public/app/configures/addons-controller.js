@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('AddonsController', 
              ['$scope', 'Addon', '$stateParams', '$log', 
     function ($scope,   Addon,   $stateParams,    $log) {

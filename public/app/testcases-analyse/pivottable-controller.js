@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('tcpivottableController', 
              ['$scope', 'Testcase', '$stateParams', '$log',
     function ($scope,   Testcase,   $stateParams,    $log) {

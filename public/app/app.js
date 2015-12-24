@@ -12,7 +12,7 @@ angular.module('OpenTMI', [
   'OpenTMI.resources',
   'OpenTMI.wizard',
   'OpenTMI.yotta',
-  'tmtControllers', 
+  'OpenTMIControllers', 
   'tmtServices',
   'angularLoad',
   'ui.bootstrap', 
@@ -68,8 +68,7 @@ angular.module('OpenTMI', [
     $stateProvider
       .state('home', {
         url: '',
-        templateUrl: 'app/pages/home.html',
-        controller: 'defaultController',
+        templateUrl: 'app/pages/home.html'
         /*onEnter: function(){
           console.log('title')
         }

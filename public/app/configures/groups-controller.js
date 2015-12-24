@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('GroupsController', 
              ['$scope', 'Groups', '$stateParams', '$log', 
     function ($scope,   Groups,   $stateParams,    $log) {

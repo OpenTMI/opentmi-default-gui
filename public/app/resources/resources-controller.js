@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('ResourcesController', 
              ['$scope', 'Resource', '$stateParams', '$log', 
     function ($scope,   Resource,   $stateParams,    $log) {

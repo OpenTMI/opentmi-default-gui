@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('WizardController', 
              ['$scope', 'Wizard', '$stateParams', '$log', 'WizardHandler',
     function ($scope,  Wizard,  $stateParams,    $log, WizardHandler) {

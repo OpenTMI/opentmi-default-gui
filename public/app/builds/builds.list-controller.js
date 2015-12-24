@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('BuildListController', 
              ['$scope', 'Builds', '$stateParams', '$log',
     function ($scope,   Builds,   $stateParams,    $log) {

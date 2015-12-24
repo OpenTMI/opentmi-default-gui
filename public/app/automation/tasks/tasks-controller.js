@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('TasksController', 
              ['$scope', 'Task', '$stateParams', '$log', 
     function ($scope,   Task,   $stateParams,    $log) {

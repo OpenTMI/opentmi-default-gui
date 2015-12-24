@@ -1,7 +1,7 @@
 'use strict';	
 
-angular.module('tmtControllers')
-  .controller("MenuController", function($scope, $http, socket) {
+angular.module('OpenTMIControllers')
+  .controller("MenuController", function($scope, $http) {
     //http://quarktheme.com/typography-icons/
     $scope.menus = [
       {

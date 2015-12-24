@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('AccountController', 
              ['$scope', 'Account', '$stateParams', '$log', 
     function ($scope,   Account,   $stateParams,    $log) {

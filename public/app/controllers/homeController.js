@@ -1,7 +1,7 @@
 'use strict';	
 
 angular
-.module('tmtControllers')
+.module('OpenTMIControllers')
 .controller('HomeController', 
   function ($scope, $log, socket, noty) {
 
@@ -54,18 +54,7 @@ angular
     socket.forward('home.today', $scope);
     socket.forward('home.now', $scope);
     socket.forward('home.github', $scope);
-    socket.forward('notify', $scope);
     
-    $scope.$on('socket:notify', function (ev, data) {
-        console.log(data);
-        noty.noty({ 
-            text: data.text,
-            type: data.type || "success",
-            timeout: data.timeout || 2000,
-            maxVisible: data.maxVisible || 1,
-            layout: data.layout || 'bottom'
-        });
-    });
     
     $scope.$on('socket:broadcast', function(event, data) {
       $log.debug('got a message', event.name);

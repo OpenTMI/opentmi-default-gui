@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('CampaignsController', 
              ['$scope', 'Campaign', '$stateParams', '$log', 
     function ($scope,   Campaign,   $stateParams,    $log) {

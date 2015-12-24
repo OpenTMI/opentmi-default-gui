@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('pivottableController', 
              ['$scope', 'Result', '$stateParams', '$log',
     function ($scope,   Result,   $stateParams,    $log) {

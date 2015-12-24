@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tmtControllers')
+angular.module('OpenTMIControllers')
   .controller('YottaTreeController', 
              ['$scope', '$http', 'Yotta', '$stateParams', '$log', '$location', 
     function ( $scope,   $http,   Yotta,   $stateParams,   $log, $location) {

@@ -1,8 +1,8 @@
 <style type="text/css">
 /*style.css*/
 .grid {
-  width: 700px;
-  height: 800px;
+  width: 100%;
+  height: 100%;
 }
 .my-custom-menu {
   position: absolute;
@@ -19,12 +19,7 @@
 </style>
 
 <div>
-    <div ui-view="columnTwo">
-      <div class="text-center">
-        <div>
-          <div id="grid1" ui-grid="gridOptions" ui-grid-pinning ui-grid-edit ui-grid-exporter ui-grid-selection class="grid"></div>
-        </div>
-      </div>
-    </div>
+  <div id="grid1" ui-grid="gridOptions" ui-grid-pinning ui-grid-edit ui-grid-exporter ui-grid-selection class="grid"></div>
+
 </div>
 

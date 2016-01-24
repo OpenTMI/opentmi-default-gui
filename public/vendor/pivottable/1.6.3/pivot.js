@@ -1029,6 +1029,12 @@
             if (v == null) {
               v = "null";
             }
+            if(!axisValues[k]){
+              //if whole key is missing, creatae it..
+              base[v] = 0;
+              axisValues[k] = base;
+              console.warn("Key missing: "+k);
+            }
             if ((base = axisValues[k])[v] == null) {
               base[v] = 0;
             }

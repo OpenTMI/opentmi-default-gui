@@ -1,3 +1,12 @@
-<button ng-click="update()">Update</button>
-<span ng-if="loading"><i class="icon icon-refresh icon-spin"></i></span>
-<div id="pivottable" style="margin: 30px">pivottable</div>
+<!--<i ng-disabled="loading" class="fa fa-refresh" aria-hidden="true"></i> -->
+
+
+<button class="fa fa-refresh" ng-click="update()" ng-disabled="loading">
+<span data-ng-show="loading">Loading..
+ <i class="fa fa-spinner fa-spin"></i>
+</span>
+<span ng-if="!loading">Update</span>
+</button>
+
+
+<div id="pivottable"></div>

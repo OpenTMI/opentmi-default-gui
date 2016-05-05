@@ -2,11 +2,22 @@
 
 angular.module('OpenTMIControllers')
   .controller('pivottableController', 
-             ['$scope', 'Result', '$stateParams', '$log',
-    function ($scope,   Result,   $stateParams,    $log) {
+             ['$scope', 'Result', '$stateParams', '$log', 'noty',
+    function ($scope,   Result,   $stateParams,    $log, noty) {
   
     $log.info('init pivottableController')
     $scope.results = [];
+
+    $scope.noty = function(data){
+      console.log(data);
+      noty.noty({ 
+          text: data.text,
+          type: data.type || "success",
+          timeout: data.timeout || 2000,
+          maxVisible: data.maxVisible || 5,
+          layout: data.layout || 'bottom'
+      });
+    };
 
     ZSchema.registerFormat("fillResult", function (obj) {
         obj['hello'] = "world";
@@ -49,10 +60,14 @@ angular.module('OpenTMIControllers')
             'exec.sut.tag': {type: 'array', items: {type: 'string'}},
         }
     }
-    
+    $scope.loading = false;
     $scope.update = function() {
-        Result.query({q: JSON.stringify({}), fl:true, l: 5000}).$promise.then( 
+        $scope.loading = true;
+        $scope.noty({text: 'loading'});
+        Result.query({q: JSON.stringify({}), s: {'cre.time': -1}, fl:true, l: 10000}).$promise.then( 
           function(data){
+            $scope.noty({text: 'ready'});
+            $scope.loading = false;
             var results = _.map(data, function(r) {
                 r['exec.dut.count'] = ""+r['exec.dut.count'];
                 r.duration = parseFloat(r.duration);
@@ -152,7 +167,7 @@ angular.module('OpenTMIControllers')
                           $.pivotUtilities.export_renderers);
         $("#pivottable").pivotUI($scope.results, {
             rows: ["component", "feature"],
-            cols: ["Week number", "exec.verdict"],
+            cols: ["year", "Week number", "exec.verdict"],
             rendererName: "Heatmap",
             renderers: renderers,
             derivedAttributes: {

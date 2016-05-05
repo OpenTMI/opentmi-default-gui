@@ -9,21 +9,27 @@ angular.module('OpenTMIControllers')
     
     var updateTable = function(q){
       var q = q||{};
-      Resource.query({q: JSON.stringify(q)}, function(resources){
+      Resource.query({q: JSON.stringify(q), p:'type_info'}, function(resources){
         console.log(resources);
         $scope.dataResources = resources;
       });
     }
     $scope.columns = [
-      { field: 'name', width:200, enableCellEdit: false, displayName: 'Name' },
-      { field: 'type', width:150, enableCellEdit: false, displayName: 'Type' },
-      { field: 'status.value', width:100, enableCellEdit: true, displayName: 'State'},
+      { field: 'name', width:200, enableCellEdit: true, displayName: 'Name' },
+      { field: 'type', width:50, enableCellEdit: false, displayName: 'Type' },
+      { field: 'target.name', width:100, enableCellEdit: true, displayName: 'Type Name'},
+      { field: 'status.value', width:80, enableCellEdit: true, displayName: 'State'},
+      { field: 'usage.type', width:130, enableCellEdit: true, displayName: 'Usage Type'},
+      { field: 'target.meta_info.manufacturer', width:100, enableCellEdit: true, displayName: 'Manufacturer'},
+      { field: 'target.meta_info.model', width:100, enableCellEdit: true, displayName: 'Model'},
+      //{ field: 'status.value', width:100, enableCellEdit: true, displayName: 'State'},
     ]
 
     $scope.gridOptions = { 
       columnDefs: $scope.columns,
       enableColumnResizing: true,
       enableFiltering: true,
+      enableCellEdit: true,
       //enableRowSelection: true,
       enableFullRowSelection: true,
       multiSelect: false,

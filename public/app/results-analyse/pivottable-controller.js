@@ -7,24 +7,64 @@ angular.module('OpenTMIControllers')
   
     $log.info('init pivottableController')
     $scope.results = [];
+
+    ZSchema.registerFormat("fillResult", function (obj) {
+        obj['hello'] = "world";
+        obj['Duration_bin10'] = 0
+        obj['Week number'] = 0
+        obj['campaign'] = ""
+        obj['component'] = ""
+        obj['cre.time'] = ""
+        obj['day'] = "30"
+        obj['day name'] = ""
+        obj['duration'] = 0
+        obj['exec.duration'] = 0
+        obj['exec.dut.count'] = 0
+        obj['exec.dut.type'] = ""
+        obj['exec.dut.vendor'] =""
+        obj['exec.env.framework.name'] = ""
+        obj['exec.env.framework.ver'] = ""
+        obj['exec.logs'] = ''
+        obj['exec.note'] =
+        obj['exec.sut.branch'] = ""
+        obj['exec.sut.buildUrl'] = ""
+        obj['exec.sut.commitId'] = ""
+        obj['exec.sut.gitUrl'] = ""
+        obj['exec.verdict'] = ""
+        obj['feature'] =''
+        obj['id'] = ""
+        obj['job.id'] = ""
+        obj['month'] = ""
+        obj['month name'] = "Nov"
+        obj['tcid'] = ""
+        obj['year'] = ""
+        return true;
+    });
+    var validator = new ZSchema();
+    var resultSchema = {
+        type: 'object',
+        //format: 'fillResult',
+        properties: {
+            'exec.dut.count': {type: 'string'},
+            'exec.sut.tag': {type: 'array', items: {type: 'string'}},
+        }
+    }
     
     $scope.update = function() {
-        $scope.loading = true;
-        Result.query({q: JSON.stringify({}), s: {'cre.time': -1}, fl:true, l: 10000}).$promise.then( 
-          function(results){
-            $scope.loading = false;
-            for(var r of results) {
+        Result.query({q: JSON.stringify({}), fl:true, l: 5000}).$promise.then( 
+          function(data){
+            var results = _.map(data, function(r) {
                 r['exec.dut.count'] = ""+r['exec.dut.count'];
                 r.duration = parseFloat(r.duration);
-                var component = ''
-                var feature = ''
+                var components = []
+                var features = []
                 for (var k of Object.keys(r)) {
                     if (k.match(/\.\d/) ){
                         if(k.match(/\.fut\.\d/)) {
-                            feature += r[k]
+                            features.push(r[k]);
                         }
                         if(k.match(/\.cut\.\d/)) {
-                            component = r[k]
+                            components.push(r[k])
                         }
                         delete r[k]
                     }
@@ -32,8 +72,8 @@ angular.module('OpenTMIControllers')
                 delete r['exec.sut.tag']
                 delete r['exec.sut.cut']
                 delete r['exec.sut.fut']
-                r.component = component
-                r.feature = feature
+                r.component = components.join(',')
+                r.feature = features.join(',')
                 /*if(r['exec.sut.fut.0']){
                     r['exec.sut.fut'] = r['exec.sut.fut.0']
                     delete r['exec.sut.fut.0']
@@ -46,7 +86,11 @@ angular.module('OpenTMIControllers')
                     r['exec.sut.cut2'] = r['exec.sut.cut.1']
                     delete r['exec.sut.cut.1']
                 }*/
-            }
+                //var ok = validator.validate(r, resultSchema);
+                //console.log(ok);
+                return r;
+            });
+            console.log(results);
             $scope.results = results;
             pivotUi()
         });

@@ -9,7 +9,6 @@ angular.module('OpenTMIControllers')
     $scope.results = [];
 
     $scope.noty = function(data){
-      console.log(data);
       noty.noty({ 
           text: data.text,
           type: data.type || "success",
@@ -60,11 +59,56 @@ angular.module('OpenTMIControllers')
             'exec.sut.tag': {type: 'array', items: {type: 'string'}},
         }
     }
+    $scope.predefinedViews = [ 
+        {   name: 'default', 
+            id: "view-1",
+            cfg: {
+                rows: ["component", "feature"],
+                cols: ["year", "Week number", "exec.verdict"],
+                rendererName: "Heatmap"
+            }
+        },
+        {   name: 'Results by Campaign', 
+            id: "view-2",
+            cfg: {
+                rows: ["campaign"],
+                cols: ["year", "Week number", "exec.verdict"],
+                rendererName: "Heatmap"
+            }
+        }
+    ];
+    $scope.predefinedViewSelection = 'view-1';
+    $scope.resultsTo = new Date();
+    $scope.resultsFrom = moment().subtract(3, 'weeks').toDate();
+    $scope.limitCount = 10000;
     $scope.loading = false;
+    var getView = function(view) { 
+        var view = view || $scope.predefinedViewSelection;
+        var predefineView = _.find($scope.predefinedViews, function(o){ 
+            return view===o.id;})
+        return predefineView;
+    }
+    $scope.selectView = function(view) {
+        var predefineView = getView(view);
+        pivotUi(predefineView.cfg);
+    };
+    $scope.delayedUpdate = function() {
+        if($scope.loading)return;
+        if($scope.timer) clearTimeout($scope.timer);
+        $scope.timer = setTimeout($scope.update, 5000);
+    };
     $scope.update = function() {
         $scope.loading = true;
+        if($scope.timer) clearTimeout($scope.timer);
         $scope.noty({text: 'loading'});
-        Result.query({q: JSON.stringify({}), s: {'cre.time': -1}, fl:true, l: 10000}).$promise.then( 
+        var q = {};
+        if(true) {
+            q['cre.time'] = {
+                $gte: $scope.resultsFrom,
+                $lt: $scope.resultsTo
+            };
+        }
+        Result.query({q: JSON.stringify(q), s: {'cre.time': -1}, fl:true, l: $scope.limitCount}).$promise.then( 
           function(data){
             $scope.noty({text: 'ready'});
             $scope.loading = false;
@@ -105,9 +149,10 @@ angular.module('OpenTMIControllers')
                 //console.log(ok);
                 return r;
             });
-            console.log(results);
             $scope.results = results;
-            pivotUi()
+            //$scope.selectView()
+            //
+            pivotUi(getView().cfg);
         });
     }
     $scope.update();
@@ -128,12 +173,18 @@ angular.module('OpenTMIControllers')
 
 
     
-    function pivotUi() {
+    function pivotUi(cfg) {
+        console.log(cfg);
+        cfg = cfg || {};
         var derivers =    $.pivotUtilities.derivers;
         var dateFormat =  $.pivotUtilities.derivers.dateFormat;
         var sortAs =      $.pivotUtilities.sortAs;
         var tpl =         $.pivotUtilities.aggregatorTemplates;
-        
+
+        var rows = cfg.rows || ["component", "feature"];
+        var cols = cfg.cols || ["year", "Week number", "exec.verdict"];
+        var rendererName = cfg.rendererName || "Heatmap";
+
         var weeNumberDerivery = function(record) {
             var date;
             date = new Date(Date.parse(record['cre.time']));
@@ -166,9 +217,9 @@ angular.module('OpenTMIControllers')
                           $.pivotUtilities.c3_renderers,
                           $.pivotUtilities.export_renderers);
         $("#pivottable").pivotUI($scope.results, {
-            rows: ["component", "feature"],
-            cols: ["year", "Week number", "exec.verdict"],
-            rendererName: "Heatmap",
+            rows: rows, 
+            cols: cols,
+            rendererName: rendererName,
             renderers: renderers,
             derivedAttributes: {
                 "year":       dateFormat("cre.time", "%y", true),

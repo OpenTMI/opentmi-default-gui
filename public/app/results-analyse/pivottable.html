@@ -8,5 +8,29 @@
 <span ng-if="!loading">Update</span>
 </button>
 
+Limit:
+<input ng-disabled="loading"
+       type="number"
+       ng-model="limitCount"
+       min="10"
+       max="1000000"
+       required="true"
+       ng-change="delayedUpdate()">
 
-<div id="pivottable"></div>
+From:
+<input ng-disabled="loading"
+       type="week"
+       ng-model="resultsFrom"
+       ng-change="delayedUpdate()">
+To: <input ng-disabled="loading"
+       type="week"
+       ng-model="resultsTo"
+       ng-change="delayedUpdate()">
+
+<!--
+Predefined views:
+<select name="singleSelect" ng-model="predefinedViewSelection" ng-change="selectView(predefinedViewSelection)">
+  <option ng-repeat="option in predefinedViews" value="{{option.id}}".id>{{option.name}}</option>
+</select><br>
+-->
+<div style="margin-top: 20px" id="pivottable"></div>

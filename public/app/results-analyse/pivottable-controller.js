@@ -9,10 +9,10 @@ angular.module('OpenTMIControllers')
     $scope.results = [];
     
     $scope.update = function() {
-        Result.query({q: JSON.stringify({}), fl:true, l: 5000}).$promise.then( 
+        $scope.loading = true;
+        Result.query({q: JSON.stringify({}), s: {'cre.time': -1}, fl:true, l: 10000}).$promise.then( 
           function(results){
-            $log.info(results)
-            
+            $scope.loading = false;
             for(var r of results) {
                 r['exec.dut.count'] = ""+r['exec.dut.count'];
                 r.duration = parseFloat(r.duration);

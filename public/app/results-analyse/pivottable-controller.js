@@ -120,10 +120,10 @@ angular.module('OpenTMIControllers')
                 for (var k of Object.keys(r)) {
                     if (k.match(/\.\d/) ){
                         if(k.match(/\.fut\.\d/)) {
-                            features.push(r[k]);
+                            features.push(r[k].toLowerCase());
                         }
                         if(k.match(/\.cut\.\d/)) {
-                            components.push(r[k])
+                            components.push(r[k].toLowerCase());
                         }
                         delete r[k]
                     }

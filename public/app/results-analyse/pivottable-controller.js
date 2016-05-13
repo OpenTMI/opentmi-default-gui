@@ -133,6 +133,7 @@ angular.module('OpenTMIControllers')
                 delete r['exec.sut.fut']
                 r.component = components.join(',')
                 r.feature = features.join(',')
+                r.passrate = r['exec.verdict']==='pass'?1:0;
                 /*if(r['exec.sut.fut.0']){
                     r['exec.sut.fut'] = r['exec.sut.fut.0']
                     delete r['exec.sut.fut.0']

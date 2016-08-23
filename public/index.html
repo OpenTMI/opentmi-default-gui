@@ -4,11 +4,11 @@
 <html lang="en" ng-app="OpenTMI">
 
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
   <meta name="generator" content="Bootply" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
+
   <!-- SCROLLS -->
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" />
@@ -17,14 +17,14 @@
 
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css">
   <link rel="stylesheet", href="/vendor/pivottable/1.6.3/pivot.min.css" />
-  
+
   <!-- styles for ng-animate are located here -->
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
   <!-- SPELLS -->
   <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-  
+
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular-resource.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular-touch.js"></script>
@@ -33,13 +33,13 @@
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular-cookies.js"></script>
 
   <script src="/vendor/angular-load/angular-load.min.js"></script>
-  
+
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
  <!-- <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>-->
   <script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/latest/restangular.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.3.1/lodash.min.js"></script>
 
-  
+
   <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.3.js"></script>
   <script src="http://angular-ui.github.io/ui-router/release/angular-ui-router.min.js"></script>
   <script src="/vendor/ui-grid/3.0.6/ui-grid.min.js"></script>
@@ -72,7 +72,7 @@
   <script type="text/javascript" src="vendor/tv4/tv4.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-schema-form/0.8.12/schema-form.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-schema-form/0.8.12/bootstrap-decorator.min.js"></script>
-  
+
 
   <!-- Satellizer -->
   <!--[if lte IE 9]>
@@ -96,16 +96,16 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.10/d3.min.js"></script>
   <!--<script src="/vendor/d3/d3.architectureTree.js"></script>-->
-  <script src="/vendor/d3/d3-tree-directive.js"></script> 
+  <script src="/vendor/d3/d3-tree-directive.js"></script>
   <!-- z-schema json validator-->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/z-schema/3.16.1/ZSchema-browser-min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/z-schema/3.16.1/ZSchema-browser-min.js"></script>
 
   <!--[if lt IE 9]>
   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-  
+
  <script src="app/app.js"></script>
-  
+
   <!-- Routers -->
   <script src="app/wizard/wizard.js"></script>
   <script src="app/testcases/testcases.js"></script>
@@ -117,7 +117,7 @@
   <script src="app/configures/configures.js"></script>
   <script src="app/yotta/yotta.js"></script>
   <script src="app/resources/resources.js"></script>
-  
+
   <!-- Controllers -->
   <script src="app/controllers.js"></script>
   <script src="app/controllers/defaultController.js"></script>
@@ -150,9 +150,9 @@
   <script src="app/configures/settings-controller.js"></script>
   <script src="app/configures/addons-controller.js"></script>
   <script src="app/resources/resources-controller.js"></script>
-  
-  
-  
+
+
+
   <!-- Services -->
   <script src="app/services.js"></script>
   <script src="app/wizard/wizard-service.js"></script>
@@ -167,24 +167,24 @@
   <script src="app/resources/resources-service.js"></script>
   <script src="app/yotta/yotta-service.js"></script>
 
-  
+
   <script src="app/filters.js"></script>
   <script src="app/directives.js"></script>
-  
+
 </head>
 
 <!-- define angular controller -->
 <body ng-controller="defaultController">
 
   <div class="navbar navbar-default" ng-controller="MenuController">
-    
+
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+        <a class="navbar-brand" href="/#/"><i class="fa fa-home"></i></a>
       </div>
       <ul class="nav navbar-nav navbar-left">
         <li ng-repeat="menu in menus" ng-class="{dropdown: menu.menus}">
-          
+
           <a  ng-class="{'dropdown-toggle': menu.menus}" data-toggle="dropdown" title="{{menu.tooltip}}">
             <!-- <i ng-if="menu.icon" class="fa fa-{{menu.icon}}" />  -->
             {{menu.title}} <span class="caret"></span>
@@ -192,7 +192,7 @@
           <ul ng-if="menu.menus" class="dropdown-menu">
             <li ng-repeat="submenu in menu.menus">
               <a href="{{submenu.action}}" title="{{submenu.tooltip}}">{{submenu.title}}</a>
-              
+
               <!-- extra menu.. -->
               <!--
               <ul ng-if="submenu.menus" class="dropdown-menu">
@@ -201,15 +201,15 @@
                 </li>
               </ul>
               -->
-              
+
             </li>
           </ul>
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+
         <!-- <li><a href="#configure"><i class="fa fa-cogs"></i></a></li> -->
-        
+
         <li ng-class="{dropdown: cmenu.menus}">
           <a ng-class="{'dropdown-toggle': cmenu.menus}" data-toggle="dropdown" title="{{cmenu.tooltip}}">
           <i class="fa fa-cogs"></i><span class="caret"></span></a>
@@ -218,12 +218,12 @@
               <a href="{{submenu.action}}" title="{{submenu.tooltip}}">{{submenu.title}}</a>
             </li>
           </ul>
-          
+
         </li>
-        
+
         <li><a href="#about"><i class="fa fa-info"></i></a></li>
         <li><a href="#contact"><i class="fa fa-comment"></i></a></li>
-        
+
         <li ng-if="!isAuthenticated()"><a href="#login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         <li ng-if="isAuthenticated()"><a href="#logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
       </ul>
@@ -231,15 +231,15 @@
   </div>
 
   <div id="main">
-  
+
     <!-- angular templating -->
     <!-- this is where content will be injected -->
     <div ui-view class="container"></div> <!-- slide -->
-    
+
   </div>
   <hr>
   <footer class="text-center">
-    <p><a href="https://github.com/OpenTMI/opentmi">OpenTMI</a> - 
+    <p><a href="https://github.com/OpenTMI/opentmi">OpenTMI</a> -
     <a href="https://github.com/OpenTMI/opentmi-default-gui"><i class="fa fa-github"></i></a>
     </p>
     <pre>
@@ -247,7 +247,7 @@
       $state: "{{$state.current.name}}" ? {{$stateParams}}
     </pre>
   </footer>
-  
+
 </body>
 
 </html>

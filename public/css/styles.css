@@ -22,3 +22,5 @@
           transform: scaleX(1);
   opacity: 1;
 }
+
+a {cursor:pointer;}

@@ -1,5 +1,5 @@
-<div class="jumbotron" style="width: 300px;padding-right: auto; padding-left: 10px">
-  
+<div class="jumbotron testcase-jumbotron">
+
   <div ng-if="showTc()">
   <json-formatter open="1" json="tc" hoverPreviewEnabled="true" ></json-formatter>
   </div>
@@ -10,4 +10,3 @@
   </div>
   <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 </div>
-

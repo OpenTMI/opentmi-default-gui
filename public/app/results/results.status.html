@@ -1,8 +1,7 @@
-<div class="jumbotron" style="width: 200px;padding-right: auto; padding-left: 10px">
+<div class="jumbotron results-jumbotron">
   <strong>Count:</strong> {{ msg.dataLength | number }}
   <br/>
   <strong>Duration:</strong> {{ msg.totalDuration | amDurationFormat:'seconds':true }}
-  
+
   <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 </div>
-

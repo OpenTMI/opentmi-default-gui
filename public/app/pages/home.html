@@ -1,6 +1,6 @@
 <div class="jumbotron text-center" ng-controller="HomeController">
   <h2>OpenTMI</h2>
-  <uib-tabset style="height: 480px">
+  <uib-tabset id="tabset">
     <uib-tab heading="Frontpage">
       <h3>
         Welcome to OpenTMI - frontpage.
@@ -10,21 +10,21 @@
     <uib-tab heading="Today Test Status">
       <div class="col">
         <small><em>Today Overall Passrate:</em></small>
-        <div class="row-sm-1"><uib-progressbar max="100" value="today.passrate"><span style="color:white; white-space:nowrap;">{{today.passrate}} %</span></uib-progressbar></div>
-        
+        <div class="row-sm-1"><uib-progressbar max="100" value="today.passrate"><span class="home-progressbar">{{today.passrate}} %</span></uib-progressbar></div>
+
         <small><em>Today Overall Executed:</em></small>
-        <div class="row-sm-2"><uib-progressbar max="today.max" value="today.executed"><span style="color:white; white-space:nowrap;">{{today.executed}}</span></uib-progressbar></div>
+        <div class="row-sm-2"><uib-progressbar max="today.max" value="today.executed"><span class="home-progressbar">{{today.executed}}</span></uib-progressbar></div>
 
         <small><em>Individual Failures:</em></small>
         <div class="row-sm-3">
-          <uib-progressbar max="today.failures.individual.max" value="today.failures.individual.count"><span style="color:white; white-space:nowrap;">{{today.failures.individual.count}}</span></uib-progressbar>
+          <uib-progressbar max="today.failures.individual.max" value="today.failures.individual.count"><span class="home-progressbar">{{today.failures.individual.count}}</span></uib-progressbar>
         </div>
 
         <small><em>Github Private / Public Repos:</em></small>
         <div class="row-sm-4">
-          <uib-progressbar max="now.github.total_repos" value="now.github.private_repos"><span style="color:white; white-space:nowrap;">{{now.github.private_repos}} / {{now.github.total_repos}}</span></uib-progressbar>
+          <uib-progressbar max="now.github.total_repos" value="now.github.private_repos"><span class="home-progressbar">{{now.github.private_repos}} / {{now.github.total_repos}}</span></uib-progressbar>
         </div>
-      
+
       </div>
     </uib-tab>
     <uib-tab heading="Active Execution">
@@ -33,10 +33,10 @@
       {{now.jenkins.master.alive?"ALIVE":"DEAD"}}
       </div>
       <small><em>Jenkins slave:</em></small>
-      <div class="row-sm-2"><uib-progressbar value="now.jenkins.slaves.active" max="now.jenkins.slaves.count"><span style="color:white; white-space:nowrap;">{{now.jenkins.slaves.active}} / {{now.jenkins.slaves.count}}</span></uib-progressbar></div>
+      <div class="row-sm-2"><uib-progressbar value="now.jenkins.slaves.active" max="now.jenkins.slaves.count"><span class="home-progressbar">{{now.jenkins.slaves.active}} / {{now.jenkins.slaves.count}}</span></uib-progressbar></div>
 
       <small><em>Jenkins Active Jobs:</em></small>
-      <div class="row-sm-4"><uib-progressbar max="now.jenkins.jobs.count" value="now.jenkins.jobs.active"><span style="color:white; white-space:nowrap;">{{now.jenkins.jobs.active}} / {{now.jenkins.jobs.count}}</span></uib-progressbar></div>
+      <div class="row-sm-4"><uib-progressbar max="now.jenkins.jobs.count" value="now.jenkins.jobs.active"><span class="home-progressbar">{{now.jenkins.jobs.active}} / {{now.jenkins.jobs.count}}</span></uib-progressbar></div>
 
       <small><em>Test Automation Clients:</em></small>
       <div class="row-sm-5"><uib-progressbar value="now.racks.active" max="now.racks.count">{{now.racks.active}}</uib-progressbar></div>

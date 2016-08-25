@@ -2,13 +2,12 @@
     <div class="col-sm-2" class="left-bar">
         <div ui-view="tcFilters">filters..</div>
     </div>
-    
+
     <div class="col-sm-8">
         <div ui-view="tcBody">tc-table</div>
     </div>
-    
+
     <div class="col-sm-2">
-        <div ui-view="tcStatus">status..</div>
+        <div ui-view="tcStatus" ui-scrollpoint="50">status..</div>
     </div>
 </div>
-

@@ -22,3 +22,14 @@
           transform: scaleX(1);
   opacity: 1;
 }
+
+a {cursor:pointer;}
+
+.navbar {
+    border-radius: 0;
+}
+
+.ui-scrollpoint {
+    position:fixed;
+    top:20px;
+}

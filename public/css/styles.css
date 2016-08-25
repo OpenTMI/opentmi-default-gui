@@ -1,7 +1,9 @@
 /*******************/
 /* GENERAL STYLING */
 /*******************/
-a {cursor:pointer;}
+a {
+    cursor:pointer;
+}
 
 .navbar {
     border-radius: 0;
@@ -37,28 +39,28 @@ a {cursor:pointer;}
 /* SLIDE */
 /*********/
 .slide.ng-leave {
-  position: relative;
+    position: relative;
 }
 .slide.ng-enter {
-  position: absolute;
+    position: absolute;
 }
 .slide.ng-enter, .slide.ng-leave {
-  -webkit-transition: -webkit-transform 0.3s ease-in, opacity 0.3s ease-in;
-     -moz-transition: -moz-transform 0.3s ease-in, opacity 0.3s ease-in;
-       -o-transition: -o-transform 0.3s ease-in, opacity 0.3s ease-in;
-          transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+    -webkit-transition: -webkit-transform 0.3s ease-in, opacity 0.3s ease-in;
+    -moz-transition: -moz-transform 0.3s ease-in, opacity 0.3s ease-in;
+    -o-transition: -o-transform 0.3s ease-in, opacity 0.3s ease-in;
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in;
 }
 .slide.ng-enter, .slide.ng-leave.ng-leave-active {
-  -webkit-transform: scaleX(0.0001);
-       -o-transform: scaleX(0.0001);
-          transform: scaleX(0.0001);
-  opacity: 0;
+    -webkit-transform: scaleX(0.0001);
+    -o-transform: scaleX(0.0001);
+    transform: scaleX(0.0001);
+    opacity: 0;
 }
 .slide, .slide.ng-enter.ng-enter-active {
-  -webkit-transform: scaleX(1);
-       -o-transform: scaleX(1);
-          transform: scaleX(1);
-  opacity: 1;
+    -webkit-transform: scaleX(1);
+    -o-transform: scaleX(1);
+    transform: scaleX(1);
+    opacity: 1;
 }
 
 /******************/
@@ -88,18 +90,18 @@ a {cursor:pointer;}
 /* GRIDS */
 /*********/
 .grid {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 .my-custom-menu {
-  position: absolute;
+    position: absolute;
 }
 
 .my-custom-menu .ui-grid-menu {
-  padding: 0px;
+    padding: 0px;
 }
 
 .my-custom-menu .ui-grid-menu-inner {
-  -webkit-box-shadow: none;
-  box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }

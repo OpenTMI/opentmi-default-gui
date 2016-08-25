@@ -1,3 +1,41 @@
+/*******************/
+/* GENERAL STYLING */
+/*******************/
+a {cursor:pointer;}
+
+.navbar {
+    border-radius: 0;
+}
+
+
+/****************/
+/* SMALL TWEAKS */
+/****************/
+.home-progressbar {
+    color:white;
+    white-space:nowrap;
+}
+
+.build-jumbotron, .campaings-jumbotron, .results-jumbotron {
+    width: 200px;
+    padding-right: auto !important;
+    padding-left: 10px !important;
+}
+
+.testcase-jumbotron {
+    width: 300px;
+    padding-right: auto !important;
+    padding-left: 10px !important;
+}
+
+.ui-scrollpoint {
+    position:fixed;
+    top:20px;
+}
+
+/*********/
+/* SLIDE */
+/*********/
 .slide.ng-leave {
   position: relative;
 }
@@ -23,13 +61,45 @@
   opacity: 1;
 }
 
-a {cursor:pointer;}
-
-.navbar {
-    border-radius: 0;
+/******************/
+/* TABLE STYLINGS */
+/******************/
+.accounts th, .addons th, .testcase-details th  {
+    width: 100px;
 }
 
-.ui-scrollpoint {
-    position:fixed;
-    top:20px;
+
+
+/********/
+/* TABS */
+/********/
+#tabset {
+    height: 480px;
+}
+
+/***************/
+/* PIVOT TABLE */
+/***************/
+#pivottable {
+    margin-top: 20px;
+}
+
+/*********/
+/* GRIDS */
+/*********/
+.grid {
+  width: 100%;
+  height: 100%;
+}
+.my-custom-menu {
+  position: absolute;
+}
+
+.my-custom-menu .ui-grid-menu {
+  padding: 0px;
+}
+
+.my-custom-menu .ui-grid-menu-inner {
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }

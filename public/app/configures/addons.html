@@ -1,16 +1,16 @@
 <div class="jumbotron text-center">
 	<h1>Addons</h1>
-	
-  <table>
+
+  <table class="addons">
     <tr>
-      <th style="width: 100px">Name</th>
-      <th style="width: 100px">State</th>
+      <th>Name</th>
+      <th>State</th>
     </tr>
-    <tr class="animate-repeat" ng-repeat="addon in addons | filter:Addons">    
+    <tr class="animate-repeat" ng-repeat="addon in addons | filter:Addons">
       <td>{{addon.name}}</td>
       <td>{{addon.state}}</td>
     </tr>
-    <tr class="animate-repeat" ng-if="(addons|filter:Addon).length == 0">    
+    <tr class="animate-repeat" ng-if="(addons|filter:Addon).length == 0">
       <td colspan="5">NO results found..</td>
     </tr>
   </table>

@@ -8,6 +8,10 @@ angular.module('OpenTMIControllers')
     $log.info('init ResultListController');
     $scope.gridMode = 'plain';
 
+    $scope.fields = function() {
+       return _.reduce($scope.columns, function(s, o){ return s+' '+o.field; }, '');
+    };
+
     $scope.data = [];
     $scope.query = {
       q: {}, 
@@ -110,6 +114,10 @@ angular.module('OpenTMIControllers')
             ]
         },
       },
+      {
+        field: 'exec.note',
+        width: 100,
+        displayName: 'Note' },
       /*{ field: 'campaign', width:150, 
         //grouping: { groupPriority: 0 },
         cellTemplate: defaultCellTemplate, displayName: 'Campaign' }, */
@@ -234,7 +242,8 @@ angular.module('OpenTMIControllers')
       Result.query({
           q: JSON.stringify($scope.query.q), 
           s: $scope.query.s,
-          l: $scope.pageSize
+          l: $scope.pageSize,
+          f: $scope.fields()
       })
       .$promise.then(function(newData){
         $scope.data = $scope.data.concat(newData);
@@ -248,7 +257,8 @@ angular.module('OpenTMIControllers')
           q: JSON.stringify($scope.query.q), 
           s: $scope.query.s,
           l: $scope.pageSize,
-          sk: $scope.lastPage*$scope.pageSize
+          sk: $scope.lastPage*$scope.pageSize,
+          f: $scope.fields()
       })
       .$promise.then(function(newData){
         $log.debug("getNewData()");
@@ -275,7 +285,8 @@ angular.module('OpenTMIControllers')
           q: JSON.stringify($scope.query.q), 
           s: $scope.query.s,
           l: $scope.pageSize,
-          sk: $scope.firstPage*$scope.pageSize
+          sk: $scope.firstPage*$scope.pageSize,
+          f: $scope.fields()
       })
       .$promise.then(function(newData){
         $scope.firstPage--;

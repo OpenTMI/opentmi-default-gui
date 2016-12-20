@@ -9,7 +9,7 @@ angular.module('OpenTMIControllers')
     $scope.gridMode = 'plain';
 
     $scope.fields = function() {
-       return _.reduce($scope.columns, function(s, o){ return s+' '+o.field; }, '');
+       return _.reduce($scope.columns, function(s, o){ return s+' '+o.field; }, '')+' exec.sut.buildUrl';
     };
 
     $scope.data = [];
@@ -23,7 +23,7 @@ angular.module('OpenTMIControllers')
 
     $scope.setMode = function(value){
       console.log('mode change: '+value);
-    }
+    };
     function checkStart(term, value, row, column) {
         term = term.replace(/\\/g,"")
         var now = moment(value);
@@ -31,7 +31,7 @@ angular.module('OpenTMIControllers')
             if(moment(term).isAfter(now, 'day')) return false;;
         } 
         return true;
-    }
+    };
 
     function checkEnd(term, value, row, column) {
         term = term.replace(/\\/g,"")
@@ -40,11 +40,17 @@ angular.module('OpenTMIControllers')
             if(moment(term).isBefore(now, 'day')) return false;;
         } 
         return true;
-    }
+    };
 
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
                        '<a href="#/results/{{ row.entity._id }}">{{ row.entity[col.field] }}</a>' +
                        '</div>';
+    var linkToJob = '<div class="ngCellText" ng-class="col.colIndex()">' +
+                       '<a href="{{ row.entity.exec.sut.buildUrl }}">' +
+                        '{{ COL_FIELD }}'+
+                       '</a>' +
+                       '</div>';
+
     var defaultCellTemplate = '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>';
     $scope.columns = [ 
       { field: 'cre.time', width: 140, type: 'date', 
@@ -59,7 +65,7 @@ angular.module('OpenTMIControllers')
           'class="ui-grid-filter-input" ng-model="colFilter.term" date-picker /></div>' 
       }, 
       { field: 'exec.sut.buildName', width:200, displayName: 'Build'  }, 
-      { field: 'job.id', width:200, displayName: 'JobId'  }, 
+      { field: 'job.id', width:200, cellTemplate: linkToJob, displayName: 'JobId'  },
       { field: 'tcid', cellTemplate: linkCellTemplate, width:200, displayName: 'TC',
         customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
           if ( typeof aggregation.components === 'undefined' ) { 

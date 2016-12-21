@@ -64,7 +64,7 @@ angular.module('OpenTMIControllers')
           '<input type="text" show-weeks="true" '+
           'class="ui-grid-filter-input" ng-model="colFilter.term" date-picker /></div>' 
       }, 
-      { field: 'exec.sut.buildName', width:200, displayName: 'Build'  },
+      { field: 'exec.sut.buildName', width:150, displayName: 'Build'  },
       { field: 'campaign', width:250, cellTemplate: linkToJob, displayName: 'Campaign'  },
       { field: 'tcid', cellTemplate: linkCellTemplate, width:250, displayName: 'TC',
         customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
@@ -122,9 +122,9 @@ angular.module('OpenTMIControllers')
       },
       {
         field: 'exec.note',
-        width: 100,
+        width: 250,
         displayName: 'Note' },
-      { field: 'exec.duration', width:100, displayName: 'Duration',
+      { field: 'exec.duration', width:80, displayName: 'Duration',
         aggregationType: uiGridConstants.aggregationTypes.avg,
         cellFilter: 'durationFilter',
         treeAggregationType: uiGridGroupingConstants.aggregation.AVG },

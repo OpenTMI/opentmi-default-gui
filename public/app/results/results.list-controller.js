@@ -64,9 +64,9 @@ angular.module('OpenTMIControllers')
           '<input type="text" show-weeks="true" '+
           'class="ui-grid-filter-input" ng-model="colFilter.term" date-picker /></div>' 
       }, 
-      { field: 'exec.sut.buildName', width:200, displayName: 'Build'  }, 
-      { field: 'campaign', width:200, cellTemplate: linkToJob, displayName: 'Campaign'  },
-      { field: 'tcid', cellTemplate: linkCellTemplate, width:200, displayName: 'TC',
+      { field: 'exec.sut.buildName', width:200, displayName: 'Build'  },
+      { field: 'campaign', width:250, cellTemplate: linkToJob, displayName: 'Campaign'  },
+      { field: 'tcid', cellTemplate: linkCellTemplate, width:250, displayName: 'TC',
         customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
           if ( typeof aggregation.components === 'undefined' ) { 
             aggregation.summary = {
@@ -130,7 +130,9 @@ angular.module('OpenTMIControllers')
         treeAggregationType: uiGridGroupingConstants.aggregation.AVG },
       { field: 'exec.dut.type',  width:100, 
         cellTemplate: defaultCellTemplate, displayName: 'DutType' },
-      { field: 'exec.sut.cut', width:140, 
+      { field: 'exec.dut.model',  width:100,
+        cellTemplate: defaultCellTemplate, displayName: 'DutModel' },
+      { field: 'exec.sut.cut',
         cellTemplate: defaultCellTemplate, displayName: 'Components',
         customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
           if ( typeof aggregation.components === 'undefined' ) { 
@@ -140,11 +142,11 @@ angular.module('OpenTMIControllers')
             if( aggregation.components.indexOf(component)<0) {
               aggregation.components.push(component);
             }
-          });  
+          });
         },
         customTreeAggregationFinalizerFn: function(aggregation){
           if( aggregation.components ){
-            aggregation.rendered = aggregation.components;
+            aggregation.rendered = _.reduce(aggregation.components, function(s, o) {s += ', '+o}, '');
           }
         }
       },

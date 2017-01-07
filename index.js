@@ -2,7 +2,7 @@ var express = require('express');
 var winston = require('winston');
 var mongoose = require('mongoose');
 var moment = require('moment');
-var _ = require('underscore');
+var _ = require('lodash');
 var util = require('util');
 var dns = require('dns');
 //var Logger = require('../Logger');
@@ -35,7 +35,7 @@ function AddonGui (app, server, io, passport){
 
   this.register = function(){
     app.use( express.static(__dirname + '/public/') );
-    
+
     app.get('/api/v0/gui/visitors', function(req, res){
         res.json(visitors);
     });
@@ -70,7 +70,7 @@ function AddonGui (app, server, io, passport){
         }
       }
     });
-  
+
   var resultCount = function() {
     var _today = moment().startOf('day');
     var q = {'cre.time': {"$gte": _today.toDate()} };
@@ -102,7 +102,7 @@ function AddonGui (app, server, io, passport){
   io.on('connection', function (client) {
       var ip = client.request.connection.remoteAddress;
       if(ip) {
-        global.pubsub.emit('new_visitor', 
+        global.pubsub.emit('new_visitor',
           {ip: ip}
         );
       }
@@ -125,7 +125,7 @@ function AddonGui (app, server, io, passport){
           global.pubsub.emit('visitor_leave', {ip: ip});
       });
   });
-   
+
 
   return this;
 }

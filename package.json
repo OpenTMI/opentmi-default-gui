@@ -33,6 +33,6 @@
   "dependencies": {
     "winston": "*",
     "nconf": "*",
-    "underscore": "*"
+    "lodash": "*"
   }
 }

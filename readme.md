@@ -1,24 +1,23 @@
 # Web GUI for OpenTMI
 
-This project contains web GUI for OpenTMI written in Angularjs.
-
-*..in progress, but something already exists..*
+This project contains web GUI for OpenTMI backend, written in Angularjs.
 
 # Test Management
+
 ## Testcases
 Table view for test cases. It (will) also support change test cases meta-informations in group.
 
 ## Testcase Analyse
-Analysing Test cases in PIVOT -table. It for example gives information of test summaries etc.
+Analysing Test cases in PIVO -table. It for example gives information of test summaries etc.
 There will be pre-defined configurations in future, so that it is easier to use.
 
 ## Testcase Tree
 This show tests in feature-tree view. It helps to understand what features covered by test cases and what is not.
 
 ## Campaign
-Campaign is group of test cases for test automation.
+Campaign is group of test cases for test automation. (Not imlemented)
 
-# Test Automation
+# Test Automation (Not imlemented)
 ## Plans
 ## Tasks
 ## Schedule
@@ -26,8 +25,12 @@ Campaign is group of test cases for test automation.
 
 # SUT (Software Under Test)
 ## Modules
+
 ## Builds
+Table view for DUT (device under test) builds. User can also download builds from table link.
+
 ## Builds-tree
+Tree view, which shows device models, build configuration names and actual builds in tree. 
 
 # DUT (Device Under Test)
 

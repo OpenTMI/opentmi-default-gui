@@ -52,6 +52,12 @@ angular.module('OpenTMI.builds', [
             }
           }
         })
+        .state('buildstats', {
+          url: '/duts/buildstats',
+          templateUrl: 'app/builds/buildstats.html',
+          controller: 'BuildstatsController'
+        })
+
       }
   ]
 );

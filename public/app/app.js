@@ -40,7 +40,10 @@ angular.module('OpenTMI', [
         'd3-multi-parent',
         'mgo-angular-wizard',
         'satellizer',
-        'notyModule'
+        'notyModule',
+        'angularSpinner',
+        'ngBootbox',
+        'nvd3'
     ])
     .run(
         ['$rootScope', '$state', '$stateParams',
@@ -57,8 +60,8 @@ angular.module('OpenTMI', [
             // Redirects and Otherwise //
             // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
             $urlRouterProvider
-            // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
-            // Here we are just setting up some convenience urls.
+                // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
+                // Here we are just setting up some convenience urls.
                 .when('/tc?id', '/testcases/:id')
                 .when('/tc/:id', '/testcases/:id')
                 // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
@@ -70,12 +73,12 @@ angular.module('OpenTMI', [
                 .state('home', {
                     url: '/',
                     templateUrl: 'app/pages/home.html'
-                        /*onEnter: function(){
-                          console.log('title')
-                        }
-                        onExit: function(title){
-                          if(title){ console.log(title) }
-                        }*/
+                    /*onEnter: function(){
+                      console.log('title')
+                    }
+                    onExit: function(title){
+                      if(title){ console.log(title) }
+                    }*/
                 })
                 .state('login', {
                     url: '/login',

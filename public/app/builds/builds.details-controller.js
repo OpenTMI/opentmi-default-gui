@@ -7,11 +7,9 @@ angular.module('OpenTMIControllers')
 
     $log.info('init BuildDetailsController');
 
-    var gotCb  = function(error) {
-        if(error) {
-          return $log.error(error);
-        }
+    var gotCb  = function(build) {
+       $scope.build = build;
     };
-    $scope.build = Builds.get($stateParams.buildId, gotCb);
+    Builds.get($stateParams.buildId, gotCb);
 
   }]);

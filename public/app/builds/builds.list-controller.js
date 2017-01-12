@@ -47,7 +47,7 @@ angular.module('OpenTMIControllers')
     function doUpdateList(q)
     {
       if(!q) q = {};
-      Builds.query({q: JSON.stringify(q), f: "_id name target files configuration cre.time vcs"})
+      Builds.query({q: JSON.stringify(q), f: "_id name target files configuration cre.time vcs ci"})
         .$promise.then( function(builds){
           $log.info(builds);
           $scope.dataBuilds = builds;

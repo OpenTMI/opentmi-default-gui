@@ -1,0 +1,75 @@
+<style type="text/css">
+    #sequence {
+      width: 600px;
+      height: 70px;
+    }
+
+    #legend {
+      padding: 40px 0 0 900px;
+      position: absolute;
+    }
+
+    #sequence text, #legend text, #footer text {
+      font-weight: 600;
+      fill: #fff;
+    }
+
+    #chart {
+      position: relative;
+    }
+
+    #chart path {
+      stroke: #fff;
+    }
+
+    #explanation {
+      position: absolute;
+      top: 360px;
+      left: 570px;
+      width: 140px;
+      text-align: center;
+      color: #666;
+      z-index: -1;
+    }
+
+    #percentage {
+      font-size: 2.5em;
+    }
+</style>
+
+<h2>{{build.name}}</h2>
+<table>
+    <tr>
+        <th width="100px">Model</th><td>{{build.target.hw.model}}</td>
+    </tr><tr>
+        <th>Toolchain</th><td>{{build.configuration.toolchain.name}}</td>
+    </tr><tr>
+        <th>Configuration</th><td>{{build.configuration.name}}</td>
+    </tr><tr>
+        <th>Branch</th><td>{{build.vcs[0].branch}}</td>
+    </tr><tr>
+        <th>CI job</th><td><a href="{{build.vcs[0].url}}" target="_blank">{{build.vcs[0].url}}</a></td>
+    </tr><tr ng-repeat="(index, file) in build.files">
+        <th>File #{{index}}</th><td><a href="/api/v0/duts/builds/{{build._id}}/files/{{index}}/download" target="_blank">{{file.name}} ({{(file.size/1024).toFixed(1)}}kB)</a></td>
+    </tr>
+</table>
+<br>
+<uib-accordion close-others="oneAtATime">
+    <div uib-accordion-group class="panel-default" heading="raw data" is-open="false">
+      <pre>{{buildStr}}</pre>
+    </div>
+</uib-accordion>
+
+<div id="sidebar">
+  <div id="legend"></div>
+  Mouseover or click on the round segment diagram.
+</div>
+<div id="sequence"></div>
+<div id="chart">
+<div id="explanation" style="visibility: hidden;">
+  <span id="percentage"></span><br/>
+  bytes in <span id="percentage_desc"></span>
+</div>
+</div>
+
+

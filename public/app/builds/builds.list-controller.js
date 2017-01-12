@@ -8,8 +8,14 @@ angular.module('OpenTMIControllers')
     $log.info('init BuildListController')
     
     
-    var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
-                       '<a href="{{ row.entity.vcs[0].url }}">{{ row.entity[col.field] }}</a>' +
+    var vcsLinkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
+                       '<a href="{{ row.entity.vcs[0].url }}">{{ row.entity.vcs[0].branch }}</a>' +
+                       '</div>';
+    var ciLinkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
+                       '<a href="{{ row.entity.ci.location.url }}">{{ row.entity.ci.job.name}} # {{ row.entity.ci.job.number}}</a>' +
+                       '</div>';
+    var nameTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
+                       '<a href="#/duts/builds/{{ row.entity._id }}">{{ row.entity[col.field] }}</a>' +
                        '</div>';
     var dlCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
                        '<a target="new" href="api/v0/duts/builds/{{ row.entity._id }}/files/0/download">{{ COL_FIELD }} ({{(row.entity.files[0].size/1024).toFixed(0)}} kB)</a>' +
@@ -18,19 +24,22 @@ angular.module('OpenTMIControllers')
 
     $scope.columns = [
       { field: 'cre.time', width:200, displayName: 'Date' },
+      { field: 'name', width:400, cellTemplate: nameTemplate, displayName: 'Name' },
       { field: 'target.os', width:100, displayName: 'OS' },
-      { field: 'target.hw.model', width:100, displayName: 'Target' },
+      { field: 'target.hw.model', width:150, displayName: 'Target' },
+      { field: 'vcs[0].branch', width:100, cellTemplate: vcsLinkCellTemplate, displayName: 'PR' },
+      { field: 'ci[0].url', width:100, cellTemplate: ciLinkCellTemplate, displayName: 'CI Job' },
       { field: 'configuration.name', width:150, displayName: 'Configuration' },
       { field: 'configuration.toolchain.name', width:100, displayName: 'Toolchain' },
-      { field: 'files[0].name', width:300, cellTemplate: dlCellTemplate, displayName: 'File' },
-      { field: 'name', cellTemplate: linkCellTemplate, displayName: 'Name' }
+      { field: 'files[0].name', cellTemplate: dlCellTemplate, displayName: 'File', cellTooltip: function (row, col) {return row.entity.name}  },
     ];
     $scope.gridOptions = { 
       columnDefs: $scope.columns,
       enableColumnResizing: true,
       enableFiltering: true,
       enableRowSelection: true,
-      //showFooter: true,
+      showFooter: true,
+      showGroupPanel: true,
       exporterMenuCsv: true,
       enableGridMenu: true
     };

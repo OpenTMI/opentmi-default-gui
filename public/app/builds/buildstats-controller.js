@@ -7,6 +7,36 @@ angular.module('OpenTMIControllers')
                 size: 10
             });
 
+            var downloadFile = function(uri, fileName) {
+                //Initialize file format you want csv or xls
+                //var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+
+                //this trick will generate a temp <a /> tag
+                var link = document.createElement("a");
+                link.href = uri;
+                link.target = '_new';
+
+                //set the visibility hidden so it will not effect on your web-layout
+                link.style = "visibility:hidden";
+                link.download = fileName;
+
+                //this part will append the anchor tag and remove it after automatic click
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            $('input[name="daterange"]').daterangepicker({
+                "drops": "up",
+                "autoApply": true,
+                "locale": {
+                    "format": "DD.MM.YYYY",
+                    "separator": " - ",
+                    "firstDay": 1
+                },
+                "startDate": moment().subtract(4, 'days').format('DD.MM.YYYY'),
+                "endDate": moment().format('DD.MM.YYYY')
+            });
             // Setup the chart
             $scope.options = {
                 chart: {
@@ -37,12 +67,32 @@ angular.module('OpenTMIControllers')
                         }
                     },
                     yAxis: {
-                        axisLabel: 'b',
+                        axisLabel: 'bytes',
+                    },
+                    lines: {
+                        dispatch: {
+                            elementClick: function(e) {
+                                var filename = 'build.bin';
+                                if ($('#binaries').find('option:selected').val()) {
+                                    filename = $('#binaries').find('option:selected').val();
+                                }
+                                downloadFile('/api/v0/duts/builds/' + e[0].point.id + '/files/0/download', filename, 'application/octet-stream');
+                            }
+                        }
                     }
                 },
                 title: {
                     enable: true,
                     text: 'Build statistics'
+                },
+                subtitle: {
+                    enable: true,
+                    html: 'You can download build binary by hovering your mouse on chart and clicking.',
+                    css: {
+                        'text-align': 'center',
+                        'margin': '10px 13px 0px 7px',
+                        'font-size': '10px',
+                    }
                 }
             };
             $scope.data = [];
@@ -83,6 +133,9 @@ angular.module('OpenTMIControllers')
                 if ($('#toolchains').find('option:selected').val()) {
                     q['configuration.toolchain.name'] = $('#toolchains').find('option:selected').val();
                 }
+                if ($('#binaries').find('option:selected').val()) {
+                    q['files.name'] = $('#binaries').find('option:selected').val();
+                }
                 if (searchterm) {
                     return {
                         t: 'distinct',
@@ -92,7 +145,11 @@ angular.module('OpenTMIControllers')
                             'cre.time': 1
                         }
                     };
-                } else { // basicly used for full data fetch
+                } else { // basicly used for chart data fetch
+                    q['cre.time'] = {
+                        $gte: moment($('#daterange').data('daterangepicker').startDate).startOf('day').format('YYYY-MM-DDTHH:mm:ss.SSS'),
+                        $lt: moment($('#daterange').data('daterangepicker').endDate).endOf('day').format('YYYY-MM-DDTHH:mm:ss.SSS')
+                    };
                     return {
                         q: JSON.stringify(q),
                         s: {
@@ -136,68 +193,54 @@ angular.module('OpenTMIControllers')
                     });
             });
 
+            $('#binaries').on('show.bs.select', function(e) {
+                $(this).selectpicker('val', '');
+                Builds.query($scope.createQuery('files.name'))
+                    .$promise.then(function(binary) {
+                        $scope.populateSelectbox(binary, $('#binaries'));
+                    });
+            });
+            // fetch data when daterange is changed
+            $('#daterange').on('apply.daterangepicker', function(ev, picker) {
+                $scope.fetchData();
+            });
             // this function gathers the data from mongodb and makes it
             // easy to nvd3 to read it.
             $scope.fetchData = function() {
+                $("#drSelection").show();
                 Builds.query($scope.createQuery())
                     .$promise.then(function(data) {
-                        var heap = [],
-                            stack = [],
-                            total_flash = [],
-                            total_ram = [],
-                            static_ram = [];
+                        $scope.data = [];
                         $.each(data, function(key, value) {
-                            // for some reason (didn't have time to check) I got
-                            // some weird results using timestamp as a x-axis value
-                            // So now it is just a running number (data order in query)
-                            // and we use date as a label.
-                            var labelString = d3.time.format('%d.%m')(new Date(value.cre.time));
-                            heap.push({
+                            var labelString = d3.time.format('%d.%m %H:%M')(new Date(value.cre.time));
+                            for (var i = 0; i < Object.keys(value.memory.summary).length; i++) {
+                                if ($scope.data.some(function(el) {
+                                        return el.key == Object.keys(value.memory.summary)[i];
+                                    })) {
+                                    for (var x = 0; x < $scope.data.length; x++) {
+                                        if ($scope.data[x].key == Object.keys(value.memory.summary)[i]) {
+                                            $scope.data[x].values.push({
                                 x: key,
-                                y: value.memory.summary.heap,
-                                label: labelString
+                                                y: value.memory.summary[Object.keys(value.memory.summary)[i]],
+                                                label: labelString,
+                                                id: value._id
                             });
+                                        }
+                                    }
+                                } else {
+                                    var tmp = {};
+                                    tmp.key = Object.keys(value.memory.summary)[i];
+                                    tmp.values = [{
+                                x: key,
+                                        y: value.memory.summary[Object.keys(value.memory.summary)[i]],
+                                        label: labelString,
+                                        id: value._id
+                                    }];
 
-                            stack.push({
-                                x: key,
-                                y: value.memory.summary.stack,
-                                label: labelString
-                            });
-
-                            total_flash.push({
-                                x: key,
-                                y: value.memory.summary.total_flash,
-                                label: labelString
-                            });
-
-                            total_ram.push({
-                                x: key,
-                                y: value.memory.summary.total_ram,
-                                label: labelString
-                            });
-
-                            static_ram.push({
-                                x: key,
-                                y: value.memory.summary.static_ram,
-                                label: labelString
-                            });
+                                    $scope.data.push(tmp);
+                                }
+                            }
                         });
-                        $scope.data = [{
-                            key: 'Heap',
-                            values: heap
-                        }, {
-                            key: 'stack',
-                            values: stack
-                        }, {
-                            key: 'total_flash',
-                            values: total_flash
-                        }, {
-                            key: 'total_ram',
-                            values: total_ram
-                        }, {
-                            key: 'static_ram',
-                            values: static_ram
-                        }];
                     });
             };
         }

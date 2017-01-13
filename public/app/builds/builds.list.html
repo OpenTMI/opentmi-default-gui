@@ -24,7 +24,13 @@
     <div ui-view="columnTwo">
       <div class="text-center">
         <div> -->
-          <div id="grid1" ui-grid="gridOptions" ui-grid-pinning ui-grid-grouping ui-grid-exporter ui-grid-resize-columns ui-grid-exporter class="grid"></div>
+            <div id="grid1" ui-grid="gridOptions" ui-grid-pinning ui-grid-grouping ui-grid-exporter ui-grid-resize-columns ui-grid-exporter class="grid"></div>
+            Page size page:
+            <input type="number" min="10" max="2000" ng-model="pagination.pageSize" ng-change="load()">of {{ pagination.pageSize }}
+            Current page:
+            <input type="number" min="0" max="{{ pagination.getTotalPages() }}" ng-model="pagination.pageNumber" ng-change="load()">of {{ pagination.getTotalPages() }}
+            <button type="button" class="btn btn-success" ng-click="pagination.previousPage()">previous page</button>
+            <button type="button" class="btn btn-success" ng-click="pagination.nextPage()">next page</button>
 <!--
         </div>
       </div>

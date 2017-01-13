@@ -27,7 +27,8 @@ angular.module('OpenTMIControllers')
         menus: [
           { title: "Modules", tooltip: 'Yotta Modules', action: "#/yotta#sal-stack-nanostack-eventloop"},
           { title: "Builds", action: "#/duts/builds" },
-          { title: "Builds-Tree", action: "#/duts/builds/tree" }
+          { title: "Builds-Tree", action: "#/duts/builds/tree" },
+          { title: "Build statistics", action: "#/duts/buildstats" }
         ]
       },
       {

@@ -1,0 +1,104 @@
+<style>
+  .panel-body{
+    padding-top: 0px;
+  }
+  #fetchbutton {
+    margin-right: 15px;
+  }
+</style>
+<div class="row">
+  <div class="col-sm-12">
+      <h1>Build statistics</h1>
+  </div>
+</div>
+  <div class="row">
+    <div class="col-xs-12 col-md-4">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="panel-heading">
+              <h3 class="panel-title">1) Select target hardware model</h3>
+          </div>
+          <div class="panel-body">
+              <select id="hardwares" class="form-control selectpicker">
+
+              </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="panel-heading">
+              <h3 class="panel-title">Select branch</h3>
+          </div>
+          <div class="panel-body">
+              <select id="branches" class="form-control selectpicker">
+
+              </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="panel-heading">
+              <h3 class="panel-title">Select configuration name</h3>
+          </div>
+          <div class="panel-body">
+              <select id="confnames" class="form-control selectpicker">
+
+              </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="panel-heading">
+              <h3 class="panel-title">Select toolchain</h3>
+          </div>
+          <div class="panel-body">
+              <select id="toolchains" class="form-control selectpicker">
+
+              </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="panel-heading">
+              <h3 class="panel-title">Select binary</h3>
+          </div>
+          <div class="panel-body">
+              <select id="binaries" class="form-control selectpicker">
+
+              </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="pull-right">
+            <button class="btn btn-primary" id="fetchbutton" ng-click="fetchData()">Draw chart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-8">
+      <div class="row">
+        <div class="col-xs-12">
+          <nvd3 options='options' data='data'></nvd3>
+        </div>
+      </div>
+      <div class="row" id="drSelection" style="display:none;">
+        <div class="col-xs-12 col-md-8 col-md-offset-1">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label for="daterange" class="col-sm-4 control-label">Date range</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" name="daterange" id="daterange"/>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 angular.module('OpenTMI.builds', [
   'ui.router'
 ])
-  
+
 .config(
   [          '$stateProvider', '$urlRouterProvider',
     function ($stateProvider,   $urlRouterProvider) {
@@ -14,35 +14,35 @@ angular.module('OpenTMI.builds', [
         .state('builds.list', {
           url: '',
           views: {
-              'buildFilters@buids': { 
+              'buildFilters@buids': {
                 templateUrl: 'app/builds/builds.filters.html',
                 controller: 'BuildFilterController'
               },
-              'buildBody@builds': { 
+              'buildBody@builds': {
                 templateUrl: 'app/builds/builds.list.html',
                 controller: 'BuildListController',
               },
-              'buildStatus@builds': { 
+              'buildStatus@builds': {
                 templateUrl: 'app/builds/builds.status.html',
                 controller: 'BuildStatusController',
               }
           }
-        })/*
-        .state('builds.detail', {
+        })
+        .state('builds.details', {
           url: '/{buildId:[0-9a-fA-F]{24}}',
-          controller: 'BuildDetailsController',
           views: {
-              'buildFilters@builds': { 
+              /*'buildFilters@builds': {
                 templateUrl: 'app/builds/builds.details.filters.html',
-              },
-              'buildBody@builds': { 
-                templateUrl: 'app/builds/builds.details.html'
-              },
-              'buildStatus@builds': { 
+              },*/
+              'buildBody@builds': {
+                templateUrl: 'app/builds/builds.details.html',
+                controller: 'BuildsDetailsController'
+              }/*,
+              'buildStatus@builds': {
                 templateUrl: 'app/builds/builds.details.status.html'
-              }
+              }*/
           }
-        })*/
+        })
         .state('builds.tree', {
           url: '/tree',
           views: {

@@ -17,7 +17,7 @@
     "gui"
   ],
   "author": "Jussi Vatjus-Anttila <jussiva@gmail.com>",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "readmeFilename": "README.md",
   "opentmi": {
     "id": "default-gui",

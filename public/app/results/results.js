@@ -1,12 +1,12 @@
 angular.module('OpenTMI.results', [
   'ui.router'
 ])
-  
+
 .config(
   [          '$stateProvider', '$urlRouterProvider',
     function ($stateProvider,   $urlRouterProvider) {
       $stateProvider
-      
+
         .state('results', {
           abstract: true,
           url: '/results',
@@ -15,15 +15,15 @@ angular.module('OpenTMI.results', [
         .state('results.list', {
           url: '',
           views: {
-              /*'resultFilters@results': { 
+              /*'resultFilters@results': {
                 templateUrl: 'app/results/results.filters.html',
                 controller: 'ResultFilterController'
               },*/
-              'resultBody@results': { 
+              'resultBody@results': {
                 templateUrl: 'app/results/results.list.html',
                 controller: 'ResultListController',
               }/*,
-              'resultStatus@results': { 
+              'resultStatus@results': {
                 templateUrl: 'app/results/results.status.html',
                 controller: 'ResultStatusController',
               }*/
@@ -31,15 +31,15 @@ angular.module('OpenTMI.results', [
         })
         .state('results.detail', {
           url: '/{resultId:[0-9a-fA-F]{24}}',
-          controller: 'ResultDetailsController',
           views: {
-              /*'resultFilters@results': { 
+              /*'resultFilters@results': {
                 templateUrl: 'app/results/results.details.filters.html',
               },*/
-              'resultBody@results': { 
-                templateUrl: 'app/results/results.details.html'
+              'resultBody@results': {
+                templateUrl: 'app/results/results.details.html',
+                controller: 'ResultsDetailsController'
               }/*,
-              'resultStatus@results': { 
+              'resultStatus@results': {
                 templateUrl: 'app/results/results.details.status.html'
               }*/
           }

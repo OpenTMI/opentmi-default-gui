@@ -1,4 +1,38 @@
 <div class="jumbotron text-center">
-  <strong>Result</strong> {{ result.tcid }}
+  <strong>Result</strong>
+  <br>
+  <table>
+    <tr><th style="width:100px">TC</th><td><a href="#/testcases/{{ result.tcid }}">{{ result.tcid }}</a></td></tr>
+    <tr><th>Result</th><td>{{ result.exec.verdict }}</td></tr>
+    <tr><th>Duration</th><td>{{ result.exec.duration }} seconds</td></tr>
+    <tr><th>Dut</th><td>{{ result.dut.model }}</td></tr>
+    <tr><th>Build</th><td><a href="#/duts/builds/{{ result.sut.ref._id }}">{{ result.sut.name }}</a></td></tr>
+  </table>
 </div>
 
+<uib-accordion close-others="oneAtATime">
+    <div uib-accordion-group class="panel-default" heading="raw data" is-open="false">
+      <pre>{{resultsStr}}</pre>
+    </div>
+</uib-accordion>
+
+<uib-accordion close-others="oneAtATime">
+    <div uib-accordion-group class="panel-default" heading="Logs" is-open="false">
+      TBD
+    </div>
+</uib-accordion>
+
+<uib-accordion close-others="oneAtATime">
+    <div uib-accordion-group class="panel-default" heading="Memory Analyse" is-open="false">
+      TBD
+    </div>
+</uib-accordion>
+
+<uib-accordion close-others="oneAtATime">
+    <div uib-accordion-group class="panel-default" heading="Trend" is-open="false">
+      <div id="resultTrendGrid"
+            ui-grid="gridOptions"
+            ui-grid-pinning ui-grid-exporter ui-grid-grouping ui-grid-infinite-scroll ui-grid-resize-columns
+            class="grid"></div>
+    </div>
+</uib-accordion>

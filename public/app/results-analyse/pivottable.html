@@ -1,5 +1,10 @@
-<!--<i ng-disabled="loading" class="fa fa-refresh" aria-hidden="true"></i> -->
+<style>
+ .container {
+   width: 100%;
+ }
+</style>
 
+<!--<i ng-disabled="loading" class="fa fa-refresh" aria-hidden="true"></i> -->
 
 <button class="fa fa-refresh" ng-click="update()" ng-disabled="loading">
 <span data-ng-show="loading">Loading..
@@ -8,6 +13,8 @@
 <span ng-if="!loading">Update</span>
 </button>
 
+
+<select id="predefineQuery" ng-model="predefinedViewSelection" ng-change="selectView()"></select>
 Limit:
 <input ng-disabled="loading"
        type="number"
@@ -27,10 +34,4 @@ To: <input ng-disabled="loading"
        ng-model="resultsTo"
        ng-change="delayedUpdate()">
 
-<!--
-Predefined views:
-<select name="singleSelect" ng-model="predefinedViewSelection" ng-change="selectView(predefinedViewSelection)">
-  <option ng-repeat="option in predefinedViews" value="{{option.id}}".id>{{option.name}}</option>
-</select><br>
--->
-<div id="pivottable"></div>
+<div id="pivottable" style="margin: 30px;"></div>

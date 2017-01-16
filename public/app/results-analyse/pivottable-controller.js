@@ -2,8 +2,8 @@
 
 angular.module('OpenTMIControllers')
   .controller('pivottableController', 
-             ['$scope', 'Result', '$stateParams', '$log', 'noty',
-    function ($scope,   Result,   $stateParams,    $log, noty) {
+             ['$scope', 'Result', '$stateParams', '$location', '$log', 'noty',
+    function ( $scope,   Result,   $stateParams, $location,  $log, noty) {
   
     $log.info('init pivottableController')
     $scope.results = [];
@@ -60,7 +60,7 @@ angular.module('OpenTMIControllers')
         }
     }
     $scope.predefinedViews = [ 
-        {   name: 'default', 
+        {   name: 'Results vs features',
             id: "view-1",
             cfg: {
                 rows: ["component", "feature"],
@@ -68,11 +68,19 @@ angular.module('OpenTMIControllers')
                 rendererName: "Heatmap"
             }
         },
-        {   name: 'Results by Campaign', 
+        {   name: 'Results vs Campaign',
             id: "view-2",
             cfg: {
                 rows: ["campaign"],
                 cols: ["year", "Week number", "exec.verdict"],
+                rendererName: "Heatmap"
+            }
+        },
+        {   name: 'Results vs fw versions',
+            id: "view-3",
+            cfg: {
+                rows: ["exec.dut.type"],
+                cols: ["year", "day", "exec.env.framework.ver", "exec.verdict"],
                 rendererName: "Heatmap"
             }
         }
@@ -80,8 +88,26 @@ angular.module('OpenTMIControllers')
     $scope.predefinedViewSelection = 'view-1';
     $scope.resultsTo = new Date();
     $scope.resultsFrom = moment().subtract(3, 'weeks').toDate();
-    $scope.limitCount = 10000;
+    $scope.limitCount = 1000;
     $scope.loading = false;
+
+    $scope.populateSelectbox = function(data, selectbox) {
+        $(selectbox).html('');
+        $(selectbox)
+            .append($('<option></option>')
+                .attr('value', '')
+                .text('Select value'));
+        $.each(data, function(key, obj) {
+            $(selectbox)
+                .append($('<option></option>')
+                    .attr('value', obj.id)
+                    .text(obj.name));
+        });
+        $(selectbox).selectpicker('refresh');
+    };
+
+    $scope.populateSelectbox($scope.predefinedViews, $('#predefineQuery'));
+
     var getView = function(view) { 
         var view = view || $scope.predefinedViewSelection;
         var predefineView = _.find($scope.predefinedViews, function(o){ 
@@ -108,11 +134,19 @@ angular.module('OpenTMIControllers')
                 $lt: $scope.resultsTo
             };
         }
-        Result.query({q: JSON.stringify(q), s: {'cre.time': -1}, fl:true, l: $scope.limitCount}).$promise.then( 
+        _.merge(q, $location.search());
+        let req = {
+            q: JSON.stringify(q),
+            s: {'cre.time': -1},
+            fl:true,
+            l: $scope.limitCount
+        };
+        Result.query(req).$promise.then(
           function(data){
             $scope.noty({text: 'ready'});
             $scope.loading = false;
             var results = _.map(data, function(r) {
+
                 r['exec.dut.count'] = ""+r['exec.dut.count'];
                 r.duration = parseFloat(r.duration);
                 var components = []
@@ -131,8 +165,8 @@ angular.module('OpenTMIControllers')
                 delete r['exec.sut.tag']
                 delete r['exec.sut.cut']
                 delete r['exec.sut.fut']
-                r.component = components.join(',')
-                r.feature = features.join(',')
+                r.component = components.sort().join(',')
+                r.feature = features.sort().join(',')
                 r.passrate = r['exec.verdict']==='pass'?1:0;
                 /*if(r['exec.sut.fut.0']){
                     r['exec.sut.fut'] = r['exec.sut.fut.0']
@@ -252,11 +286,11 @@ angular.module('OpenTMIControllers')
                 "Latest Results": latestAggregator()
             },*/
             hiddenAttributes: ["__v","_id._bsontype","_id.id" ,"exec.logs"],
-            onRefresh: function(config) {
+            /*onRefresh: function(config) {
                 var config_copy = JSON.parse(JSON.stringify(config));
-            }
+            }*/
 
-        });
+        }, true);
     }
     
   }])

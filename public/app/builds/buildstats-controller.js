@@ -58,12 +58,7 @@ angular.module('OpenTMIControllers')
                     xAxis: {
                         axisLabel: 'Date',
                         tickFormat: function(d) {
-                            if ($scope.data[0].values[d]) {
-                                return $scope.data[0].values[d].label;
-                            } else {
-                                return '';
-                            }
-
+                            return _.get($scope.data, '0.values.' + d+'.label', '');
                         }
                     },
                     yAxis: {
@@ -207,7 +202,9 @@ angular.module('OpenTMIControllers')
             // this function gathers the data from mongodb and makes it
             // easy to nvd3 to read it.
             $scope.fetchData = function() {
+                $(".loader").show();
                 $("#drSelection").show();
+
                 Builds.query($scope.createQuery())
                     .$promise.then(function(data) {
                         $scope.data = [];
@@ -220,18 +217,18 @@ angular.module('OpenTMIControllers')
                                     for (var x = 0; x < $scope.data.length; x++) {
                                         if ($scope.data[x].key == Object.keys(value.memory.summary)[i]) {
                                             $scope.data[x].values.push({
-                                x: key,
+                                                x: key,
                                                 y: value.memory.summary[Object.keys(value.memory.summary)[i]],
                                                 label: labelString,
                                                 id: value._id
-                            });
+                                            });
                                         }
                                     }
                                 } else {
                                     var tmp = {};
                                     tmp.key = Object.keys(value.memory.summary)[i];
                                     tmp.values = [{
-                                x: key,
+                                        x: key,
                                         y: value.memory.summary[Object.keys(value.memory.summary)[i]],
                                         label: labelString,
                                         id: value._id
@@ -241,6 +238,7 @@ angular.module('OpenTMIControllers')
                                 }
                             }
                         });
+                        $(".loader").hide();
                     });
             };
         }

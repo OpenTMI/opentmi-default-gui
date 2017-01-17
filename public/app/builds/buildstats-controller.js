@@ -1,30 +1,11 @@
 angular.module('OpenTMIControllers')
-    .controller('BuildstatsController', ['$scope', 'Builds', '$stateParams', '$log',
-        function($scope, Builds, $stateParams, $log) {
+    .controller('BuildstatsController', ['$scope', '$location', 'Builds', '$stateParams', '$log',
+        function($scope, $location, Builds, $stateParams, $log) {
 
             $log.info('init BuildstatsController');
             $('.selectpicker').selectpicker({
                 size: 10
             });
-
-            var downloadFile = function(uri, fileName) {
-                //Initialize file format you want csv or xls
-                //var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
-
-                //this trick will generate a temp <a /> tag
-                var link = document.createElement("a");
-                link.href = uri;
-                link.target = '_new';
-
-                //set the visibility hidden so it will not effect on your web-layout
-                link.style = "visibility:hidden";
-                link.download = fileName;
-
-                //this part will append the anchor tag and remove it after automatic click
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
 
             $('input[name="daterange"]').daterangepicker({
                 "drops": "up",
@@ -37,6 +18,7 @@ angular.module('OpenTMIControllers')
                 "startDate": moment().subtract(4, 'days').format('DD.MM.YYYY'),
                 "endDate": moment().format('DD.MM.YYYY')
             });
+
             // Setup the chart
             $scope.options = {
                 chart: {
@@ -71,7 +53,9 @@ angular.module('OpenTMIControllers')
                                 if ($('#binaries').find('option:selected').val()) {
                                     filename = $('#binaries').find('option:selected').val();
                                 }
-                                downloadFile('/api/v0/duts/builds/' + e[0].point.id + '/files/0/download', filename, 'application/octet-stream');
+                                $scope.$apply(function() {
+                                    $location.path( '/duts/builds/'+e[0].point.id );
+                                });
                             }
                         }
                     }

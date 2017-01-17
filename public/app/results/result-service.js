@@ -2,14 +2,13 @@
 
 angular.module('tmtServices')
   .factory('Result', function($resource) {
-    
     return $resource(
-	    "/api/v0/results/:id", {id: '@id'},
+	    "/api/v0/results/:_id", {_id: '@id'},
 	    {update: {method: "PUT"}}
     );
   })/*
   .factory('Testcase', function(Restangular) {
-     var restAngular = 
+     var restAngular =
       Restangular.withConfig(function(Configurer) {
         Configurer.setBaseUrl('/api/v0');
     });

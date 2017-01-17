@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('OpenTMIControllers')
-  .controller('ResultListController', 
+  .controller('ResultListController',
              ['$scope', 'Result', 'Testcase', '$stateParams', '$timeout', '$log', '$q', 'uiGridConstants', 'uiGridGroupingConstants',
     function ($scope,   Result,    Testcase,   $stateParams,   $timeout, $log,   $q,   uiGridConstants, uiGridGroupingConstants) {
-  
+
     $log.info('init ResultListController');
     $scope.gridMode = 'plain';
 
@@ -14,7 +14,7 @@ angular.module('OpenTMIControllers')
 
     $scope.data = [];
     $scope.query = {
-      q: {}, 
+      q: {},
       s: { 'cre.time': -1}
     };
     $scope.firstPage = 0;
@@ -29,7 +29,7 @@ angular.module('OpenTMIControllers')
         var now = moment(value);
         if(term) {
             if(moment(term).isAfter(now, 'day')) return false;;
-        } 
+        }
         return true;
     };
 
@@ -38,7 +38,7 @@ angular.module('OpenTMIControllers')
         var now = moment(value);
         if(term) {
             if(moment(term).isBefore(now, 'day')) return false;;
-        } 
+        }
         return true;
     };
 
@@ -52,23 +52,23 @@ angular.module('OpenTMIControllers')
                        '</div>';
 
     var defaultCellTemplate = '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>';
-    $scope.columns = [ 
-      { field: 'cre.time', width: 140, type: 'date', 
+    $scope.columns = [
+      { field: 'cre.time', width: 140, type: 'date',
         cellFilter: 'date:"yy/MM/dd HH:mm"', displayName: 'Date',
         filters: [
           { condition: uiGridConstants.filter.LESS_THAN },
           { condition: uiGridConstants.filter.GREATER_THAN }
         ],
-        filterHeaderTemplate: 
+        filterHeaderTemplate:
           '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters">'+
           '<input type="text" show-weeks="true" '+
-          'class="ui-grid-filter-input" ng-model="colFilter.term" date-picker /></div>' 
-      }, 
+          'class="ui-grid-filter-input" ng-model="colFilter.term" date-picker /></div>'
+      },
       { field: 'exec.sut.buildName', width:150, displayName: 'Build'  },
-      { field: 'campaign', width:250, cellTemplate: linkToJob, displayName: 'Campaign'  },
+      { field: 'campaign', width:280, cellTemplate: linkToJob, displayName: 'Campaign'  },
       { field: 'tcid', cellTemplate: linkCellTemplate, width:250, displayName: 'TC',
         customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
-          if ( typeof aggregation.components === 'undefined' ) { 
+          if ( typeof aggregation.components === 'undefined' ) {
             aggregation.summary = {
               count: 0
             };
@@ -79,8 +79,8 @@ angular.module('OpenTMIControllers')
           if(aggregation.summary ){
             aggregation.rendered = "Amount: "+aggregation.summary.count;
           }
-        } 
-      }, 
+        }
+      },
       { field: 'exec.verdict',  width:100, displayName: 'Verdict',
         cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
           var value = grid.getCellValue(row,col)
@@ -90,11 +90,11 @@ angular.module('OpenTMIControllers')
           return 'red';
         },
         customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
-          if ( typeof aggregation.summary === 'undefined' ) { 
+          if ( typeof aggregation.summary === 'undefined' ) {
             aggregation.summary = {
               count: 0,
               passCount: 0
-            }; 
+            };
           }
           aggregation.summary.count++;
           if(fieldValue == 'pass'){
@@ -113,9 +113,9 @@ angular.module('OpenTMIControllers')
         },
         filter: {
           type: uiGridConstants.filter.SELECT,
-          selectOptions: [ 
-              { value: 'pass', label: 'pass' }, 
-              { value: 'fail', label: 'fail' }, 
+          selectOptions: [
+              { value: 'pass', label: 'pass' },
+              { value: 'fail', label: 'fail' },
               { value: 'inconclusive', label: 'inconclusive'}
             ]
         },
@@ -128,14 +128,14 @@ angular.module('OpenTMIControllers')
         aggregationType: uiGridConstants.aggregationTypes.avg,
         cellFilter: 'durationFilter',
         treeAggregationType: uiGridGroupingConstants.aggregation.AVG },
-      { field: 'exec.dut.type',  width:100, 
+      { field: 'exec.dut.type',  width:100,
         cellTemplate: defaultCellTemplate, displayName: 'DutType' },
       { field: 'exec.dut.model',  width:100,
         cellTemplate: defaultCellTemplate, displayName: 'DutModel' },
       { field: 'exec.sut.cut',
         cellTemplate: defaultCellTemplate, displayName: 'Components',
         customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
-          if ( typeof aggregation.components === 'undefined' ) { 
+          if ( typeof aggregation.components === 'undefined' ) {
             aggregation.components = []
           }
           fieldValue.forEach( function(component){
@@ -150,8 +150,8 @@ angular.module('OpenTMIControllers')
           }
         }
       },
-    ]; 
-    $scope.gridOptions = { 
+    ];
+    $scope.gridOptions = {
       columnDefs: $scope.columns,
       treeRowHeaderAlwaysVisible: false,
       enableRowSelection: false,
@@ -179,7 +179,7 @@ angular.module('OpenTMIControllers')
           }, 1000);
         } );
         $scope.gridApi = gridApi;
-        
+
         //$scope.gridApi.grouping.groupColumn('campaign');
       },
       data: 'data'
@@ -190,7 +190,7 @@ angular.module('OpenTMIControllers')
           $timeout.cancel($scope.filterTimeout);
       }
     });
-    
+
     $scope.filterChanged = function(){
       var grid = this.grid;
       var filters = [];
@@ -210,7 +210,7 @@ angular.module('OpenTMIControllers')
               value = {"$regex": ("/"+colFilters[0]+"/"), "$options":"i"};
             }
             filters.push({
-              key: column.name, 
+              key: column.name,
               value: value
             });
           } else if( colFilters.length > 1 ){
@@ -225,15 +225,15 @@ angular.module('OpenTMIControllers')
               value = {"$regex": ("/"+colFilters[0]+"/"), "$options":"i"};
             }
             filters.push({
-              key: column.name, 
+              key: column.name,
               value: value
             });
           }
         }
-        
+
       });
       console.log(filters);
-      $scope.query.q = {}  
+      $scope.query.q = {}
       if( filters.length > 0 ) {
         filters.forEach( function(filter){
           $scope.query.q[filter.key] = filter.value;
@@ -245,7 +245,7 @@ angular.module('OpenTMIControllers')
     $scope.getFirstData = function() {
       var promise = $q.defer();
       Result.query({
-          q: JSON.stringify($scope.query.q), 
+          q: JSON.stringify($scope.query.q),
           s: $scope.query.s,
           l: $scope.pageSize,
           f: $scope.fields()
@@ -259,7 +259,7 @@ angular.module('OpenTMIControllers')
     $scope.getDataDown = function() {
       var promise = $q.defer();
       Result.query({
-          q: JSON.stringify($scope.query.q), 
+          q: JSON.stringify($scope.query.q),
           s: $scope.query.s,
           l: $scope.pageSize,
           sk: $scope.lastPage*$scope.pageSize,
@@ -271,7 +271,7 @@ angular.module('OpenTMIControllers')
         $scope.gridApi.infiniteScroll.saveScrollPercentage();
         $scope.data = $scope.data.concat(newData);
         $scope.gridApi.infiniteScroll.dataLoaded(
-          $scope.firstPage > 0, 
+          $scope.firstPage > 0,
           $scope.lastPage < 4
         ).then(function() {
           $scope.checkDataLength('up');
@@ -287,7 +287,7 @@ angular.module('OpenTMIControllers')
     $scope.getDataUp = function() {
       var promise = $q.defer();
       Result.query({
-          q: JSON.stringify($scope.query.q), 
+          q: JSON.stringify($scope.query.q),
           s: $scope.query.s,
           l: $scope.pageSize,
           sk: $scope.firstPage*$scope.pageSize,
@@ -316,14 +316,14 @@ angular.module('OpenTMIControllers')
       if( $scope.lastPage - $scope.firstPage > 3 ){
         // we want to remove a page
         $scope.gridApi.infiniteScroll.saveScrollPercentage();
-   
+
         if( discardDirection === 'up' ){
           $scope.data = $scope.data.slice($scope.pageSize);
           $scope.firstPage++;
           $timeout(function() {
             // wait for grid to ingest data changes
             $scope.gridApi.infiniteScroll.dataRemovedTop(
-              $scope.firstPage > 0, 
+              $scope.firstPage > 0,
               $scope.lastPage < 4);
           });
         } else {
@@ -332,7 +332,7 @@ angular.module('OpenTMIControllers')
           $timeout(function() {
             // wait for grid to ingest data changes
             $scope.gridApi.infiniteScroll.dataRemovedBottom(
-              $scope.firstPage > 0, 
+              $scope.firstPage > 0,
               $scope.lastPage < 4);
           });
         }
@@ -341,26 +341,26 @@ angular.module('OpenTMIControllers')
     $scope.reset = function() {
       $scope.firstPage = 0;
       $scope.lastPage = 1;
-   
+
       // turn off the infinite scroll handling up and down - hopefully this won't be needed after @swalters scrolling changes
       $scope.gridApi.infiniteScroll.setScrollDirections( false, false );
       $scope.data = [];
-   
+
       $scope.getFirstData().then(function(){
         $timeout(function() {
           // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
-          $scope.gridApi.infiniteScroll.resetScroll( 
+          $scope.gridApi.infiniteScroll.resetScroll(
             $scope.firstPage > 0, $scope.lastPage < 4 );
         });
       });
     };
-   
+
     $scope.getFirstData().then(function(){
       $timeout(function() {
         // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
         // you need to call resetData once you've loaded your data if you want to enable scroll up,
         // it adjusts the scroll position down one pixel so that we can generate scroll up events
-        $scope.gridApi.infiniteScroll.resetScroll( 
+        $scope.gridApi.infiniteScroll.resetScroll(
           $scope.firstPage > 0, $scope.lastPage < 4 );
       });
     });
@@ -386,7 +386,7 @@ angular.module('OpenTMIControllers')
       });
       $scope.query.q = q;
       $scope.reset();
-      
+
     });
     */
   }])
@@ -434,7 +434,7 @@ angular.module('OpenTMIControllers')
         }
     }
   })
-  
+
   /*
   .service('stats', function(){
     var service = {
@@ -463,7 +463,7 @@ angular.module('OpenTMIControllers')
       'maintenance': 'maintenance',
       'unknown': 'unknown'
     };
-    
+
     return function(input) {
       if (!input){
         return '';
@@ -472,5 +472,5 @@ angular.module('OpenTMIControllers')
       }
     };
   })*/
-  
+
   ;

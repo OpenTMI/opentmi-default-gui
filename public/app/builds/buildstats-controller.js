@@ -58,7 +58,7 @@ angular.module('OpenTMIControllers')
                     xAxis: {
                         axisLabel: 'Date',
                         tickFormat: function(d) {
-                            return _.get($scope.data, '0.values.' + d, '');
+                            return _.get($scope.data, '0.values.' + d+'.label', '');
                         }
                     },
                     yAxis: {

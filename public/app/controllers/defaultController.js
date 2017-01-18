@@ -24,13 +24,13 @@ angular.module('OpenTMIControllers')
     socket.forward('disconnect', $scope);
     socket.forward('notify', $scope);
     $scope.$on('socket:connect', function (ev, data) {
-      $log.error('ws error');
-      $scope.noty({
+        $log.info('connected');
+        $scope.noty({
         text: 'OpenTMI connected'
       });
     });
     $scope.$on('socket:disconnect', function (ev, data) {
-      $log.error('ws error');
+      $log.info('disconnected');
       $scope.noty({
         text: 'OpenTMI disconnected',
         type: 'error'

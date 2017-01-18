@@ -79,7 +79,7 @@ angular.module('OpenTMIControllers')
         {   name: 'Results vs fw versions',
             id: "view-3",
             cfg: {
-                rows: ["exec.dut.type"],
+                rows: ["exec.dut.model"],
                 cols: ["year", "day", "exec.env.framework.ver", "exec.verdict"],
                 rendererName: "Heatmap"
             }
@@ -103,7 +103,7 @@ angular.module('OpenTMIControllers')
                     .attr('value', obj.id)
                     .text(obj.name));
         });
-        $(selectbox).selectpicker('refresh');
+        //$(selectbox).selectpicker('refresh');
     };
 
     $scope.populateSelectbox($scope.predefinedViews, $('#predefineQuery'));

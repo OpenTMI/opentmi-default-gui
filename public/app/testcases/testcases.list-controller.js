@@ -13,7 +13,7 @@ angular.module('OpenTMIControllers')
                        '</div>';
     var defaultCellTemplate = '<div class="ui-grid-cell-contents"><span>{{COL_FIELD}}</span></div>';
     $scope.columns = [ 
-      { field: 'tcid', /*width:200,*/ enableCellEdit: true, cellTemplate: linkCellTemplate, displayName: 'TC'  }, 
+      { field: 'tcid', width:250, enableCellEdit: false, cellTemplate: linkCellTemplate, displayName: 'TC'  },
       { field: 'status.value', width:100, enableCellEdit: true, displayName: 'Status', 
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //cellFilter: 'mapStatus', 
@@ -25,11 +25,12 @@ angular.module('OpenTMIControllers')
         ]
       },
       //{ field: 'cre.user', width:200, enableCellEdit: true, displayName: 'Creator' },
+        { field: 'archive.value', width:100, enableCellEdit: false, displayName: 'Archived' },
       { field: 'owner.name', width:100, 
         enableCellEdit: true, displayName: 'Owner' },
       { field: 'other_info.type', width:100, 
         enableCellEdit: true, displayName: 'Type' },
-      { field: 'other_info.components', width: 100, 
+      { field: 'other_info.components', width: 250,
         enableCellEdit: true, displayName: 'Components' },
       //{ field: 'other_info.layer', width:50, enableCellEdit: true, displayName: 'Layer',
       // editableCellTemplate: 'ui-grid/dropdownEditor',
@@ -41,7 +42,8 @@ angular.module('OpenTMIControllers')
       //   { id: 'L3', status: 'L3' },
       //   { id: 'unknown', status: 'unknown' },
       // ] },
-
+      { field: 'execution.estimation.duration', width: 100, displayName: 'Duration',enableCellEdit: false },
+      { field: 'other_info.title', enableCellEdit: false, displayName: 'Title'},
       //{ field: 'specs', enableCellEdit: true },
       //{ field: 'history.durationAvg', width:100, enableCellEdit: true, cellTemplate: defaultCellTemplate },
     ]; 
@@ -74,7 +76,7 @@ angular.module('OpenTMIControllers')
     {
       Testcase.query({
           q: JSON.stringify(q), 
-          f: "tcid execution.estimation.duration status owner other_info.type other_info.components",
+          f: "tcid execution.estimation.duration status owner other_info.type other_info.components other_info.title",
           l: 5000
       }).$promise.then( 
         function(testcases){

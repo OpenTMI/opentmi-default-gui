@@ -72,7 +72,11 @@ angular.module('OpenTMIControllers')
     
     function doUpdateList(q)
     {
-      Testcase.query({q: JSON.stringify(q), f: "tcid execution.estimation.duration status owner other_info.type other_info.components"}).$promise.then( 
+      Testcase.query({
+          q: JSON.stringify(q), 
+          f: "tcid execution.estimation.duration status owner other_info.type other_info.components",
+          l: 5000
+      }).$promise.then( 
         function(testcases){
           status.dataLength = testcases.length;
           status.totalDuration = 0;

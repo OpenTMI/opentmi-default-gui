@@ -211,20 +211,23 @@ angular.module('OpenTMIControllers')
                 feature: feature}
             })
           });
-          var id = component+"/unknown"
-          console.log(id);
-          
-          list.push( {
-            id: id,
-            text: "unknown",
-            type: "feature",
-            parent: component,
-            children: true,
-            li_attr: {
-              type: "feature", 
-              component: component,
-              feature: ""} 
-          })
+          if(!_.find(features, (f)=>{return f=='unknown'})) {
+              var id = component + "/unknown"
+              console.log(id);
+
+              list.push({
+                  id: id,
+                  text: "unknown",
+                  type: "feature",
+                  parent: component,
+                  children: true,
+                  li_attr: {
+                      type: "feature",
+                      component: component,
+                      feature: ""
+                  }
+              })
+          }
           cb(list);
         }
       )

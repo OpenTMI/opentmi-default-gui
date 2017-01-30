@@ -7,6 +7,7 @@ angular.module('OpenTMIControllers')
   
     $log.info('init pivottableController')
     $scope.results = [];
+    $scope.hwOnly = null;
 
     $scope.noty = function(data){
       noty.noty({ 
@@ -58,7 +59,8 @@ angular.module('OpenTMIControllers')
             'exec.dut.count': {type: 'string'},
             'exec.sut.tag': {type: 'array', items: {type: 'string'}},
         }
-    }
+    };
+    $scope.currentConfig = null;
     $scope.predefinedViews = [ 
         {   name: 'Results vs features',
             id: "view-1",
@@ -103,38 +105,49 @@ angular.module('OpenTMIControllers')
                     .attr('value', obj.id)
                     .text(obj.name));
         });
-        //$(selectbox).selectpicker('refresh');
     };
 
     $scope.populateSelectbox($scope.predefinedViews, $('#predefineQuery'));
 
-    var getView = function(view) { 
+    var getViewConfigs = function(view) {
         var view = view || $scope.predefinedViewSelection;
         var predefineView = _.find($scope.predefinedViews, function(o){ 
-            return view===o.id;})
-        return predefineView;
+            return view===o.id;});
+        return predefineView.cfg;
     }
     $scope.selectView = function(view) {
-        var predefineView = getView(view);
-        pivotUi(predefineView.cfg);
+        $scope.currentConfig = getViewConfigs(view);
+        pivotUi($scope.currentConfig);
     };
     $scope.delayedUpdate = function() {
         if($scope.loading)return;
         if($scope.timer) clearTimeout($scope.timer);
         $scope.timer = setTimeout($scope.update, 5000);
     };
-    $scope.update = function() {
+    $scope.$watch(function(){ return $location.search() }, function(params){
+        $scope.delayedUpdate();
+    });
+
+    function getConfig() {
+        return JSON.parse(JSON.stringify($("#pivottable").data("pivotUIOptions")));
+    }
+    $scope.update = function(configs) {
+        if(!configs) {
+            $scope.currentConfig = configs = getConfig();
+        }
         $scope.loading = true;
         if($scope.timer) clearTimeout($scope.timer);
         $scope.noty({text: 'loading'});
         var q = {};
-        if(true) {
-            q['cre.time'] = {
-                $gte: $scope.resultsFrom,
-                $lt: $scope.resultsTo
-            };
-        }
+        q['cre.time'] = {
+            $gte: $scope.resultsFrom,
+            $lt: $scope.resultsTo
+        };
+        if($scope.hwOnly) q['exec.dut.type'] = 'hw';
+        else if(q['exec.dut.type']) delete q['exec.dut.type'];
+
         _.merge(q, $location.search());
+
         let req = {
             q: JSON.stringify(q),
             s: {'cre.time': -1},
@@ -187,10 +200,10 @@ angular.module('OpenTMIControllers')
             $scope.results = results;
             //$scope.selectView()
             //
-            pivotUi(getView().cfg);
+            pivotUi(configs);
         });
-    }
-    $scope.update();
+    };
+    $scope.update(getViewConfigs());
 
     /**
      * Get week number in the year.

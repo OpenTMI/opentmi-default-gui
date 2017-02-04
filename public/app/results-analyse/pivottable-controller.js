@@ -1,16 +1,41 @@
 'use strict';
 
 angular.module('OpenTMIControllers')
-  .controller('pivottableController', 
-             ['$scope', 'Result', '$stateParams', '$location', '$log', 'noty',
-    function ( $scope,   Result,   $stateParams, $location,  $log, noty) {
-  
+  .controller('pivottableController',
+             ['$scope', 'Result', '$stateParams', '$location', '$log', 'noty', '$localStorage',
+    function ( $scope,   Result,   $stateParams,   $location,   $log,   noty,   $localStorage) {
+
     $log.info('init pivottableController')
     $scope.results = [];
-    $scope.hwOnly = null;
+
+    if (!$localStorage.results) $localStorage.results = {}
+    if (!$localStorage.results.pivottable) $localStorage.results.pivottable = {}
+
+    $scope.save = function() {
+       let cfg = getConfig();
+       let name = $scope.showNew?$scope.new_name:'custom';
+       if(name === 'custom') {
+         $scope.predefinedViewSelection = name;
+       }
+       $localStorage.results.pivottable[name] = cfg;
+       addPreset(name, cfg);
+       $scope.showNew = false;
+    }
+    $scope.remove = function() {
+       let name = $scope.predefinedViewSelection;
+       if($localStorage.results.pivottable[name]) {
+         delete $localStorage.results.pivottable[name];
+       }
+       removePreset(name);
+    }
+    $scope.restore = function() {
+      _.each($localStorage.results.pivottable, (o, key) => {
+         addPreset(key, o);
+      });
+    }
 
     $scope.noty = function(data){
-      noty.noty({ 
+      noty.noty({
           text: data.text,
           type: data.type || "success",
           timeout: data.timeout || 2000,
@@ -60,10 +85,8 @@ angular.module('OpenTMIControllers')
             'exec.sut.tag': {type: 'array', items: {type: 'string'}},
         }
     };
-    $scope.currentConfig = null;
-    $scope.predefinedViews = [ 
+    $scope.predefinedViews = [
         {   name: 'Results vs features',
-            id: "view-1",
             cfg: {
                 rows: ["component", "feature"],
                 cols: ["year", "Week number", "exec.verdict"],
@@ -71,7 +94,6 @@ angular.module('OpenTMIControllers')
             }
         },
         {   name: 'Results vs Campaign',
-            id: "view-2",
             cfg: {
                 rows: ["campaign"],
                 cols: ["year", "Week number", "exec.verdict"],
@@ -79,7 +101,6 @@ angular.module('OpenTMIControllers')
             }
         },
         {   name: 'Results vs fw versions',
-            id: "view-3",
             cfg: {
                 rows: ["exec.dut.model"],
                 cols: ["year", "day", "exec.env.framework.ver", "exec.verdict"],
@@ -87,37 +108,42 @@ angular.module('OpenTMIControllers')
             }
         }
     ];
-    $scope.predefinedViewSelection = 'view-1';
+
+    let addPreset = function(name, cfg) {
+      let o = _.find($scope.predefinedViews, {name: name})
+      if(o) {
+        o.cfg = cfg;
+      } else {
+        $scope.predefinedViews.push({
+          name: name,
+          cfg: cfg
+        })
+      }
+    }
+    let removePreset = function(name) {
+      let o = _.find($scope.predefinedViews, {name: name});
+      if(o) {
+        $scope.predefinedViews.pop(o);
+      }
+    }
+
+    $scope.restore();
+
+    $scope.predefinedViewSelection = $scope.predefinedViews[0].name;
     $scope.resultsTo = new Date();
     $scope.resultsFrom = moment().subtract(3, 'weeks').toDate();
     $scope.limitCount = 1000;
     $scope.loading = false;
 
-    $scope.populateSelectbox = function(data, selectbox) {
-        $(selectbox).html('');
-        $(selectbox)
-            .append($('<option></option>')
-                .attr('value', '')
-                .text('Select value'));
-        $.each(data, function(key, obj) {
-            $(selectbox)
-                .append($('<option></option>')
-                    .attr('value', obj.id)
-                    .text(obj.name));
-        });
-    };
-
-    $scope.populateSelectbox($scope.predefinedViews, $('#predefineQuery'));
-
     var getViewConfigs = function(view) {
         var view = view || $scope.predefinedViewSelection;
-        var predefineView = _.find($scope.predefinedViews, function(o){ 
-            return view===o.id;});
+        var predefineView = _.find($scope.predefinedViews, function(o){
+            return view===o.name;});
         return predefineView.cfg;
     }
     $scope.selectView = function(view) {
-        $scope.currentConfig = getViewConfigs(view);
-        pivotUi($scope.currentConfig);
+        let cfg = getViewConfigs(view);
+        pivotUi(cfg);
     };
     $scope.delayedUpdate = function() {
         if($scope.loading)return;
@@ -129,11 +155,16 @@ angular.module('OpenTMIControllers')
     });
 
     function getConfig() {
+      try {
         return JSON.parse(JSON.stringify($("#pivottable").data("pivotUIOptions")));
+      } catch(e) {
+        $log.warn(e);
+        return getViewConfigs();
+      }
     }
     $scope.update = function(configs) {
         if(!configs) {
-            $scope.currentConfig = configs = getConfig();
+            configs = getConfig();
         }
         $scope.loading = true;
         if($scope.timer) clearTimeout($scope.timer);
@@ -143,20 +174,21 @@ angular.module('OpenTMIControllers')
             $gte: $scope.resultsFrom,
             $lt: $scope.resultsTo
         };
-        if($scope.hwOnly) q['exec.dut.type'] = 'hw';
+        if([undefined, ''].indexOf($scope.limitByDutType) < 0 ) q['exec.dut.type'] = $scope.limitByDutType;
         else if(q['exec.dut.type']) delete q['exec.dut.type'];
 
         _.merge(q, $location.search());
-
         let req = {
             q: JSON.stringify(q),
-            s: {'cre.time': -1},
+            s: JSON.stringify({'cre.time': -1}),
             fl:true,
             l: $scope.limitCount
         };
+        $log.info("Request: " ,req);
+
         Result.query(req).$promise.then(
           function(data){
-            $scope.noty({text: 'ready'});
+            $scope.noty({text: "Loaded "+data.length+" results"});
             $scope.loading = false;
             var results = _.map(data, function(r) {
 
@@ -198,8 +230,6 @@ angular.module('OpenTMIControllers')
                 return r;
             });
             $scope.results = results;
-            //$scope.selectView()
-            //
             pivotUi(configs);
         });
     };
@@ -219,10 +249,8 @@ angular.module('OpenTMIControllers')
         return Math.floor((((this - januaryFirst) / 86400000) + januaryFirst.getDay() - weekStart) / 7);
     };
 
-
-    
     function pivotUi(cfg) {
-        console.log(cfg);
+        $log.debug(cfg);
         cfg = cfg || {};
         var derivers =    $.pivotUtilities.derivers;
         var dateFormat =  $.pivotUtilities.derivers.dateFormat;
@@ -245,7 +273,7 @@ angular.module('OpenTMIControllers')
               return {
                 tmp: {},
                 items: [],
-                push: function(record) { 
+                push: function(record) {
                     if( !tmp[ record.tcid ] ){
                         tmp[ record.tcid ] = {idx: items.length, time: record.cre.time }
                         this.items.push(record)
@@ -261,11 +289,11 @@ angular.module('OpenTMIControllers')
              };
             };
 
-        var renderers =   $.extend($.pivotUtilities.renderers, 
+        var renderers =   $.extend($.pivotUtilities.renderers,
                           $.pivotUtilities.c3_renderers,
                           $.pivotUtilities.export_renderers);
         $("#pivottable").pivotUI($scope.results, {
-            rows: rows, 
+            rows: rows,
             cols: cols,
             rendererName: rendererName,
             renderers: renderers,
@@ -282,7 +310,7 @@ angular.module('OpenTMIControllers')
                     try {
                         duration = parseFloat(record.duration);
                     } catch (e) {
-                        
+
                     }
                     return duration;
                 }*/
@@ -305,6 +333,6 @@ angular.module('OpenTMIControllers')
 
         }, true);
     }
-    
+
   }])
   ;

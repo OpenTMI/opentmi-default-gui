@@ -11,6 +11,31 @@ angular.module('OpenTMIControllers')
     if (!$localStorage.results) $localStorage.results = {}
     if (!$localStorage.results.pivottable) $localStorage.results.pivottable = {}
 
+    let getExportView = function() {
+      if($location.search().view) {
+        return JSON.parse($location.search().view);
+      }
+    };
+    if(getExportView()) {
+      let view = getExportView();
+      $log.debug("import view: ", view.name);
+      $localStorage.results.pivottable[view.name] = view.cfg;
+    };
+
+    let getDefaultView = function() {
+      let name = _.get(getExportView(), 'name', $scope.predefinedViews[0].name);
+      $log.debug("default view: ", name);
+      return name;
+    };
+    $scope.clearExport = function() {
+      $location.search('view', undefined);
+    };
+    $scope.export = function() {
+      let cfg = getConfig();
+      let name = $scope.showNew?$scope.new_name:'custom';
+      let view = JSON.stringify({name: name, cfg: cfg});
+      $location.search('view', view);
+    }
     $scope.save = function() {
        let cfg = getConfig();
        let name = $scope.showNew?$scope.new_name:'custom';
@@ -20,6 +45,7 @@ angular.module('OpenTMIControllers')
        $localStorage.results.pivottable[name] = cfg;
        addPreset(name, cfg);
        $scope.showNew = false;
+       $scope.clearExport();
     }
     $scope.remove = function() {
        let name = $scope.predefinedViewSelection;
@@ -27,6 +53,7 @@ angular.module('OpenTMIControllers')
          delete $localStorage.results.pivottable[name];
        }
        removePreset(name);
+       $scope.clearExport();
     }
     $scope.restore = function() {
       _.each($localStorage.results.pivottable, (o, key) => {
@@ -129,7 +156,7 @@ angular.module('OpenTMIControllers')
 
     $scope.restore();
 
-    $scope.predefinedViewSelection = $scope.predefinedViews[0].name;
+    $scope.predefinedViewSelection = getDefaultView();
     $scope.resultsTo = new Date();
     $scope.resultsFrom = moment().subtract(3, 'weeks').toDate();
     $scope.limitCount = 1000;
@@ -142,6 +169,7 @@ angular.module('OpenTMIControllers')
         return predefineView.cfg;
     }
     $scope.selectView = function(view) {
+        $scope.clearExport();
         let cfg = getViewConfigs(view);
         pivotUi(cfg);
     };
@@ -177,7 +205,7 @@ angular.module('OpenTMIControllers')
         if([undefined, ''].indexOf($scope.limitByDutType) < 0 ) q['exec.dut.type'] = $scope.limitByDutType;
         else if(q['exec.dut.type']) delete q['exec.dut.type'];
 
-        _.merge(q, $location.search());
+        _.merge(q, _.omit($location.search(), ['view']));
         let req = {
             q: JSON.stringify(q),
             s: JSON.stringify({'cre.time': -1}),

@@ -272,13 +272,14 @@ angular.module('OpenTMIControllers')
         $scope.data = $scope.data.concat(newData);
         $scope.gridApi.infiniteScroll.dataLoaded(
           $scope.firstPage > 0,
-          $scope.lastPage < 4
+          $scope.pageSize === newData.length
         ).then(function() {
           $scope.checkDataLength('up');
         }).then(function() {
           promise.resolve();
         });
       }, function(error) {
+        $log.debug("no more data");
         $scope.gridApi.infiniteScroll.dataLoaded();
         promise.reject();
       });

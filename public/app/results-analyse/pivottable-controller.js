@@ -7,6 +7,7 @@ angular.module('OpenTMIControllers')
 
     $log.info('init pivottableController')
     $scope.results = [];
+    $scope.new_name = 'my-custom';
 
     if (!$localStorage.results) $localStorage.results = {}
     if (!$localStorage.results.pivottable) $localStorage.results.pivottable = {}
@@ -38,12 +39,10 @@ angular.module('OpenTMIControllers')
     }
     $scope.save = function() {
        let cfg = getConfig();
-       let name = $scope.showNew?$scope.new_name:'custom';
-       if(name === 'custom') {
-         $scope.predefinedViewSelection = name;
-       }
+       let name = $scope.new_name;
        $localStorage.results.pivottable[name] = cfg;
        addPreset(name, cfg);
+       $scope.predefinedViewSelection = name;
        $scope.showNew = false;
        $scope.clearExport();
     }
@@ -71,47 +70,6 @@ angular.module('OpenTMIControllers')
       });
     };
 
-    ZSchema.registerFormat("fillResult", function (obj) {
-        obj['hello'] = "world";
-        obj['Duration_bin10'] = 0
-        obj['Week number'] = 0
-        obj['campaign'] = ""
-        obj['component'] = ""
-        obj['cre.time'] = ""
-        obj['day'] = "30"
-        obj['day name'] = ""
-        obj['duration'] = 0
-        obj['exec.duration'] = 0
-        obj['exec.dut.count'] = 0
-        obj['exec.dut.type'] = ""
-        obj['exec.dut.vendor'] =""
-        obj['exec.env.framework.name'] = ""
-        obj['exec.env.framework.ver'] = ""
-        obj['exec.logs'] = ''
-        obj['exec.note'] =
-        obj['exec.sut.branch'] = ""
-        obj['exec.sut.buildUrl'] = ""
-        obj['exec.sut.commitId'] = ""
-        obj['exec.sut.gitUrl'] = ""
-        obj['exec.verdict'] = ""
-        obj['feature'] =''
-        obj['id'] = ""
-        obj['job.id'] = ""
-        obj['month'] = ""
-        obj['month name'] = "Nov"
-        obj['tcid'] = ""
-        obj['year'] = ""
-        return true;
-    });
-    var validator = new ZSchema();
-    var resultSchema = {
-        type: 'object',
-        //format: 'fillResult',
-        properties: {
-            'exec.dut.count': {type: 'string'},
-            'exec.sut.tag': {type: 'array', items: {type: 'string'}},
-        }
-    };
     $scope.predefinedViews = [
         {   name: 'Results vs features',
             cfg: {

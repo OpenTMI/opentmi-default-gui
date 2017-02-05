@@ -292,27 +292,7 @@ angular.module('OpenTMIControllers')
                 "day name":   dateFormat("cre.time", "%w", true),
                 "Week number": weeNumberDerivery,
                 "Duration_bin10": derivers.bin("exec.duration", 10),
-                /*"Duration": function(record) {
-                    duration = 0;
-                    try {
-                        duration = parseFloat(record.duration);
-                    } catch (e) {
-
-                    }
-                    return duration;
-                }*/
             },
-            /*sorters: function(attr) {
-                if(attr == "month name") {
-                    return sortAs(["Jan","Feb","Mar","Apr", "May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]);
-                },
-                if(attr == "day name") {
-                    return sortAs(["Mon","Tue","Wed", "Thu","Fri","Sat","Sun"]);
-                }
-            },*/
-            /*aggregators: {
-                "Latest Results": latestAggregator()
-            },*/
             hiddenAttributes: ["__v","_id._bsontype","_id.id" ,"exec.logs"],
             /*onRefresh: function(config) {
                 var config_copy = JSON.parse(JSON.stringify(config));
@@ -320,6 +300,5 @@ angular.module('OpenTMIControllers')
 
         }, true);
     }
-
   }])
   ;

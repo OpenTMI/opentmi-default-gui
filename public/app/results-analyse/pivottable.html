@@ -4,36 +4,68 @@
  }
 </style>
 
-<!--<i ng-disabled="loading" class="fa fa-refresh" aria-hidden="true"></i> -->
-
-<button class="fa fa-refresh" ng-click="update()" ng-disabled="loading">
-<span data-ng-show="loading">Loading..
+<button class="fa fa-refresh"
+        style="font-size: 120%; margin-left: 30px;"
+        ng-click="update()"
+        tooltip="Reload data from server"
+        ng-disabled="loading">
+<span data-ng-show="loading">
  <i class="fa fa-spinner fa-spin"></i>
 </span>
-<span ng-if="!loading">Update</span>
+<!-- <span ng-if="!loading">Update</span> -->
 </button>
-
-
-<select id="predefineQuery" ng-model="predefinedViewSelection" ng-change="selectView()"></select>
-Limit:
-<input ng-disabled="loading"
+<select ng-model="predefinedViewSelection"
+        ng-change="selectView()">
+  <option ng-repeat="option in predefinedViews"
+          value="{{option.name}}">{{option.name}}</option>
+</select>
+<button class="fa fa-minus"
+        style="font-size: 120%;"
+        tooltip="Remove" ng-click="remove()"></button>
+<button class="fa fa-plus"
+        style="font-size: 120%;"
+        ng-init="showNew=false"
+        ng-click="showNew = !showNew"
+        tooltip="New"></button>
+<input ng-model="new_name"
+       ng-show="showNew"></input>
+<button class="fa fa-save"
+        style="font-size: 120%;"
+        ng-click="save()"
+        ng-show="showNew"
+        tooltip="Save"></button>
+<button class="fa fa-clipboard" style="font-size: 120%;" ng-click="export()" tooltip="Export URL"></button>
+<select ng-disabled="loading"
        type="number"
+       ng-init="limitCount=1000"
        ng-model="limitCount"
-       min="10"
-       max="1000000"
-       required="true"
+       tooltip="Select how many results will be fetched from backend"
        ng-change="delayedUpdate()">
+    <option ng-repeat="value in [1000, 10000, 20000]"
+        value="{{value}}">
+        {{value}}
+    </option>
+</select>
 
-From:
 <input ng-disabled="loading"
        type="week"
+       tooltip="Results from"
        ng-model="resultsFrom"
        ng-change="delayedUpdate()">
-To: <input ng-disabled="loading"
+..<input ng-disabled="loading"
        type="week"
+       tooltip="Results to"
        ng-model="resultsTo"
        ng-change="delayedUpdate()">
 
-HW only: <input type="checkbox" ng-model="hwOnly" ng-change="delayedUpdate()">
-
+ <select ng-disabled="loading"
+        ng-init="limitByDutType = 'hw'"
+        ng-model="limitByDutType"
+        tooltip="Filter results by DUT type"
+        ng-change="delayedUpdate()">
+     <option ng-repeat="type in ['', 'hw', 'simulator', 'process']"
+         value="{{type}}">
+         {{type}}
+     </option>
+ </select>
 <div id="pivottable" style="margin: 30px;"></div>

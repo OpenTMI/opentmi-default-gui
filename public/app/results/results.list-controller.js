@@ -11,6 +11,12 @@ angular.module('OpenTMIControllers')
     $scope.fields = function() {
        return _.reduce($scope.columns, function(s, o){ return s+' '+o.field; }, '')+' exec.sut.buildUrl';
     };
+    $scope.humanize = function(value) {
+      if(_.isString(value) || _.isUndefined(value)) {
+        return '...';
+      }
+      return Humanize.intComma(value);
+    }
 
     $scope.data = [];
     $scope.query = {
@@ -242,8 +248,16 @@ angular.module('OpenTMIControllers')
       console.log( JSON.stringify($scope.query.q));
       $scope.reset();
     }
+    $scope.resultsCount = undefined;
     $scope.getFirstData = function() {
       var promise = $q.defer();
+      $scope.resultsCount = undefined;
+      Result.count({
+          q: JSON.stringify($scope.query.q),
+          t: 'count'})
+          .$promise.then( function(resp) {
+              $scope.resultsCount = resp.count;
+          });
       Result.query({
           q: JSON.stringify($scope.query.q),
           s: $scope.query.s,
@@ -252,12 +266,14 @@ angular.module('OpenTMIControllers')
       })
       .$promise.then(function(newData){
         $scope.data = $scope.data.concat(newData);
+        $scope.loadedCount = $scope.data.length;
         promise.resolve();
       });
       return promise.promise;
     }
     $scope.getDataDown = function() {
       var promise = $q.defer();
+      $scope.loadedCount = undefined;
       Result.query({
           q: JSON.stringify($scope.query.q),
           s: $scope.query.s,
@@ -270,6 +286,7 @@ angular.module('OpenTMIControllers')
         $scope.lastPage++;
         $scope.gridApi.infiniteScroll.saveScrollPercentage();
         $scope.data = $scope.data.concat(newData);
+        $scope.loadedCount = $scope.data.length;
         $scope.gridApi.infiniteScroll.dataLoaded(
           $scope.firstPage > 0,
           $scope.pageSize === newData.length

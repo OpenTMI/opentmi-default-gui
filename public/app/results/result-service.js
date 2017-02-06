@@ -4,7 +4,13 @@ angular.module('tmtServices')
   .factory('Result', function($resource) {
     return $resource(
 	    "/api/v0/results/:_id", {_id: '@id'},
-	    {update: {method: "PUT"}}
+	    {
+        update: {method: "PUT"},
+        count: {
+          method: 'get',
+          isArray: false
+        }
+      }
     );
   })/*
   .factory('Testcase', function(Restangular) {

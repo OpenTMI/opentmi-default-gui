@@ -49,7 +49,7 @@ angular.module('OpenTMIControllers')
     };
 
     var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
-                       '<a href="#/results/{{ row.entity._id }}">{{ row.entity[col.field] }}</a>' +
+                       '<a href="#/results/{{ row.entity._id }}">{{ COL_FIELD }}</a>' +
                        '</div>';
     var linkToJob = '<div class="ngCellText" ng-class="col.colIndex()">' +
                        '<a href="{{ row.entity.exec.sut.buildUrl }}">' +
@@ -72,24 +72,11 @@ angular.module('OpenTMIControllers')
       },
       { field: 'exec.sut.buildName', width:150, displayName: 'Build'  },
       { field: 'campaign', width:280, cellTemplate: linkToJob, displayName: 'Campaign'  },
-      { field: 'tcid', cellTemplate: linkCellTemplate, width:250, displayName: 'TC',
-        customTreeAggregationFn: function( aggregation, fieldValue, numValue, row ) {
-          if ( typeof aggregation.components === 'undefined' ) {
-            aggregation.summary = {
-              count: 0
-            };
-          }
-          aggregation.summary.count++;
-        },
-        customTreeAggregationFinalizerFn: function(aggregation){
-          if(aggregation.summary ){
-            aggregation.rendered = "Amount: "+aggregation.summary.count;
-          }
-        }
-      },
+      { field: 'tcid', cellTemplate: linkCellTemplate, width:250, displayName: 'Testcase' },
       { field: 'exec.verdict',  width:100, displayName: 'Verdict',
         cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
-          var value = grid.getCellValue(row,col)
+          var value = grid.getCellValue(row,col);
+          if (!value) { return ''; }
           if (value.match(/pass/) || value.match(/100%/)) {
             return 'green';
           } //else if( value.match())

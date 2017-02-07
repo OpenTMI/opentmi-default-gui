@@ -7,7 +7,7 @@
 <button class="fa fa-refresh"
         style="font-size: 120%; margin-left: 30px;"
         ng-click="update()"
-        tooltip="Reload data from server"
+        uib-tooltip="Reload data from server"
         ng-disabled="loading">
 <span data-ng-show="loading">
  <i class="fa fa-spinner fa-spin"></i>
@@ -21,25 +21,28 @@
 </select>
 <button class="fa fa-minus"
         style="font-size: 120%;"
-        tooltip="Remove" ng-click="remove()"></button>
+        uib-tooltip="Remove" ng-click="remove()"></button>
 <button class="fa fa-plus"
         style="font-size: 120%;"
         ng-init="showNew=false"
         ng-click="showNew = !showNew"
-        tooltip="New"></button>
+        uib-tooltip="New"></button>
 <input ng-model="new_name"
        ng-show="showNew"></input>
 <button class="fa fa-save"
         style="font-size: 120%;"
         ng-click="save()"
         ng-show="showNew"
-        tooltip="Save"></button>
-<button class="fa fa-clipboard" style="font-size: 120%;" ng-click="export()" tooltip="Export URL"></button>
+        uib-tooltip="Save"></button>
+<button class="fa fa-clipboard"
+        style="font-size: 120%;"
+        ng-click="export()"
+        uib-tooltip="Export URL"></button>
 <select ng-disabled="loading"
        type="number"
        ng-init="limitCount=1000"
        ng-model="limitCount"
-       tooltip="Select how many results will be fetched from backend"
+       uib-tooltip="Select how many results will be fetched from backend"
        ng-change="delayedUpdate()">
     <option ng-repeat="value in [1000, 10000, 20000]"
         value="{{value}}">
@@ -49,19 +52,19 @@
 
 <input ng-disabled="loading"
        type="week"
-       tooltip="Results from"
+       uib-tooltip="Results from"
        ng-model="resultsFrom"
        ng-change="delayedUpdate()">
 ..<input ng-disabled="loading"
        type="week"
-       tooltip="Results to"
+       uib-tooltip="Results to"
        ng-model="resultsTo"
        ng-change="delayedUpdate()">
 
  <select ng-disabled="loading"
         ng-init="limitByDutType = 'hw'"
         ng-model="limitByDutType"
-        tooltip="Filter results by DUT type"
+        uib-tooltip="Filter results by DUT type"
         ng-change="delayedUpdate()">
      <option ng-repeat="type in ['', 'hw', 'simulator', 'process']"
          value="{{type}}">

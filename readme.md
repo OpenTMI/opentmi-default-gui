@@ -2,6 +2,38 @@
 
 This project contains web GUI for OpenTMI backend, written in Angularjs.
 
+# API's
+
+### Get active visitors count
+```
+GET /api/v0/gui/visitors
+response: 
+{
+    "connected":{
+        "count":1,
+        "clients":{}
+    },
+    "pendingRequests":6
+}
+```
+
+### Get statistics about today results
+```
+GET /api/v0/gui/stats/results/today
+response:
+{
+    "passrate":0,
+    "executed":0,
+    "max":100,
+    "failures":{
+        "individual":{
+            "count":0,
+            "max":0
+        }
+    }
+}
+```
+
 # Test Management
 
 ## Testcases

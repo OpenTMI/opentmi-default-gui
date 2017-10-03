@@ -20,6 +20,8 @@ class AddonDefaultGui {
     logger.warn('registering instance of default-gui class');
     this._controller = new Controller(this.server, this.io);
     this.router.get('/api/v0/gui/visitors', this._controller.getVisitors.bind(this._controller));
+    this.router.get('/api/v0/gui/stats/results/today', this._controller.getTodayResults.bind(this._controller));
+    this.io.on('connection', this._controller.ioConnection.bind(this._controller));
 
   }
   unregister() {

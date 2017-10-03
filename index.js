@@ -10,6 +10,7 @@ class AddonDefaultGui {
     this.staticPath = { prefix: '/', folder: '/public/' };
 
     // Own variables
+    this.app = app;
     this.server = server;
     this.io = io;
   }
@@ -17,7 +18,7 @@ class AddonDefaultGui {
   // Default implementation of register
   register() {
     logger.warn('registering instance of default-gui class');
-    this._controller = new Controller(this.io);
+    this._controller = new Controller(this.server, this.io);
     this.router.get('/api/v0/gui/visitors', this._controller.getVisitors.bind(this._controller));
 
   }

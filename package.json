@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "description": "OpenTMI webGUI addon",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/OpenTMI/opentmi-default-gui.git"
@@ -28,8 +27,7 @@
       "controller": "OpenTMI"
     }
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
     "winston": "*",
     "nconf": "*",

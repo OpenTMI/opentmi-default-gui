@@ -12,16 +12,17 @@ class AddonDefaultGui {
     // Own variables
     this.server = server;
     this.io = io;
-    this._controller = new Controller(io);
   }
 
   // Default implementation of register
   register() {
-    logger.warn('registering instance of sample class');
+    logger.warn('registering instance of default-gui class');
+    this._controller = new Controller(this.io);
     this.router.get('/api/v0/gui/visitors', this._controller.getVisitors.bind(this._controller));
+
   }
   unregister() {
-    logger.warn('unregistering instance of sample class');
+    logger.warn('unregistering instance of default-gui class');
   }
 }
 

@@ -21,7 +21,8 @@ class DefaultGuiController {
         }
       }
     }};
-    eventBus.on('new_visitor', this.onVisitorLeave.bind(this));
+    logger.debug("start listening eventBus events");
+    eventBus.on('new_visitor', this.onNewVisitor.bind(this));
     eventBus.on('visitor_leave', this.onVisitorLeave.bind(this));
     eventBus.on('notify', this.onNotify.bind(this));
     eventBus.on('status.now', this.onStatusNow.bind(this));
@@ -35,10 +36,11 @@ class DefaultGuiController {
     setInterval( this.resultCount.bind(this), 1000*60*EVERY_MINUTES );
   }
 
-  onVisitorLeave(data) {
-    visitors.connected.count--;
+  onVisitorLeave(meta, data) {
+    this.visitors.connected.count--;
+    _.unset(this.visitors, data.ip);
   }
-  onNewVisitor(data) {
+  onNewVisitor(meta, data) {
     this.visitors.connected.count++;
     logger.info('new arrival: '+data.ip);
     if( !this.visitors[ data.ip ] ){
@@ -54,13 +56,13 @@ class DefaultGuiController {
         }
     });
   }
-  onNotify(data) {
+  onNotify(meta, data) {
     this._io.emit('notify', data);
   }
   getVisitors(req, res) {
       res.json(this.visitors);
   }
-  onStatusNow(change) {
+  onStatusNow(meta, change) {
     _.extend(this.status.now, change);
   }
 
@@ -72,7 +74,6 @@ class DefaultGuiController {
   _resultCount() {
     let _today = moment().startOf('day');
     let q = {'cre.time': {"$gte": _today.toDate()} };
-    //q = {}
     Result.find( q , function(error, docs){
       if( error ) {
         console.error(error);
@@ -95,27 +96,26 @@ class DefaultGuiController {
     });
   }
 
-
   ioConnection(client) {
       let ip = client.request.connection.remoteAddress;
+      logger.debug('ioConnection');
       if(ip) {
         eventBus.emit('new_visitor', {ip: ip} );
       }
       client.emit('home', 'hello client');
-      client.on('home', function(data){
-        console.log("home: "+JSON.stringify(data));
+      client.on('home', (data) => {
+        logger.debug("home: "+JSON.stringify(data));
       });
       client.broadcast.emit('home', 'new client arrived :)');
       let i=0;
 
-      let nowStatus = function() {
-        client.emit('home.today', status.today);
-        client.emit('home.now', status.now);
+      let emitNowStatus = () => {
+        client.emit('home.today', this.status.today);
+        client.emit('home.now', this.status.now);
       };
-      let statusTimer = setInterval( nowStatus, 2000 );
+      let statusTimer = setInterval( emitNowStatus, 2000 );
 
-      /*client.emit('home', 'test-'+i++);*/
-      client.on('disconnect', function () {
+      client.on('disconnect', () => {
           clearTimeout(statusTimer);
           eventBus.emit('visitor_leave', {ip: ip});
       });

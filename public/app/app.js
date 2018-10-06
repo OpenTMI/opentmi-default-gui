@@ -110,11 +110,16 @@ angular.module('OpenTMI', [
             RestangularProvider.setBaseUrl('/api/v0');
 
             /*
-            $authProvider.google({
-              clientId: ''
+            jQuery.getJSON('/auth/google/id', ({clientID}) => {
+                $authProvider.google({
+                  clientId: clientID
+                });
             });*/
-            $authProvider.github({
-                clientId: '3d495d811f39e0e888fd'
+            jQuery.getJSON('/auth/github/id', ({clientID}) => {
+                $authProvider.github({
+                  clientId: clientID,
+                  scope: ['user:email', 'read:org']
+                });
             });
 
             function loginRequired($q, $location, $auth) {

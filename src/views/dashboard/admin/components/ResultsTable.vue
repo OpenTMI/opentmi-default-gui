@@ -1,20 +1,13 @@
 <template>
   <el-table :data="list" style="width: 100%;padding-top: 15px;">
-    <el-table-column label="Test Case" min-width="200">
+    <el-table-column label="Testcase" min-width="400">
       <template slot-scope="scope">
         {{ scope.row.tcid }}
       </template>
     </el-table-column>
-    <el-table-column label="Verdict" width="195" align="center">
+    <el-table-column label="Verdict" width="100" align="center">
       <template slot-scope="scope">
         {{ scope.row.exec.verdict }}
-      </template>
-    </el-table-column>
-    <el-table-column label="Status" width="100" align="center">
-      <template slot-scope="{row}">
-        <el-tag :type="row.status | statusFilter">
-          {{ row.status }}
-        </el-tag>
       </template>
     </el-table-column>
   </el-table>
@@ -47,9 +40,10 @@ export default {
   },
   methods: {
     fetchData() {
-      resultsList().then(response => {
-        this.list = response.data.slice(0, 8)
-      })
+      resultsList({l: 8, s: {'cre.time': -1}, f: '-_id tcid exec.verdict'})
+        .then(({data}) => {
+          this.list = data
+        })
     }
   }
 }

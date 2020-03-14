@@ -11,12 +11,12 @@
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <raddar-chart />
+          <raddar-chart  :chart-data="raddarChartData" />
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <pie-chart />
+          <pie-chart :chart-data="pieChartData"/>
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
@@ -29,12 +29,6 @@
     <el-row :gutter="8">
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
         <results-table />
-      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <todo-list />
-      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <box-card />
       </el-col>
     </el-row>
   </div>
@@ -49,28 +43,27 @@ import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import ResultsTable from './components/ResultsTable'
-import TodoList from './components/TodoList'
-import BoxCard from './components/BoxCard'
+import {eventList} from "../../../api/events";
 
 
 const lineChartData = {
   newResults: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
+    actualData: []
   },
   events: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
+    actualData: []
   },
   tests: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
+    actualData: []
   },
   resources: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
+    actualData: []
   }
 }
+
+const raddarChartData = []
+
+const pieChartData = []
 
 export default {
   name: 'DashboardAdmin',
@@ -81,73 +74,198 @@ export default {
     RaddarChart,
     PieChart,
     BarChart,
-    ResultsTable,
-    TodoList,
-    BoxCard
+    ResultsTable
   },
   methods: {
+    getDayGroup(field) {
+      return {'$subtract': [
+          field,
+          {'$add': [
+              {'$multiply': [{'$hour': field}, 3600000]},
+              {'$multiply': [{'$minute': field}, 60000]},
+              {'$multiply': [{'$second': field}, 1000]},
+              {'$millisecond': field}
+            ]}
+        ]}
+    },
+    mapData(data, map = item => [item.date, item.count]) {
+      return this._.reduce(data, (acc, item) => {
+        acc.actualData.push(map(item))
+        return acc
+      }, {
+        actualData: []
+      })
+    },
+    lastWeekDate() {
+      const ourDate = new Date();
+      //Change it so that it is 7 days in the past.
+      const pastDate = ourDate.getDate() - 7;
+      ourDate.setDate(pastDate);
+      return ourDate
+    },
     handleSetLineChartData(type) {
-      if (type === 'newResults') {
-        const ourDate = new Date();
-        //Change it so that it is 7 days in the past.
-        const pastDate = ourDate.getDate() - 7;
-        ourDate.setDate(pastDate);
 
-        const query = {
-          q: JSON.stringify([
-            {
-              $match: {
-                'cre.time': {
-                  $gt: ourDate.toISOString()
-                }
-              }
-            },
-            {
-              $group: {
-                _id: {
-                  'day': {'$subtract': [
-                      '$cre.time',
-                      {'$add': [
-                          {'$multiply': [{'$hour': '$cre.time'}, 3600000]},
-                          {'$multiply': [{'$minute': '$cre.time'}, 60000]},
-                          {'$multiply': [{'$second': '$cre.time'}, 1000]},
-                          {'$millisecond': '$cre.time'}
-                        ]}
-                    ]},
-                },
-                count: {$sum: 1}
-              }
-            },
-            {
-              $project: {
-                date: '$_id.day',
-                count: '$count'
+      const query = {
+        q: JSON.stringify([
+          {
+            $match: {
+              'cre.time': {
+                $gt: this.lastWeekDate().toISOString()
               }
             }
-          ]), t: 'aggregate'}
-        console.log('newResults: ', query)
-        resultsList(query)
-                .then(({data}) => data)
-                .then(data => {
-                  console.log(data)
-                  const chartData = this._.reduce(data, (acc, item) => {
-                    acc.actualData.push(item.count)
-                    return acc
-                  }, {
-                    expectedData: [],
-                    actualData: []
-                  })
-                  this.lineChartData = chartData
-                })
-        return
-      } else {
-        this.lineChartData = lineChartData[type]
+          },
+          {
+            $group: {
+              _id: { day: this.getDayGroup('$cre.time') },
+              count: {$sum: 1}
+            }
+          },
+          {
+            $sort: {'_id.day': -1}
+          },
+          {
+            $project: {
+              date: '$_id.day',
+              count: '$count'
+            }
+          }
+        ]), t: 'aggregate'}
+
+      let list;
+      if (type === 'newResults') {
+        list = resultsList
+      } else if (type === 'events') {
+        list = eventList
+      } else if (type === 'resources') {
+        list = resourceList
+      } else if (type === 'testcases') {
+        list = testList
       }
+
+      list(query)
+              .then(({data}) => data)
+              .then(data => {
+                this.lineChartData = this.mapData(data)
+              })
+    },
+    getPieChartData() {
+      console.log('getPieChartData')
+      const query = {
+        q: JSON.stringify([
+          {
+            $match: {
+              'cre.time': {
+                $gt: this.lastWeekDate().toISOString()
+              }
+            }
+          },
+          {
+            $group: {
+              _id: {
+                campaign: '$campaign'
+              },
+              count: {$sum: 1}
+            }
+          },
+          {
+            $project: {
+              name: '$_id.campaign',
+              value: '$count'
+            }
+          }
+        ]), t: 'aggregate'}
+
+      resultsList(query)
+              .then(({data}) => data)
+              .then(data => {
+                this.pieChartData = data
+              })
+    },
+    getRaddarChartData() {
+      const query = {
+        q: JSON.stringify([
+          {
+            $match: {
+              'cre.time': {
+                $gt: this.lastWeekDate().toISOString()
+              }
+            }
+          },
+          {
+            $group: {
+              _id: {
+                  verdict: '$exec.verdict',
+                  campaign: '$campaign'
+              },
+              count: {$sum: 1}
+            }
+          },
+          {
+            $project: {
+              verdict: '$_id.verdict',
+              campaign: '$_id.campaign',
+              count: '$count'
+            }
+          }
+        ]), t: 'aggregate'}
+
+      resultsList(query)
+              .then(({data}) => data)
+              .then(data => {
+                const raddarData = this._.reduce(data, (acc, item) => {
+                  let obj = this._.find(acc, {name: item.campaign})
+                  if (!obj) {
+                    obj = {name: item.campaign, value: [0,0,0,0,0,0]}
+                    acc.push(obj)
+                  }
+                  if (item.verdict === 'pass') {
+                    obj.value[0] = item.count
+                  }
+                  else if (item.verdict === 'fail') {
+                    obj.value[1] = item.count
+                  }
+                  else if (item.verdict === 'inconclusive') {
+                    obj.value[2] = item.count
+                  }
+                  else if (item.verdict === 'block') {
+                    obj.value[3] = item.count
+                  }
+                  else if (item.verdict === 'error') {
+                    obj.value[4] = item.count
+                  }
+                  else if (item.verdict === 'skip') {
+                    obj.value[5] = item.count
+                  }
+                  return acc
+                }, [])
+                this.raddarChartData = raddarData/*[
+                  {
+                    value: [5000, 7000, 12000, 0, 0, 0],
+                    name: 'Allocated Budget'
+                  },
+                  {
+                    value: [4000, 9000, 15000, 0, 0, 0],
+                    name: 'Expected Spending'
+                  },
+                  {
+                    value: [5500, 11000, 12000, 0, 0, 0],
+                    name: 'Actual Spending'
+                  }
+                ]*/
+              })
+
     }
+  },
+  created() {
+    this.getRaddarChartData()
+    this.getPieChartData()
+    this.handleSetLineChartData('newResults')
   },
   data() {
     return {
-      lineChartData: lineChartData.newResults
+      lineChartData: lineChartData.newResults,
+      raddarChartData: raddarChartData,
+      pieChartData: pieChartData
     }
   }
 }

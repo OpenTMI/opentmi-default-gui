@@ -21,11 +21,23 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    chartData: {
+      type: Object,
+      required: true
     }
   },
   data() {
     return {
       chart: null
+    }
+  },
+  watch: {
+    chartData: {
+      deep: true,
+      handler(val) {
+        this.setOptions(val)
+      }
     }
   },
   mounted() {
@@ -43,7 +55,10 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
+      this.setOptions(this.chartData)
+    },
 
+    setOptions(data) {
       this.chart.setOption({
         tooltip: {
           trigger: 'item',
@@ -52,22 +67,16 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: this._.map(data, item => item.name)
         },
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: 'Test runs per campaign',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
-            ],
+            data: data,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }

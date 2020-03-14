@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { resultsList } from '@/api/results'
 import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
@@ -50,6 +51,7 @@ import BarChart from './components/BarChart'
 import ResultsTable from './components/ResultsTable'
 import TodoList from './components/TodoList'
 import BoxCard from './components/BoxCard'
+
 
 const lineChartData = {
   newResults: {
@@ -83,15 +85,21 @@ export default {
     TodoList,
     BoxCard
   },
+  methods: {
+    handleSetLineChartData(type) {
+      if (type === 'newResults') {
+        let query = {f: 'tcid exec.verdict'}
+        console.log('newResults: ', query)
+        resultsList(query).then(data => this.lineChartData = data)
+        return
+      } else {
+        this.lineChartData = lineChartData[type]
+      }
+    }
+  },
   data() {
     return {
       lineChartData: lineChartData.newResults
-    }
-  },
-  methods: {
-    handleSetLineChartData(type) {
-
-      this.lineChartData = lineChartData[type]
     }
   }
 }

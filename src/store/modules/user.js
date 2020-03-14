@@ -54,9 +54,10 @@ const actions = {
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-        data.roles = ['admin']
-        data.avatar = ''
-        data.introduction = ''
+        data.roles = data.roles || ['admin']
+        data.avatar = data.avatar || ''
+        data.introduction = data.introduction || ''
+
         const { roles, name, avatar, introduction } = data
 
         // roles must be a non-empty array

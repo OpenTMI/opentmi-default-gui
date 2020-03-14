@@ -33,12 +33,13 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ email: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
         resolve()
       }).catch(error => {
+        console.error('what happens..', error)
         reject(error)
       })
     })
@@ -53,7 +54,9 @@ const actions = {
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-
+        data.roles = ['admin']
+        data.avatar = ''
+        data.introduction = ''
         const { roles, name, avatar, introduction } = data
 
         // roles must be a non-empty array
@@ -67,6 +70,7 @@ const actions = {
         commit('SET_INTRODUCTION', introduction)
         resolve(data)
       }).catch(error => {
+        console.log('rejected getInfo', error)
         reject(error)
       })
     })

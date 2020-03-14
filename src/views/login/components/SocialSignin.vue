@@ -18,7 +18,7 @@ export default {
   name: 'SocialSignin',
   methods: {
     githubHandleClick(thirdpart) {
-      alert('ok')
+      alert('not implemented')
       // this.$store.commit('SET_AUTH_TYPE', thirdpart)
       // const appid = 'xxxxx'
       // const redirect_uri = encodeURIComponent('xxx/redirect?redirect=' + window.location.origin + '/auth-redirect')

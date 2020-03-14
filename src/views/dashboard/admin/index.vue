@@ -88,9 +88,57 @@ export default {
   methods: {
     handleSetLineChartData(type) {
       if (type === 'newResults') {
-        let query = {f: 'tcid exec.verdict'}
+        const ourDate = new Date();
+        //Change it so that it is 7 days in the past.
+        const pastDate = ourDate.getDate() - 7;
+        ourDate.setDate(pastDate);
+
+        const query = {
+          q: JSON.stringify([
+            {
+              $match: {
+                'cre.time': {
+                  $gt: ourDate.toISOString()
+                }
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  'day': {'$subtract': [
+                      '$cre.time',
+                      {'$add': [
+                          {'$multiply': [{'$hour': '$cre.time'}, 3600000]},
+                          {'$multiply': [{'$minute': '$cre.time'}, 60000]},
+                          {'$multiply': [{'$second': '$cre.time'}, 1000]},
+                          {'$millisecond': '$cre.time'}
+                        ]}
+                    ]},
+                },
+                count: {$sum: 1}
+              }
+            },
+            {
+              $project: {
+                date: '$_id.day',
+                count: '$count'
+              }
+            }
+          ]), t: 'aggregate'}
         console.log('newResults: ', query)
-        resultsList(query).then(data => this.lineChartData = data)
+        resultsList(query)
+                .then(({data}) => data)
+                .then(data => {
+                  console.log(data)
+                  const chartData = this._.reduce(data, (acc, item) => {
+                    acc.actualData.push(item.count)
+                    return acc
+                  }, {
+                    expectedData: [],
+                    actualData: []
+                  })
+                  this.lineChartData = chartData
+                })
         return
       } else {
         this.lineChartData = lineChartData[type]

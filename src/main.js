@@ -1,5 +1,6 @@
 import Vue from 'vue'
-
+import VueLodash from 'vue-lodash'
+import lodash from 'lodash'
 import Cookies from 'js-cookie'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
@@ -35,6 +36,9 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
+
+Vue.use(VueLodash, { lodash: lodash })
+
 
 // register global utility filters
 Object.keys(filters).forEach(key => {

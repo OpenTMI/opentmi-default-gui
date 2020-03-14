@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             Results count
           </div>
-          <div class="card-panel-num" v-text="111" />
+          <count-to :start-val="0" :end-val="results.count" :duration="2000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             Events
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="events.count" :duration="2000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             Test Cases
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="tests.count" :duration="2000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             Resources
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="resources.count" :duration="2000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,6 +57,10 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import {resultsList} from "../../../../api/results";
+import {testList} from "../../../../api/testcases";
+import {resourceList} from "../../../../api/resources";
+import {eventList} from "../../../../api/events";
 
 export default {
   name: 'PanelGroup',
@@ -65,8 +69,34 @@ export default {
   },
   data() {
     return {
-      count: '123'
+      results: {count: 0},
+      tests: {count: 0},
+      resources: {count: 0},
+      events: {count: 0}
     }
+  },
+  created() {
+    // find out results count
+    resultsList({t: 'count'})
+            .then(({data}) => {
+              const {count} = data
+              this.results.count = count
+            })
+    testList({t: 'count'})
+            .then(({data}) => {
+              const {count} = data
+              this.tests.count = count
+            })
+    resourceList({t: 'count'})
+            .then(({data}) => {
+              const {count} = data
+              this.resources.count = count
+            })
+    eventList({t: 'count'})
+            .then(({data}) => {
+              const {count} = data
+              this.events.count = count
+            })
   },
   methods: {
     handleSetLineChartData(type) {

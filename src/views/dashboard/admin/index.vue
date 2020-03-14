@@ -21,7 +21,7 @@
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <bar-chart />
+          <bar-chart :chart-data="barChartData"/>
         </div>
       </el-col>
     </el-row>
@@ -36,6 +36,9 @@
 
 <script>
 import { resultsList } from '@/api/results'
+import { eventList } from '@/api/events'
+import { resourceList } from '@/api/resources'
+import { testList } from '@/api/testcases'
 import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
@@ -43,7 +46,6 @@ import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import ResultsTable from './components/ResultsTable'
-import {eventList} from "../../../api/events";
 
 
 const lineChartData = {
@@ -62,8 +64,8 @@ const lineChartData = {
 }
 
 const raddarChartData = []
-
 const pieChartData = []
+const barChartData = []
 
 export default {
   name: 'DashboardAdmin',
@@ -104,7 +106,6 @@ export default {
       return ourDate
     },
     handleSetLineChartData(type) {
-
       const query = {
         q: JSON.stringify([
           {
@@ -146,6 +147,71 @@ export default {
               .then(({data}) => data)
               .then(data => {
                 this.lineChartData = this.mapData(data)
+              })
+    },
+    getBarChartData() {
+      /*this.barChartData = [{
+        name: 'pageA',
+        data: [79, 52, 200, 334, 390, 330, 220],
+      }, {
+        name: 'pageB',
+        data: [80, 52, 200, 334, 390, 330, 220],
+      }, {
+        name: 'pageC',
+        data: [30, 52, 200, 334, 390, 330, 220],
+      }]*/
+      console.log('getPieChartData')
+      const query = {
+        q: JSON.stringify([
+          {
+            $match: {
+              'cre.time': {
+                $gt: this.lastWeekDate().toISOString()
+              }
+            }
+          },
+          {
+            $group: {
+              _id: {
+                day: this.getDayGroup('$cre.time'),
+                verdict: '$exec.verdict'
+              },
+              count: {$sum: 1}
+            }
+          },
+          {
+            $sort: {
+              '_id.day': -1,
+              'count': -1
+            }
+          },
+          {
+            $project: {
+              day: '$_id.day',
+              verdict: '$_id.verdict',
+              value: '$count'
+            }
+          }
+        ]), t: 'aggregate'}
+
+      resultsList(query)
+              .then(({data}) => data)
+              .then(data => {
+                const barData = this._.reduce(data, (acc, item) => {
+                  let obj = this._.find(acc, {name: item.verdict})
+                  if (!obj) {
+                    obj = {name: item.verdict, data: [0,0,0,0,0,0,0]}
+                    acc.push(obj)
+                  }
+                  let dayOfWeek = new Date(item.day).getDay();
+                  if (dayOfWeek === 0) {
+                    dayOfWeek = 7
+                  }
+                  dayOfWeek --
+                  obj.data[dayOfWeek] = item.value
+                  return acc
+                }, [])
+                this.barChartData = barData
               })
     },
     getPieChartData() {
@@ -259,13 +325,15 @@ export default {
   created() {
     this.getRaddarChartData()
     this.getPieChartData()
+    this.getBarChartData()
     this.handleSetLineChartData('newResults')
   },
   data() {
     return {
       lineChartData: lineChartData.newResults,
       raddarChartData: raddarChartData,
-      pieChartData: pieChartData
+      pieChartData: pieChartData,
+      barChartData: barChartData
     }
   }
 }

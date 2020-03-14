@@ -1,49 +1,37 @@
 <template>
   <div class="app-container">
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="ID" width="80">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
+
 
       <el-table-column width="180px" align="center" label="Date">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.cre.time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="120px" align="center" label="Author">
-        <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="100px" label="Importance">
-        <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>
-
-      <el-table-column class-name="status-col" label="Status" width="110">
+      <el-table-column align="center" label="Testcase" width="300">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
+          <span>{{ row.tcid }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="200px" align="center" label="Campaign">
+        <template slot-scope="scope">
+          <span>{{ scope.row.campaign }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column class-name="status-col" label="Verdict" width="110">
+        <template slot-scope="{row}">
+          <el-tag :type="row.exec.verdict | statusFilter">
+            {{ row.exec.verdict }}
           </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="300px" label="Title">
-        <template slot-scope="{row}">
-          <router-link :to="'/example/edit/'+row.id" class="link-type">
-            <span>{{ row.title }}</span>
-          </router-link>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="Actions" width="120">
         <template slot-scope="scope">
-          <router-link :to="'/example/edit/'+scope.row.id">
+          <router-link :to="'/result/edit/'+scope.row._id">
             <el-button type="primary" size="small" icon="el-icon-edit">
               Edit
             </el-button>
@@ -57,7 +45,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
+import { resultsList } from '@/api/results'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
@@ -66,9 +54,9 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        pass: 'success',
+        inconclusive: 'info',
+        fail: 'danger'
       }
       return statusMap[status]
     }
@@ -79,7 +67,7 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
-        page: 1,
+        page: 0,
         limit: 20
       }
     }
@@ -90,11 +78,22 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-        this.listLoading = false
-      })
+      resultsList({t: 'count'})
+              .then(({data}) => {
+                this.total = data.count
+                const query = this._.clone(this.listQuery)
+                query.l = query.limit
+                query.sk = query.page * query.limit
+                query.sort = {'cre.time': -1}
+                this._.unset(query, 'limit')
+                this._.unset(query, 'page')
+                return resultsList(query)
+              })
+              .then(({data}) => {
+                console.log(data)
+                this.list = data
+                this.listLoading = false
+              })
     }
   }
 }

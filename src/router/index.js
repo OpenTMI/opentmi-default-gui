@@ -178,7 +178,7 @@ export const asyncRoutes = [
     name: 'Results',
     meta: {
       title: 'Result',
-      icon: 'example'
+      icon: 'result'
     },
     children: [
       {
@@ -188,7 +188,7 @@ export const asyncRoutes = [
         meta: { title: 'Create Result', icon: 'edit' }
       },
       {
-        path: 'edit/:id(\\d+)',
+        path: 'edit/:id(\\s+)',
         component: () => import('@/views/result/edit'),
         name: 'EditResult',
         meta: { title: 'Edit Result', noCache: true, activeMenu: '/result/list' },
@@ -198,7 +198,7 @@ export const asyncRoutes = [
         path: 'list',
         component: () => import('@/views/result/list'),
         name: 'ResultList',
-        meta: { title: 'Resul List', icon: 'list' }
+        meta: { title: 'Result List', icon: 'list' }
       }
     ]
   },

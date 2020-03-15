@@ -6,6 +6,8 @@ import VuePivottable from 'vue-pivottable'
 import moment from 'moment'
 import VueMoment from 'vue-moment'
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
+import locale from 'element-ui/lib/locale';
+import lang from 'element-ui/lib/locale/lang/en';
 
 import Element from 'element-ui'
 import './styles/element-variables.scss'
@@ -42,6 +44,9 @@ Vue.use(Element, {
 Vue.use(VueLodash, {lodash});
 Vue.use(VuePivottable)
 Vue.use(VueMoment, {moment});
+
+// configure language
+locale.use(lang)
 
 // register global utility filters
 Object.keys(filters).forEach(key => {

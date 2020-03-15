@@ -1,7 +1,18 @@
 <template>
   <div class="app-container">
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
 
+    <div class="filter-container">
+      <el-input v-model="listQuery.tcid" placeholder="Tcid" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.campaign" placeholder="Campaign" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery['exec.verdict']" placeholder="Verdict" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="item in ['pass', 'fail', 'inconclusive', 'block', 'error', 'skip']" :key="item" :label="item" :value="item" />
+      </el-select>
+      <el-input v-model="listQuery['exec.duts.0.model']" placeholder="Dut Model" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        Search
+      </el-button>
+    </div>
+    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
 
       <el-table-column width="180px" align="center" label="Date">
         <template slot-scope="scope">
@@ -26,6 +37,12 @@
           <el-tag :type="row.exec.verdict | statusFilter">
             {{ row.exec.verdict }}
           </el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="200px" align="center" label="Dut Model">
+        <template slot-scope="{row}">
+          <span>{{ row.exec.duts[0].model }}</span>
         </template>
       </el-table-column>
 
@@ -76,6 +93,10 @@ export default {
     this.getList()
   },
   methods: {
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    },
     getList() {
       this.listLoading = true
       resultsList({t: 'count'})
@@ -90,7 +111,6 @@ export default {
                 return resultsList(query)
               })
               .then(({data}) => {
-                console.log(data)
                 this.list = data
                 this.listLoading = false
               })

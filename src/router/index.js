@@ -204,14 +204,14 @@ export const asyncRoutes = [
         path: 'Analyse',
         component: () => import('@/views/result/pivot'),
         name: 'ResultAnalyse',
-        meta: { title: 'Result Analysis', icon: 'list' }
-      }/*,
+        meta: { title: 'Result Analysis', icon: 'chart' }
+      },
       {
         path: 'Tree',
-        component: () => import('@/views/result/list'),
+        component: () => import('@/views/result/tree'),
         name: 'ResultTree',
-        meta: { title: 'Result Tree', icon: 'list' }
-      }*/
+        meta: { title: 'Result Tree', icon: 'tree' }
+      }
     ]
   },
   {

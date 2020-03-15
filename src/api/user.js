@@ -8,6 +8,13 @@ export function login(data) {
   })
 }
 
+export function githubId() {
+  return request({
+    url: '/auth/github/id',
+    method: 'get'
+  })
+}
+
 export function getInfo() {
   return request({
     url: '/auth/me',

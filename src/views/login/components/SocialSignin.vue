@@ -4,35 +4,47 @@
       <span class="github-svg-container"><svg-icon icon-class="github" class="icon" /></span>
       GitHub
     </div>
+    <!--
     <div class="sign-btn" @click="googleHandleClick('google')">
       <span class="google-svg-container"><svg-icon icon-class="google" class="icon" /></span>
       Google
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-// import openWindow from '@/utils/open-window'
+import openWindow from '@/utils/open-window'
+import { githubId } from '@/api/user'
 
 export default {
   name: 'SocialSignin',
+  created() {
+    this.loadAuthInfo()
+  },
+  data() {
+    return {
+      githubId: ''
+    }
+  },
   methods: {
-    githubHandleClick(thirdpart) {
-      alert('not implemented')
-      // this.$store.commit('SET_AUTH_TYPE', thirdpart)
-      // const appid = 'xxxxx'
-      // const redirect_uri = encodeURIComponent('xxx/redirect?redirect=' + window.location.origin + '/auth-redirect')
-      // const url = 'https://open.weixin.qq.com/connect/qrconnect?appid=' + appid + '&redirect_uri=' + redirect_uri + '&response_type=code&scope=snsapi_login#wechat_redirect'
-      // openWindow(url, thirdpart, 540, 540)
+    loadAuthInfo() {
+      githubId().then(({data}) => {
+        this.githubId = data.clientID
+      })
     },
+    githubHandleClick(thirdpart) {
+      this.$store.commit('SET_AUTH_TYPE', thirdpart)
+      const url = `https://github.com/login/oauth/authorize?client_id=${this.githubId}&scope=read:org`
+      openWindow(url, thirdpart, 540, 540)
+    },/*
     googleHandleClick(thirdpart) {
-      alert('ok')
+      alert('not implemented')
       // this.$store.commit('SET_AUTH_TYPE', thirdpart)
       // const client_id = 'xxxxx'
       // const redirect_uri = encodeURIComponent('xxx/redirect?redirect=' + window.location.origin + '/auth-redirect')
       // const url = 'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=' + client_id + '&redirect_uri=' + redirect_uri
       // openWindow(url, thirdpart, 540, 540)
-    }
+    }*/
   }
 }
 </script>

@@ -181,7 +181,7 @@ export const asyncRoutes = [
       icon: 'result'
     },
     children: [
-      {
+      /*{
         path: 'result',
         component: () => import('@/views/result/create'),
         name: 'CreateResult',
@@ -193,7 +193,7 @@ export const asyncRoutes = [
         name: 'EditResult',
         meta: { title: 'Edit Result', noCache: true, activeMenu: '/result/list' },
         hidden: true
-      },
+      },*/
       {
         path: 'list',
         component: () => import('@/views/result/list'),
@@ -205,13 +205,50 @@ export const asyncRoutes = [
         component: () => import('@/views/result/pivot'),
         name: 'ResultAnalyse',
         meta: { title: 'Result Analysis', icon: 'list' }
-      },
+      }/*,
       {
         path: 'Tree',
         component: () => import('@/views/result/list'),
         name: 'ResultTree',
         meta: { title: 'Result Tree', icon: 'list' }
-      }
+      }*/
+    ]
+  },
+  {
+    path: '/testcases',
+    component: Layout,
+    redirect: '/testcases/list',
+    name: 'Testcases',
+    meta: {
+      title: 'Testcases',
+      icon: 'testcase'
+    },
+    children: [
+      /*{
+        path: 'testcase',
+        component: () => import('@/views/testcase/create'),
+        name: 'CreateTestcase',
+        meta: { title: 'Create TestCase', icon: 'edit' }
+      },
+      {
+        path: 'edit/:id(\\s+)',
+        component: () => import('@/views/testcase/edit'),
+        name: 'EditTestcase',
+        meta: { title: 'Edit TestCase', noCache: true, activeMenu: '/testcase/list' },
+        hidden: true
+      },*/
+      {
+        path: 'list',
+        component: () => import('@/views/testcase/list'),
+        name: 'TestcaseList',
+        meta: { title: 'Testcase List', icon: 'list' }
+      }/*,
+      {
+        path: 'Tree',
+        component: () => import('@/views/testcase/tree'),
+        name: 'TestcaseTree',
+        meta: { title: 'Testcase Tree', icon: 'list' }
+      }*/
     ]
   },
 /*
@@ -302,20 +339,21 @@ export const asyncRoutes = [
         meta: { title: '404', noCache: true }
       }
     ]
-  },
+  },*/
 
   {
-    path: '/error-log',
+    path: '/log',
     component: Layout,
     children: [
       {
         path: 'log',
-        component: () => import('@/views/error-log/index'),
-        name: 'ErrorLog',
-        meta: { title: 'Error Log', icon: 'bug' }
+        component: () => import('@/views/logs/index'),
+        name: 'Log',
+        meta: { title: 'Log', icon: 'bug' }
       }
     ]
   },
+  /*
 
   {
     path: '/excel',

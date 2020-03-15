@@ -6,12 +6,12 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 
-/* Router Modules */
+/* Router Modules
 import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
-
+*/
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -199,6 +199,18 @@ export const asyncRoutes = [
         component: () => import('@/views/result/list'),
         name: 'ResultList',
         meta: { title: 'Result List', icon: 'list' }
+      },
+      {
+        path: 'Analyse',
+        component: () => import('@/views/result/pivot'),
+        name: 'ResultAnalyse',
+        meta: { title: 'Result Analysis', icon: 'list' }
+      },
+      {
+        path: 'Tree',
+        component: () => import('@/views/result/list'),
+        name: 'ResultTree',
+        meta: { title: 'Result Tree', icon: 'list' }
       }
     ]
   },

@@ -2,8 +2,9 @@ import Vue from 'vue'
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
 import Cookies from 'js-cookie'
-import Vue from 'vue'
 import VuePivottable from 'vue-pivottable'
+import moment from 'moment'
+import VueMoment from 'vue-moment'
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 
 import Element from 'element-ui'
@@ -30,16 +31,17 @@ import * as filters from './filters' // global filters
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-if (process.env.NODE_ENV === 'production') {
+/*if (process.env.NODE_ENV === 'production') {
   const { mockXHR } = require('../mock')
-  //mockXHR()
-}
+  mockXHR()
+}*/
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
-Vue.use(VueLodash, { lodash: lodash })
+Vue.use(VueLodash, {lodash});
 Vue.use(VuePivottable)
+Vue.use(VueMoment, {moment});
 
 // register global utility filters
 Object.keys(filters).forEach(key => {

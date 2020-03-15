@@ -67,6 +67,7 @@
     "vue": "2.6.10",
     "vue-count-to": "1.0.13",
     "vue-lodash": "^2.1.2",
+    "vue-moment": "^4.1.0",
     "vue-pivottable": "^0.3.63",
     "vue-router": "3.0.2",
     "vue-splitpane": "1.0.4",

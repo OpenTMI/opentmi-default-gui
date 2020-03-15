@@ -2,13 +2,15 @@ import Vue from 'vue'
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
 import Cookies from 'js-cookie'
-
+import Vue from 'vue'
+import VuePivottable from 'vue-pivottable'
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 
 import Element from 'element-ui'
 import './styles/element-variables.scss'
 
 import '@/styles/index.scss' // global css
+import 'vue-pivottable/dist/vue-pivottable.css'
 
 import App from './App'
 import store from './store'
@@ -36,9 +38,8 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
-
 Vue.use(VueLodash, { lodash: lodash })
-
+Vue.use(VuePivottable)
 
 // register global utility filters
 Object.keys(filters).forEach(key => {

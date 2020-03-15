@@ -49,7 +49,7 @@ import { resultsList } from '@/api/results'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
-  name: 'ArticleList',
+  name: 'ResultList',
   components: { Pagination },
   filters: {
     statusFilter(status) {

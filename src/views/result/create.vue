@@ -3,11 +3,11 @@
 </template>
 
 <script>
-import ArticleDetail from './components/ResultDetail'
+import ResultDetail from './components/ResultDetail'
 
 export default {
-  name: 'CreateArticle',
-  components: { ArticleDetail }
+  name: 'CreateResult',
+  components: { ResultDetail }
 }
 </script>
 

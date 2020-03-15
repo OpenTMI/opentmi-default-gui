@@ -101,7 +101,7 @@ const defaultForm = {
 }
 
 export default {
-  name: 'ArticleDetail',
+  name: 'ResultDetail',
   components: { Tinymce, MDinput, Upload, Sticky, Warning, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
   props: {
     isEdit: {

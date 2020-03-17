@@ -16,26 +16,38 @@ export default {
     data() {
         return {
             treeData: [],
-            loadData: (node, resolve) => {
-                const id = node.data.id ? node.data.id : 0
-                const level = node.data.level
-                if (id === 0) {
-                    this.getCampaigns().then(resolve)
-                } else if (level === 0) {
-                    const {campaign} = node.data
-                    this.getJobs(campaign).then(resolve)
-                } else if (level === 1) {
-                    const {campaign, job} = node.data
-                    this.getTests(campaign, job).then(resolve)
-                } else if (level === 2) {
-                    const {campaign, job, tcid} = node.data
-                    this.getResults(campaign, job, tcid).then(resolve)
-                }
-            },
+            loadData: this._.debounce(this._loadData, 250)
         }
     },
-
     methods: {
+        _loadData(node, resolve) {
+            const id = node.data.id ? node.data.id : 0
+            const {level, type, filters = {}} = node.data
+            if (id === 0) {
+                this.getRoot().then(resolve)
+            } else if (type === 'tests') {
+                if (level === 0) {
+                    const options = {level: 1, field: 'tcid', type, filters}
+                    this.getDistinct(options).then(resolve)
+                } else if (level === 1) {
+                    const options = {level: 2, field: 'exec.duts.0.model', type, filters}
+                    this.getDistinct(options).then(resolve)
+                }  else if (level === 1) {
+                    const options = {level: 2, field: 'exec.verdict', type, filters}
+                    return this.getDistinct(options).then(resolve)
+                }  else if (level === 2) {
+                    const options = {level: 3, field: 'exec.verdict', type, filters}
+                    return this.getDistinct(options).then(resolve)
+                }  else if (level === 3) {
+                    const icon = 'fa fa-check icon-state-success'
+                    const isLeaf = true
+                    const options = {level: 3, field: 'job.id', type, filters, isLeaf, icon}
+                    return this.getDistinct(options).then(resolve)
+                }
+            } else {
+                resolve([])
+            }
+        },
         distinct(filters, field) {
             const query = {
                 t: 'distinct',
@@ -47,66 +59,29 @@ export default {
             }
             return this._.merge(query, filters)
         },
-        getCampaigns() {
-            const query = this.distinct({}, 'campaign')
-            return resultsList(query)
-                .then(({data}) => {
-                    const treeData = this._.map(data, item => ({
-                        text: item,
-                        level: 0,
-                        campaign: item,
-                        isLeaf: false
-                    }))
-                    return treeData
-                })
+        getRoot() {
+            return Promise.resolve([
+                {text: 'tests', level: 0, type: 'tests', isLeaf: false},
+                //{text: 'campaigns', level: 0, type: 'campaign', isLeaf: false},
+                //{text: 'dut models', level: 0, type: 'dutModel', isLeaf: false},
+            ])
         },
-        getJobs(campaign) {
-            const query = this.distinct({campaign}, 'job.id')
+        getDistinct({level, field, filters = {}, type, isLeaf = false, icon}) {
+            const query = this.distinct(filters, field)
             return resultsList(query)
                 .then(({data}) => {
-                    const treeData = this._.map(data, item => ({
-                        text: item,
-                        level: 1,
-                        campaign,
-                        job: item,
-                        isLeaf: false
-                    }))
-                    return treeData
-                })
-        },
-        getTests(campaign, job) {
-            const query = this.distinct({campaign, 'job.id': job}, 'tcid')
-            return resultsList(query)
-                .then(({data}) => {
-                    const treeData = this._.map(data, item => ({
-                        text: item,
-                        level: 2,
-                        campaign,
-                        job,
-                        tcid: item,
-                        isLeaf: false
-                    }))
-                    return treeData
-                })
-        },
-        getResults(campaign, job, tcid) {
-            const query = {
-                campaign,
-                'job.id': job,
-                tcid,
-                s: {'cre.time': 1},
-            }
-            return resultsList(query)
-                .then(({data}) => {
-                    const treeData = this._.map(data, item => ({
-                        text: `${item.exec.verdict} - ${this._.get(item, 'exec.duts.0.model', '')}`,
-                        level: 3,
-                        icon: 'fa fa-check icon-state-success',
-                        campaign,
-                        job,
-                        tcid,
-                        isLeaf: true
-                    }))
+                    const mapper = text => {
+                        const filters = this._.merge(filters, {[field]: text})
+                        return {
+                            text,
+                            level,
+                            isLeaf,
+                            icon,
+                            type,
+                            filters
+                        }
+                    }
+                    const treeData = this._.map(data, mapper)
                     return treeData
                 })
         },

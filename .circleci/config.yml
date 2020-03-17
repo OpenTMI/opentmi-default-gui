@@ -47,9 +47,9 @@ defaults: &defaults
     - run:
         name: test-unit
         command: npm run test-unit
-        environment:
-          REPORTER: mocha-circleci-reporter
-          MOCHA_FILE: junit/test-results.xml
+    #    environment:
+    #      REPORTER: mocha-circleci-reporter
+    #      MOCHA_FILE: junit/test-results.xml
     #- run:
     #    name: coveralls
     #    command: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

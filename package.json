@@ -29,8 +29,11 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "winston": "*",
-    "nconf": "*",
-    "lodash": "*"
+    "lodash": "^4.17.15",
+    "nconf": "^0.10.0",
+    "moment": "^2.24.0",
+    "mongoose": "^5.9.4",
+    "express": "^4.17.1",
+    "opentmi-addon": "^0.2.0"
   }
 }

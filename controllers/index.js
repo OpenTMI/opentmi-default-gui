@@ -1,15 +1,13 @@
-const mongoose = require('mongoose');
 const moment = require('moment');
 const _ = require('lodash');
 const dns = require('dns');
-const logger = require('./../../../tools/logger');
-const eventBus = require('./../../../tools/eventBus');
-const Result = mongoose.model('Result');
 
 class DefaultGuiController {
-  constructor(server, io) {
+  constructor({server, io, logger, eventBus, mongoose}) {
+    this.Result = mongoose.model('Result');
     this._io = io;
     this._server = server;
+    this.logger = logger
     this.visitors = {
       'connected': {
         count: 0,
@@ -51,7 +49,7 @@ class DefaultGuiController {
   }
   onNewVisitor(meta, data) {
     this.visitors.connected.count++;
-    logger.info('new arrival: '+data.ip);
+    this.logger.info('new arrival: '+data.ip);
     if (!this.visitors.connected.clients[ data.ip ]) {
         this.visitors.connected.clients[ data.ip ] = {count: 0};
     }

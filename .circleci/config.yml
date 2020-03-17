@@ -46,7 +46,7 @@ defaults: &defaults
         command: npm run build:prod
     - run:
         name: test-unit
-        command: npm run test-unit
+        command: npm run test:unit
     #    environment:
     #      REPORTER: mocha-circleci-reporter
     #      MOCHA_FILE: junit/test-results.xml

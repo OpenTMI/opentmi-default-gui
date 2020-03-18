@@ -1,6 +1,6 @@
 <template>
   <div class="social-signup-container">
-    <div class="sign-btn" @click="githubHandleClick('github')">
+    <div class="sign-btn" @click="authenticate('github')">
       <span class="github-svg-container"><svg-icon icon-class="github" class="icon" /></span>
     </div>
     <!--
@@ -13,10 +13,12 @@
 
 <script>
 
-import request from '@/utils/request'
+import VueAxios from 'vue-axios'
+import axios from 'axios'
+Vue.use(VueAxios, axios)
 import { githubId } from '@/api/user'
 import Vue from 'vue'
-import GAuth from 'vue-google-oauth2'
+import VueAuthenticate from 'vue-authenticate'
 
 export default {
   name: 'SocialSignin',
@@ -31,40 +33,28 @@ export default {
     loadAuthInfo() {
       githubId()
         .then(({ data }) => {
-          const gauthOption = {
-            clientId: data.clientID,
-            scope: ['user:email', 'read:org']
+          const authOption = {
+            baseUrl: 'http://localhost:3000', // Your API domain
+            providers: {
+              github: {
+                clientId: data.clientID,
+                scope: ['user:email', 'read:org'],
+                redirectUri: 'http://localhost:3000/auth/github' // Your client app URL
+              }
+            }
           }
-          return Vue.use(GAuth, gauthOption)
+          Vue.use(VueAuthenticate, authOption)
         })
         .catch((error) => {
           console.error(error)
         })
     },
-    githubHandleClick(thirdpart) {
-      this.$store.commit('SET_AUTH_TYPE', thirdpart)
-      this.$gAuth.getAuthCode()
-        .then(authCode => request({
-          url: '/auth/google',
-          data: { code: authCode, redirect_uri: '/auth/github' },
-          method: 'post'
-        }))
-        .then(response => {
-          console.log(response)
-        })
-        .catch(error => {
-          console.error(error)
-          throw error
-        })
-    }/*
-    googleHandleClick(thirdpart) {
-      alert('not implemented')
-      // this.$store.commit('SET_AUTH_TYPE', thirdpart)
-      // const client_id = 'xxxxx'
-      // const redirect_uri = encodeURIComponent('xxx/redirect?redirect=' + window.location.origin + '/auth-redirect')
-      // const url = 'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=' + client_id + '&redirect_uri=' + redirect_uri
-      // openWindow(url, thirdpart, 540, 540)
-    }*/
+    authenticate(provider) {
+      this.$auth.authenticate(provider).then((data) => {
+        // Execute application logic after successful social authentication
+        console.log(data)
+      })
+    }
   }
 }
 </script>

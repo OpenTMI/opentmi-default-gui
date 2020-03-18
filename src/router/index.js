@@ -82,7 +82,7 @@ export const constantRoutes = [
         meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
       }
     ]
-  },/*
+  }, /*
   {
     path: '/documentation',
     component: Layout,
@@ -181,7 +181,7 @@ export const asyncRoutes = [
       icon: 'result'
     },
     children: [
-      /*{
+      /* {
         path: 'result',
         component: () => import('@/views/result/create'),
         name: 'CreateResult',
@@ -224,7 +224,7 @@ export const asyncRoutes = [
       icon: 'testcase'
     },
     children: [
-      /*{
+      /* {
         path: 'testcase',
         component: () => import('@/views/testcase/create'),
         name: 'CreateTestcase',
@@ -251,7 +251,7 @@ export const asyncRoutes = [
       }*/
     ]
   },
-/*
+  /*
   {
     path: '/icon',
     component: Layout,

@@ -68,7 +68,7 @@ export default {
     }
     .icon {
       color: #000;
-      font-size: 24px;
+      font-size: 50px;
       margin-top: 8px;
     }
     .github-svg-container,

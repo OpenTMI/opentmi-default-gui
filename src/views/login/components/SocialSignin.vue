@@ -2,7 +2,6 @@
   <div class="social-signup-container">
     <div class="sign-btn" @click="githubHandleClick('github')">
       <span class="github-svg-container"><svg-icon icon-class="github" class="icon" /></span>
-      GitHub
     </div>
     <!--
     <div class="sign-btn" @click="googleHandleClick('google')">
@@ -13,30 +12,51 @@
 </template>
 
 <script>
-import openWindow from '@/utils/open-window'
+
+import request from '@/utils/request'
 import { githubId } from '@/api/user'
+import Vue from 'vue'
+import GAuth from 'vue-google-oauth2'
 
 export default {
   name: 'SocialSignin',
+  data() {
+    return {
+    }
+  },
   created() {
     this.loadAuthInfo()
   },
-  data() {
-    return {
-      githubId: ''
-    }
-  },
   methods: {
     loadAuthInfo() {
-      githubId().then(({data}) => {
-        this.githubId = data.clientID
-      })
+      githubId()
+        .then(({ data }) => {
+          const gauthOption = {
+            clientId: data.clientID,
+            scope: ['user:email', 'read:org']
+          }
+          return Vue.use(GAuth, gauthOption)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     },
     githubHandleClick(thirdpart) {
       this.$store.commit('SET_AUTH_TYPE', thirdpart)
-      const url = `https://github.com/login/oauth/authorize?client_id=${this.githubId}&scope=read:org`
-      openWindow(url, thirdpart, 540, 540)
-    },/*
+      this.$gAuth.getAuthCode()
+        .then(authCode => request({
+          url: '/auth/google',
+          data: { code: authCode, redirect_uri: '/auth/github' },
+          method: 'post'
+        }))
+        .then(response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.error(error)
+          throw error
+        })
+    }/*
     googleHandleClick(thirdpart) {
       alert('not implemented')
       // this.$store.commit('SET_AUTH_TYPE', thirdpart)
@@ -57,7 +77,7 @@ export default {
       cursor: pointer;
     }
     .icon {
-      color: #fff;
+      color: #000;
       font-size: 24px;
       margin-top: 8px;
     }
@@ -74,7 +94,7 @@ export default {
       margin-right: 5px;
     }
     .github-svg-container {
-      background-color: #24da70;
+      background-color: #ffffff;
     }
     .google-svg-container {
       background-color: #6BA2D6;

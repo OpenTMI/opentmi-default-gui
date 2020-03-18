@@ -34,12 +34,12 @@ export default {
       githubId()
         .then(({ data }) => {
           const authOption = {
-            baseUrl: 'http://localhost:3000', // Your API domain
+            baseUrl: window.location.origin, // Your API domain
             providers: {
               github: {
                 clientId: data.clientID,
-                scope: ['user:email', 'read:org'],
-                redirectUri: 'http://localhost:3000/auth/github' // Your client app URL
+                scope: ['user:email', 'read:user', 'read:org'],
+                redirectUri: `${window.location.origin}` // Your client app URL
               }
             }
           }

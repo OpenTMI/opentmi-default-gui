@@ -5,6 +5,10 @@ import Cookies from 'js-cookie'
 import VuePivottable from 'vue-pivottable'
 import moment from 'moment'
 import VueMoment from 'vue-moment'
+import SchemaJsonVue from 'schema-json-vue'
+import VueSocketIOExt from 'vue-socket.io-extended'
+import io from 'socket.io-client'
+
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 import locale from 'element-ui/lib/locale'
 import lang from 'element-ui/lib/locale/lang/en'
@@ -14,6 +18,7 @@ import './styles/element-variables.scss'
 
 import '@/styles/index.scss' // global css
 import 'vue-pivottable/dist/vue-pivottable.css'
+import 'schema-json-vue/lib/schema-json-vue.css'
 
 import App from './App'
 import store from './store'
@@ -33,10 +38,10 @@ import * as filters from './filters' // global filters
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-/* if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
-}*/
+if (process.env.NODE_ENV === 'production') {
+  // const { mockXHR } = require('../mock')
+  // mockXHR()
+}
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
@@ -44,6 +49,8 @@ Vue.use(Element, {
 Vue.use(VueLodash, { lodash })
 Vue.use(VuePivottable)
 Vue.use(VueMoment, { moment })
+Vue.use(SchemaJsonVue)
+Vue.use(VueSocketIOExt, io(process.env.VUE_APP_BASE_API, { autoConnect: false }))
 
 // configure language
 locale.use(lang)

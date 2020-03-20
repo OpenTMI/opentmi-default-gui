@@ -9,5 +9,5 @@ export default {
   name: 'CreateResult',
   components: { ResultDetail }
 }
-</script>
 
+</script>

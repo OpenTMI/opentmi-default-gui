@@ -99,21 +99,21 @@ export default {
     },
     getList() {
       this.listLoading = true
-      resultsList({t: 'count'})
-              .then(({data}) => {
-                this.total = data.count
-                const query = this._.clone(this.listQuery)
-                query.l = query.limit
-                query.sk = query.page * query.limit
-                query.sort = {'cre.time': -1}
-                this._.unset(query, 'limit')
-                this._.unset(query, 'page')
-                return resultsList(query)
-              })
-              .then(({data}) => {
-                this.list = data
-                this.listLoading = false
-              })
+      resultsList({ t: 'count' })
+        .then(({ data }) => {
+          this.total = data.count
+          const query = this._.clone(this.listQuery)
+          query.l = query.limit
+          query.sk = query.page * query.limit
+          query.sort = { 'cre.time': -1 }
+          this._.unset(query, 'limit')
+          this._.unset(query, 'page')
+          return resultsList(query)
+        })
+        .then(({ data }) => {
+          this.list = data
+          this.listLoading = false
+        })
     }
   }
 }

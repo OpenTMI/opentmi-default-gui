@@ -40,8 +40,8 @@ export default {
   },
   methods: {
     fetchData() {
-      resultsList({l: 8, s: {'cre.time': -1}, f: '-_id tcid exec.verdict'})
-        .then(({data}) => {
+      resultsList({ l: 8, s: { 'cre.time': -1 }, f: '-_id tcid exec.verdict' })
+        .then(({ data }) => {
           this.list = data
         })
     }

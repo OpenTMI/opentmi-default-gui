@@ -33,13 +33,14 @@ export default {
     loadAuthInfo() {
       githubId()
         .then(({ data }) => {
+          console.log(window.location.origin)
           const authOption = {
             baseUrl: window.location.origin, // Your API domain
             providers: {
               github: {
                 clientId: data.clientID,
                 scope: ['user:email', 'read:user', 'read:org'],
-                redirectUri: `${window.location.origin}` // Your client app URL
+                redirectUri: `${window.location.origin}/auth/github` // Your client app URL
               }
             }
           }
@@ -50,10 +51,15 @@ export default {
         })
     },
     authenticate(provider) {
-      this.$auth.authenticate(provider).then((data) => {
-        // Execute application logic after successful social authentication
-        console.log(data)
-      })
+      this.$auth.authenticate(provider)
+        .then((data) => {
+          // Execute application logic after successful social authentication
+          console.log('login success', data)
+        })
+        .catch((error) => {
+          console.error(`login failed ${error.message}`)
+          console.error(error)
+        })
     }
   }
 }

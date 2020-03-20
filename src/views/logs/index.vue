@@ -11,7 +11,7 @@
 
 export default {
   name: 'ErrorLog',
-  components: {  }
+  components: { }
 }
 </script>
 

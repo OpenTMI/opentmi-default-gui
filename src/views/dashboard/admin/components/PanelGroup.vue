@@ -57,10 +57,10 @@
 
 <script>
 import CountTo from 'vue-count-to'
-import {resultsList} from "../../../../api/results";
-import {testList} from "../../../../api/testcases";
-import {resourceList} from "../../../../api/resources";
-import {eventList} from "../../../../api/events";
+import { resultsList } from '../../../../api/results'
+import { testList } from '../../../../api/testcases'
+import { resourceList } from '../../../../api/resources'
+import { eventList } from '../../../../api/events'
 
 export default {
   name: 'PanelGroup',
@@ -69,34 +69,34 @@ export default {
   },
   data() {
     return {
-      results: {count: 0},
-      tests: {count: 0},
-      resources: {count: 0},
-      events: {count: 0}
+      results: { count: 0 },
+      tests: { count: 0 },
+      resources: { count: 0 },
+      events: { count: 0 }
     }
   },
   created() {
     // find out results count
-    resultsList({t: 'count'})
-            .then(({data}) => {
-              const {count} = data
-              this.results.count = count
-            })
-    testList({t: 'count'})
-            .then(({data}) => {
-              const {count} = data
-              this.tests.count = count
-            })
-    resourceList({t: 'count'})
-            .then(({data}) => {
-              const {count} = data
-              this.resources.count = count
-            })
-    eventList({t: 'count'})
-            .then(({data}) => {
-              const {count} = data
-              this.events.count = count
-            })
+    resultsList({ t: 'count' })
+      .then(({ data }) => {
+        const { count } = data
+        this.results.count = count
+      })
+    testList({ t: 'count' })
+      .then(({ data }) => {
+        const { count } = data
+        this.tests.count = count
+      })
+    resourceList({ t: 'count' })
+      .then(({ data }) => {
+        const { count } = data
+        this.resources.count = count
+      })
+    eventList({ t: 'count' })
+      .then(({ data }) => {
+        const { count } = data
+        this.events.count = count
+      })
   },
   methods: {
     handleSetLineChartData(type) {

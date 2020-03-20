@@ -1,5 +1,5 @@
 <template>
-  <article-detail :is-edit="true" />
+  <result-detail :is-edit="true" />
 </template>
 
 <script>

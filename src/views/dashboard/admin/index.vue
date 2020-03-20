@@ -11,17 +11,17 @@
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <raddar-chart  :chart-data="raddarChartData" />
+          <raddar-chart :chart-data="raddarChartData" />
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <pie-chart :chart-data="pieChartData"/>
+          <pie-chart :chart-data="pieChartData" />
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <bar-chart :chart-data="barChartData"/>
+          <bar-chart :chart-data="barChartData" />
         </div>
       </el-col>
     </el-row>
@@ -46,7 +46,6 @@ import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import ResultsTable from './components/ResultsTable'
-
 
 const lineChartData = {
   newResults: {
@@ -78,17 +77,31 @@ export default {
     BarChart,
     ResultsTable
   },
+  data() {
+    return {
+      lineChartData: lineChartData.newResults,
+      raddarChartData: raddarChartData,
+      pieChartData: pieChartData,
+      barChartData: barChartData
+    }
+  },
+  created() {
+    this.getRaddarChartData()
+    this.getPieChartData()
+    this.getBarChartData()
+    this.handleSetLineChartData('newResults')
+  },
   methods: {
     getDayGroup(field) {
-      return {'$subtract': [
-          field,
-          {'$add': [
-              {'$multiply': [{'$hour': field}, 3600000]},
-              {'$multiply': [{'$minute': field}, 60000]},
-              {'$multiply': [{'$second': field}, 1000]},
-              {'$millisecond': field}
-            ]}
-        ]}
+      return { '$subtract': [
+        field,
+        { '$add': [
+          { '$multiply': [{ '$hour': field }, 3600000] },
+          { '$multiply': [{ '$minute': field }, 60000] },
+          { '$multiply': [{ '$second': field }, 1000] },
+          { '$millisecond': field }
+        ] }
+      ] }
     },
     mapData(data, map = item => [item.date, item.count]) {
       return this._.reduce(data, (acc, item) => {
@@ -99,10 +112,10 @@ export default {
       })
     },
     lastWeekDate() {
-      const ourDate = new Date();
-      //Change it so that it is 7 days in the past.
-      const pastDate = ourDate.getDate() - 7;
-      ourDate.setDate(pastDate);
+      const ourDate = new Date()
+      // Change it so that it is 7 days in the past.
+      const pastDate = ourDate.getDate() - 7
+      ourDate.setDate(pastDate)
       return ourDate
     },
     handleSetLineChartData(type) {
@@ -118,11 +131,11 @@ export default {
           {
             $group: {
               _id: { day: this.getDayGroup('$cre.time') },
-              count: {$sum: 1}
+              count: { $sum: 1 }
             }
           },
           {
-            $sort: {'_id.day': -1}
+            $sort: { '_id.day': -1 }
           },
           {
             $project: {
@@ -130,9 +143,9 @@ export default {
               count: '$count'
             }
           }
-        ]), t: 'aggregate'}
+        ]), t: 'aggregate' }
 
-      let list;
+      let list
       if (type === 'newResults') {
         list = resultsList
       } else if (type === 'events') {
@@ -144,13 +157,13 @@ export default {
       }
 
       list(query)
-              .then(({data}) => data)
-              .then(data => {
-                this.lineChartData = this.mapData(data)
-              })
+        .then(({ data }) => data)
+        .then(data => {
+          this.lineChartData = this.mapData(data)
+        })
     },
     getBarChartData() {
-      /*this.barChartData = [{
+      /* this.barChartData = [{
         name: 'pageA',
         data: [79, 52, 200, 334, 390, 330, 220],
       }, {
@@ -176,7 +189,7 @@ export default {
                 day: this.getDayGroup('$cre.time'),
                 verdict: '$exec.verdict'
               },
-              count: {$sum: 1}
+              count: { $sum: 1 }
             }
           },
           {
@@ -192,27 +205,27 @@ export default {
               value: '$count'
             }
           }
-        ]), t: 'aggregate'}
+        ]), t: 'aggregate' }
 
       resultsList(query)
-              .then(({data}) => data)
-              .then(data => {
-                const barData = this._.reduce(data, (acc, item) => {
-                  let obj = this._.find(acc, {name: item.verdict})
-                  if (!obj) {
-                    obj = {name: item.verdict, data: [0,0,0,0,0,0,0]}
-                    acc.push(obj)
-                  }
-                  let dayOfWeek = new Date(item.day).getDay();
-                  if (dayOfWeek === 0) {
-                    dayOfWeek = 7
-                  }
-                  dayOfWeek --
-                  obj.data[dayOfWeek] = item.value
-                  return acc
-                }, [])
-                this.barChartData = barData
-              })
+        .then(({ data }) => data)
+        .then(data => {
+          const barData = this._.reduce(data, (acc, item) => {
+            let obj = this._.find(acc, { name: item.verdict })
+            if (!obj) {
+              obj = { name: item.verdict, data: [0, 0, 0, 0, 0, 0, 0] }
+              acc.push(obj)
+            }
+            let dayOfWeek = new Date(item.day).getDay()
+            if (dayOfWeek === 0) {
+              dayOfWeek = 7
+            }
+            dayOfWeek--
+            obj.data[dayOfWeek] = item.value
+            return acc
+          }, [])
+          this.barChartData = barData
+        })
     },
     getPieChartData() {
       console.log('getPieChartData')
@@ -230,7 +243,7 @@ export default {
               _id: {
                 campaign: '$campaign'
               },
-              count: {$sum: 1}
+              count: { $sum: 1 }
             }
           },
           {
@@ -239,13 +252,13 @@ export default {
               value: '$count'
             }
           }
-        ]), t: 'aggregate'}
+        ]), t: 'aggregate' }
 
       resultsList(query)
-              .then(({data}) => data)
-              .then(data => {
-                this.pieChartData = data
-              })
+        .then(({ data }) => data)
+        .then(data => {
+          this.pieChartData = data
+        })
     },
     getRaddarChartData() {
       const query = {
@@ -260,10 +273,10 @@ export default {
           {
             $group: {
               _id: {
-                  verdict: '$exec.verdict',
-                  campaign: '$campaign'
+                verdict: '$exec.verdict',
+                campaign: '$campaign'
               },
-              count: {$sum: 1}
+              count: { $sum: 1 }
             }
           },
           {
@@ -273,38 +286,33 @@ export default {
               count: '$count'
             }
           }
-        ]), t: 'aggregate'}
+        ]), t: 'aggregate' }
 
       resultsList(query)
-              .then(({data}) => data)
-              .then(data => {
-                const raddarData = this._.reduce(data, (acc, item) => {
-                  let obj = this._.find(acc, {name: item.campaign})
-                  if (!obj) {
-                    obj = {name: item.campaign, value: [0,0,0,0,0,0]}
-                    acc.push(obj)
-                  }
-                  if (item.verdict === 'pass') {
-                    obj.value[0] = item.count
-                  }
-                  else if (item.verdict === 'fail') {
-                    obj.value[1] = item.count
-                  }
-                  else if (item.verdict === 'inconclusive') {
-                    obj.value[2] = item.count
-                  }
-                  else if (item.verdict === 'block') {
-                    obj.value[3] = item.count
-                  }
-                  else if (item.verdict === 'error') {
-                    obj.value[4] = item.count
-                  }
-                  else if (item.verdict === 'skip') {
-                    obj.value[5] = item.count
-                  }
-                  return acc
-                }, [])
-                this.raddarChartData = raddarData/*[
+        .then(({ data }) => data)
+        .then(data => {
+          const raddarData = this._.reduce(data, (acc, item) => {
+            let obj = this._.find(acc, { name: item.campaign })
+            if (!obj) {
+              obj = { name: item.campaign, value: [0, 0, 0, 0, 0, 0] }
+              acc.push(obj)
+            }
+            if (item.verdict === 'pass') {
+              obj.value[0] = item.count
+            } else if (item.verdict === 'fail') {
+              obj.value[1] = item.count
+            } else if (item.verdict === 'inconclusive') {
+              obj.value[2] = item.count
+            } else if (item.verdict === 'block') {
+              obj.value[3] = item.count
+            } else if (item.verdict === 'error') {
+              obj.value[4] = item.count
+            } else if (item.verdict === 'skip') {
+              obj.value[5] = item.count
+            }
+            return acc
+          }, [])
+          this.raddarChartData = raddarData/* [
                   {
                     value: [5000, 7000, 12000, 0, 0, 0],
                     name: 'Allocated Budget'
@@ -318,22 +326,7 @@ export default {
                     name: 'Actual Spending'
                   }
                 ]*/
-              })
-
-    }
-  },
-  created() {
-    this.getRaddarChartData()
-    this.getPieChartData()
-    this.getBarChartData()
-    this.handleSetLineChartData('newResults')
-  },
-  data() {
-    return {
-      lineChartData: lineChartData.newResults,
-      raddarChartData: raddarChartData,
-      pieChartData: pieChartData,
-      barChartData: barChartData
+        })
     }
   }
 }

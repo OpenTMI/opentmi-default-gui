@@ -182,7 +182,7 @@ export default {
             message: 'Delete succed!'
           })
         })
-              // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console
         .catch(err => { console.error(err) })
     },
     generateTree(routes, basePath = '/', checkedKeys) {

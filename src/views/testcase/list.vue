@@ -2,7 +2,6 @@
   <div class="app-container">
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
 
-
       <el-table-column width="180px" align="center" label="Date">
         <template slot-scope="scope">
           <span>{{ scope.row.cre.time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -54,21 +53,21 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      testList({t: 'count'})
-              .then(({data}) => {
-                this.total = data.count
-                const query = this._.clone(this.listQuery)
-                query.l = query.limit
-                query.sk = query.page * query.limit
-                query.sort = {'cre.time': -1}
-                this._.unset(query, 'limit')
-                this._.unset(query, 'page')
-                return testList(query)
-              })
-              .then(({data}) => {
-                this.list = data
-                this.listLoading = false
-              })
+      testList({ t: 'count' })
+        .then(({ data }) => {
+          this.total = data.count
+          const query = this._.clone(this.listQuery)
+          query.l = query.limit
+          query.sk = query.page * query.limit
+          query.sort = { 'cre.time': -1 }
+          this._.unset(query, 'limit')
+          this._.unset(query, 'page')
+          return testList(query)
+        })
+        .then(({ data }) => {
+          this.list = data
+          this.listLoading = false
+        })
     }
   }
 }

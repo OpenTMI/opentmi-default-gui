@@ -234,7 +234,7 @@ export const asyncRoutes = [
         path: 'edit/:id(\\s+)',
         component: () => import('@/views/testcase/edit'),
         name: 'EditTestcase',
-        meta: { title: 'Edit TestCase', noCache: true, activeMenu: '/testcase/list' },
+        meta: { title: 'Edit TestCase', noCache: true, activeMenu: '/testcase/edit' },
         hidden: true
       },*/
       {
@@ -248,6 +248,43 @@ export const asyncRoutes = [
         component: () => import('@/views/testcase/tree'),
         name: 'TestcaseTree',
         meta: { title: 'Testcase Tree', icon: 'list' }
+      }*/
+    ]
+  },
+  {
+    path: '/resources',
+    component: Layout,
+    redirect: '/resources/list',
+    name: 'Resources',
+    meta: {
+      title: 'Resources',
+      icon: 'component'
+    },
+    children: [
+      {
+        path: 'resource',
+        component: () => import('@/views/resource/create'),
+        name: 'CreateResource',
+        meta: { title: 'Create TestCase', icon: 'edit' }
+      },
+      {
+        path: 'edit/:id(\\s+)',
+        component: () => import('@/views/resource/edit'),
+        name: 'EditResource',
+        meta: { title: 'Edit Resource', noCache: true, activeMenu: '/resource/edit' },
+        hidden: true
+      },
+      {
+        path: 'list',
+        component: () => import('@/views/resource/list'),
+        name: 'ResourceList',
+        meta: { title: 'Resource List', icon: 'list' }
+      }/*,
+      {
+        path: 'Tree',
+        component: () => import('@/views/resource/tree'),
+        name: 'ResourceTree',
+        meta: { title: 'Resource Tree', icon: 'list' }
       }*/
     ]
   },

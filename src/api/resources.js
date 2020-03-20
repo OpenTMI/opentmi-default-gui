@@ -14,3 +14,13 @@ export function resourceList(query) {
     params: query
   })
 }
+
+export function getSchema(_) {
+  return request({
+    url: `/api/v0/schemas/Resource.json`,
+    method: 'get'
+  }).then(({ data }) => {
+    const { schema } = data
+    return schema
+  })
+}

@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard-container">
-    <span>{{ $socket.connected ? 'Connected' : 'Disconnected' }}</span>
     <component :is="currentRole" />
   </div>
 </template>
@@ -26,7 +25,20 @@ export default {
   },
   sockets: {
     connect() {
-      console.log('socket connected')
+      this.$notify({
+        title: 'Online',
+        message: 'Connected to server',
+        type: 'success',
+        duration: 2000
+      })
+    },
+    disconnect() {
+      this.$notify({
+        title: 'Offline',
+        message: 'Disconnected',
+        type: 'warning',
+        duration: 2000
+      })
     },
     customEmit(val) {
       console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')

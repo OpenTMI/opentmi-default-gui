@@ -108,7 +108,7 @@ export default {
       if (this.sortBy) {
         query.s = { [this.sortBy]: this.sortDesc ? -1 : 1 }
       } else {
-        query.s = "{'cre.time': -1}"
+        query.s = '{"cre.time": -1}'
       }
       this._.unset(query, 'limit')
       this._.unset(query, 'page')

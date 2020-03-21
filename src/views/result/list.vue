@@ -1,131 +1,127 @@
 <template>
   <div class="app-container">
+    <b-table
+      id="my-table"
+      striped
+      hover
+      :items="getList"
+      :fields="fields"
+      :busy.sync="listLoading"
+      class="mt-3"
+      responsive="sm"
+      no-local-sorting
+      primary-key="_id"
+      :sort-changed="listLoading"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+    >
+      <!-- Optional default data cell scoped slot -->
+      <template v-slot:cell(cre.time)="data">
+        <i>{{ data.value | moment('MM/DD/YYYY hh:mm') }}</i>
+      </template>
+      <template v-slot:table-busy>
+        <div class="text-center text-danger my-2">
+          <b-spinner class="align-middle" />
+          <strong>Loading...</strong>
+        </div>
+      </template>
 
-    <div class="filter-container">
-      <el-input v-model="listQuery.tcid" placeholder="Tcid" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.campaign" placeholder="Campaign" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery['exec.verdict']" placeholder="Verdict" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in ['pass', 'fail', 'inconclusive', 'block', 'error', 'skip']" :key="item" :label="item" :value="item" />
-      </el-select>
-      <el-input v-model="listQuery['exec.duts.0.model']" placeholder="Dut Model" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
-      </el-button>
-    </div>
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-
-      <el-table-column width="180px" align="center" label="Date">
-        <template slot-scope="scope">
-          <span>{{ scope.row.cre.time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Testcase" width="300">
-        <template slot-scope="{row}">
-          <span>{{ row.tcid }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="200px" align="center" label="Campaign">
-        <template slot-scope="scope">
-          <span>{{ scope.row.campaign }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column class-name="status-col" label="Verdict" width="110">
-        <template slot-scope="{row}">
-          <el-tag :type="row.exec.verdict | statusFilter">
-            {{ row.exec.verdict }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="200px" align="center" label="Dut Model">
-        <template slot-scope="{row}">
-          <span>{{ row.exec.duts[0].model }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Actions" width="120">
-        <template slot-scope="scope">
-          <router-link :to="'/result/edit/'+scope.row._id">
-            <el-button type="primary" size="small" icon="el-icon-edit">
-              Edit
-            </el-button>
-          </router-link>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+      <!-- Details button -->
+      <template v-slot:cell(show_details)="row">
+        <b-button size="sm" class="mr-2" @click="row.toggleDetails">
+          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+        </b-button>
+      </template>
+      <!-- details view -->
+      <template v-slot:row-details="row">
+        <pre>{{ row.item | pretty }}</pre>
+      </template>
+    </b-table>
+    <b-pagination
+      v-model="listQuery.page"
+      :total-rows="total"
+      :per-page="listQuery.limit"
+      aria-controls="my-table"
+      first-number
+      last-number
+      @change="updateList"
+    />
   </div>
 </template>
 
 <script>
 import { resultsList } from '@/api/results'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
   name: 'ResultList',
-  components: { Pagination },
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        pass: 'success',
-        inconclusive: 'info',
-        fail: 'danger'
-      }
-      return statusMap[status]
+    pretty: function(value) {
+      return JSON.stringify(value, null, 2)
     }
   },
   data() {
     return {
-      list: null,
+      fields: [
+        {
+          key: 'cre.time',
+          sortable: true,
+          label: 'Created at'
+        },
+        {
+          key: 'tcid',
+          sortable: true
+        },
+        {
+          key: 'exec.verdict',
+          sortable: true,
+          label: 'Verdict'
+        },
+        {
+          key: 'show_details'
+        }
+      ],
       total: 0,
-      listLoading: true,
+      sortBy: 'cre.time',
+      sortDesc: true,
+      listLoading: false,
       listQuery: {
-        page: 0,
-        limit: 20
+        page: 1,
+        limit: 10
       }
     }
   },
-  created() {
-    this.getList()
-  },
   methods: {
-    handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
+    updateList(page) {
+      this.listQuery.page = page
+      this.$root.$emit('bv::refresh::table', 'my-table')
     },
     getList() {
-      this.listLoading = true
-      resultsList({ t: 'count' })
+      const query = this._.clone(this.listQuery)
+      query.l = query.limit
+      query.sk = (query.page - 1) * query.limit
+
+      if (this.sortBy) {
+        query.s = { [this.sortBy]: this.sortDesc ? -1 : 1 }
+      } else {
+        query.s = '{"cre.time": -1}'
+      }
+      this._.unset(query, 'limit')
+      this._.unset(query, 'page')
+      const countQuery = this._.merge({ t: 'count' }, this._.omit(query, ['s', 'l', 'sk']))
+      return resultsList(countQuery)
         .then(({ data }) => {
           this.total = data.count
-          const query = this._.clone(this.listQuery)
-          query.l = query.limit
-          query.sk = query.page * query.limit
-          query.sort = { 'cre.time': -1 }
-          this._.unset(query, 'limit')
-          this._.unset(query, 'page')
           return resultsList(query)
         })
-        .then(({ data }) => {
-          this.list = data
-          this.listLoading = false
+        .then(({ data }) => data)
+        .catch(error => {
+          console.error(error)
+          this.total = 0
+          // Returning an empty array, allows table to correctly handle
+          // internal busy state in case of error
+          return []
         })
     }
   }
 }
 </script>
-
-<style scoped>
-.edit-input {
-  padding-right: 100px;
-}
-.cancel-btn {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-}
-</style>

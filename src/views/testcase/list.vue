@@ -112,18 +112,13 @@ export default {
       }
       this._.unset(query, 'limit')
       this._.unset(query, 'page')
-      console.log(this.listQuery, query, this.sortBy, this.sortDesc)
-
       const countQuery = this._.merge({ t: 'count' }, this._.omit(query, ['s', 'l', 'sk']))
       return testList(countQuery)
         .then(({ data }) => {
-          console.log(data)
           this.total = data.count
           return testList(query)
         })
-        .then(({ data }) => {
-          return data
-        })
+        .then(({ data }) => data)
         .catch(error => {
           console.error(error)
           this.total = 0
@@ -135,14 +130,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.edit-input {
-  padding-right: 100px;
-}
-.cancel-btn {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-}
-</style>

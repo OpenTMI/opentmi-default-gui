@@ -4,7 +4,10 @@ import { param2Obj } from '../src/utils'
 import user from './user'
 import role from './role'
 import article from './article'
+import results from './results'
 import testcases from './testcases'
+import events from './events'
+import resources from './resources'
 import search from './remote-search'
 
 const mocks = [
@@ -12,7 +15,10 @@ const mocks = [
   ...role,
   ...article,
   ...search,
-  ...testcases
+  ...testcases,
+  ...results,
+  ...events,
+  ...resources
 ]
 
 // for front mock

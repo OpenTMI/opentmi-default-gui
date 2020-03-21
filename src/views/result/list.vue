@@ -69,7 +69,8 @@ export default {
         },
         {
           key: 'tcid',
-          sortable: true
+          sortable: true,
+          label: 'Testcase ID'
         },
         {
           key: 'exec.verdict',

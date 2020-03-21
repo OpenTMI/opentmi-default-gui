@@ -8,6 +8,7 @@ import VueMoment from 'vue-moment'
 import SchemaJsonVue from 'schema-json-vue'
 import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 import locale from 'element-ui/lib/locale'
@@ -19,6 +20,8 @@ import './styles/element-variables.scss'
 import '@/styles/index.scss' // global css
 import 'vue-pivottable/dist/vue-pivottable.css'
 import 'schema-json-vue/lib/schema-json-vue.css'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import App from './App'
 import store from './store'
@@ -51,7 +54,10 @@ Vue.use(VuePivottable)
 Vue.use(VueMoment, { moment })
 Vue.use(SchemaJsonVue)
 Vue.use(VueSocketIOExt, io(process.env.VUE_APP_BASE_API, { autoConnect: false }))
-
+// Install BootstrapVue
+Vue.use(BootstrapVue)
+// Optionally install the BootstrapVue icon components plugin
+Vue.use(IconsPlugin)
 // configure language
 locale.use(lang)
 

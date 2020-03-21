@@ -1,72 +1,135 @@
 <template>
   <div class="app-container">
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
+    <b-table
+      id="my-table"
+      striped
+      hover
+      :items="getList"
+      :fields="fields"
+      :busy.sync="listLoading"
+      class="mt-3"
+      responsive="sm"
+      no-local-sorting
+      primary-key="_id"
+      :sort-changed="listLoading"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+    >
+      <!-- Optional default data cell scoped slot -->
+      <template v-slot:cell(cre.time)="data">
+        <i>{{ data.value | moment('MM/DD/YYYY hh:mm') }}</i>
+      </template>
+      <template v-slot:table-busy>
+        <div class="text-center text-danger my-2">
+          <b-spinner class="align-middle" />
+          <strong>Loading...</strong>
+        </div>
+      </template>
 
-      <el-table-column width="180px" align="center" label="Date">
-        <template slot-scope="scope">
-          <span>{{ scope.row.cre.time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Testcase" width="300">
-        <template slot-scope="{row}">
-          <span>{{ row.tcid }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Actions" width="120">
-        <template slot-scope="scope">
-          <router-link :to="'/testcase/edit/'+scope.row._id">
-            <el-button type="primary" size="small" icon="el-icon-edit">
-              Edit
-            </el-button>
-          </router-link>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+      <!-- Details button -->
+      <template v-slot:cell(show_details)="row">
+        <b-button size="sm" class="mr-2" @click="row.toggleDetails">
+          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+        </b-button>
+      </template>
+      <!-- details view -->
+      <template v-slot:row-details="row">
+        <pre>{{ row.item | pretty }}</pre>
+      </template>
+    </b-table>
+    <b-pagination
+      v-model="listQuery.page"
+      :total-rows="total"
+      :per-page="listQuery.limit"
+      aria-controls="my-table"
+      first-number
+      last-number
+      @change="updateList"
+    />
   </div>
 </template>
 
 <script>
 import { testList } from '@/api/testcases'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
   name: 'TestcaseList',
-  components: { Pagination },
+  filters: {
+    pretty: function(value) {
+      return JSON.stringify(value, null, 2)
+    }
+  },
   data() {
     return {
-      list: null,
+      fields: [
+        {
+          key: 'cre.time',
+          sortable: true,
+          label: 'Created at'
+        },
+        {
+          key: 'tcid',
+          sortable: true
+        },
+        {
+          key: 'other_info.type',
+          sortable: true,
+          label: 'Test Type'
+        },
+        {
+          key: 'status.value',
+          sortable: true,
+          label: 'Status'
+        },
+        {
+          key: 'show_details'
+        }
+      ],
       total: 0,
-      listLoading: true,
+      sortBy: 'tcid',
+      sortDesc: false,
+      listLoading: false,
       listQuery: {
-        page: 0,
-        limit: 20
+        page: 1,
+        limit: 10
       }
     }
   },
-  created() {
-    this.getList()
-  },
   methods: {
+    updateList(page) {
+      this.listQuery.page = page
+      this.$root.$emit('bv::refresh::table', 'my-table')
+    },
     getList() {
-      this.listLoading = true
-      testList({ t: 'count' })
+      const query = this._.clone(this.listQuery)
+      query.l = query.limit
+      query.sk = (query.page - 1) * query.limit
+
+      if (this.sortBy) {
+        query.s = { [this.sortBy]: this.sortDesc ? -1 : 1 }
+      } else {
+        query.s = "{'cre.time': -1}"
+      }
+      this._.unset(query, 'limit')
+      this._.unset(query, 'page')
+      console.log(this.listQuery, query, this.sortBy, this.sortDesc)
+
+      const countQuery = this._.merge({ t: 'count' }, this._.omit(query, ['s', 'l', 'sk']))
+      return testList(countQuery)
         .then(({ data }) => {
+          console.log(data)
           this.total = data.count
-          const query = this._.clone(this.listQuery)
-          query.l = query.limit
-          query.sk = query.page * query.limit
-          query.sort = { 'cre.time': -1 }
-          this._.unset(query, 'limit')
-          this._.unset(query, 'page')
           return testList(query)
         })
         .then(({ data }) => {
-          this.list = data
-          this.listLoading = false
+          return data
+        })
+        .catch(error => {
+          console.error(error)
+          this.total = 0
+          // Returning an empty array, allows table to correctly handle
+          // internal busy state in case of error
+          return []
         })
     }
   }

@@ -3,9 +3,13 @@
   <a href="https://github.com/vuejs/vue">
     <img src="https://img.shields.io/badge/opentmi_ui-0.2.0-brightgreen.svg" alt="vue">
   </a>
+  <a href="https://snyk.io/test/github/OpenTMI/opentmi-default-gui?targetFile=package.json">
+    <img src="https://snyk.io/test/github/OpenTMI/opentmi-default-gui/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/OpenTMI/opentmi-default-gui?targetFile=package.json" style="max-width:100%;">
+  </a>
   <a href="https://github.com/PanJiaChen/vue-element-admin/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="license">
   </a>
+  
 </p>
 
 ## Introduction

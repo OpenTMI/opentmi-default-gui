@@ -20,6 +20,29 @@ This is VUE based frontend for OpenTMI
 ## Example
 Playground [here](http://opentmi.github.io/opentmi-default-gui/)
 
+## Deployment
+
+TBD
+
+
+## Features
+
+```
+- Login / Logout
+  * github login is not ready yet
+
+- Dashboard
+  * overall status of opentmi
+- Test Case
+  - Test case list view
+- Result
+  - list view
+  - pivot view
+  - tree view
+- Resources
+  - list view
+```
+
 
 ## Preparation
 
@@ -29,72 +52,6 @@ Understanding and learning this knowledge in advance will greatly help the use o
  <p align="center">
   <img width="900" src="https://wpimg.wallstcn.com/a5894c1b-f6af-456e-82df-1151da0839bf.png">
 </p>
-
-## Features
-
-```
-- Login / Logout
-
-- Permission Authentication
-  - Page permission
-  - Directive permission
-  - Permission configuration page
-  - Two-step login
-
-- Multi-environment build
-  - dev sit stage prod
-
-- Global Features
-  - I18n
-  - Multiple dynamic themes
-  - Dynamic sidebar (supports multi-level routing)
-  - Dynamic breadcrumb
-  - Tags-view (Tab page Support right-click operation)
-  - Svg Sprite
-  - Mock data
-  - Screenfull
-  - Responsive Sidebar
-
-- Editor
-  - Rich Text Editor
-  - Markdown Editor
-  - JSON Editor
-
-- Excel
-  - Export Excel
-  - Upload Excel
-  - Visualization Excel
-  - Export zip
-
-- Table
-  - Dynamic Table
-  - Drag And Drop Table
-  - Inline Edit Table
-
-- Error Page
-  - 401
-  - 404
-
-- Components
-  - Avatar Upload
-  - Back To Top
-  - Drag Dialog
-  - Drag Select
-  - Drag Kanban
-  - Drag List
-  - SplitPane
-  - Dropzone
-  - Sticky
-  - CountTo
-
-- Advanced Example
-- Error Log
-- Dashboard
-- Guide Page
-- ECharts
-- Clipboard
-- Markdown to html
-```
 
 ## Getting started
 
@@ -156,6 +113,6 @@ Modern browsers and Internet Explorer 10+.
 
 ## License
 
-[MIT](https://github.com/PanJiaChen/vue-element-admin/blob/master/LICENSE)
+[MIT](LICENSE)
 
-Copyright (c) 2012-present Jussi Vatjus-Anttila
+Copyright (c) 2019-present Jussi Vatjus-Anttila

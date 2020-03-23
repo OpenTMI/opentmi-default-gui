@@ -18,6 +18,7 @@ service.interceptors.request.use(
     if (store.getters.token) {
       // let each request carry token
       config.headers['Authorization'] = `Bearer ${getToken()}`
+      console.log('set bearer', config.headers)
     }
     return config
   },

@@ -1,10 +1,12 @@
 
-const tokens = {
+const credentials = {
   admin: {
-    token: 'admin-token'
+    token: 'admin-token',
+    password: 'admin'
   },
   editor: {
-    token: 'editor-token'
+    token: 'editor-token',
+    password: 'admin'
   }
 }
 
@@ -29,21 +31,19 @@ export default [
     url: '/auth/login',
     type: 'post',
     response: config => {
-      const { username } = config.body
-      const token = tokens[username]
+      const { email, password } = config.body
+      const credential = credentials[email]
 
       // mock error
-      if (!token) {
-        return {
+      if (!credential || credential.password !== password) {
+        console.log('invalid account', config.body, credential)
+        return Promise.reject({
           code: 401,
           message: 'Account and password are incorrect.'
-        }
+        })
       }
-
-      return {
-        code: 200,
-        data: token
-      }
+      const { token } = credential
+      return { token }
     }
   },
 
@@ -52,7 +52,12 @@ export default [
     url: '/auth/me',
     type: 'get',
     response: config => {
-      const { token } = config.query
+      console.log({ config })
+      let { headers } = config
+      if (!headers) {
+        headers = { token: 'admin-token' }
+      }
+      const { token } = headers
       const info = users[token]
 
       // mock error
@@ -63,10 +68,7 @@ export default [
         }
       }
 
-      return {
-        code: 200,
-        data: info
-      }
+      return info
     }
   },
 

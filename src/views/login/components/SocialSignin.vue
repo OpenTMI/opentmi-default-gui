@@ -33,7 +33,6 @@ export default {
     loadAuthInfo() {
       githubId()
         .then(({ data }) => {
-          console.log(window.location.origin)
           const authOption = {
             baseUrl: window.location.origin, // Your API domain
             providers: {

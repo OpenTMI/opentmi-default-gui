@@ -207,7 +207,6 @@ export default {
     },
     submitForm() {
       // eslint-disable-next-line no-console
-      console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true

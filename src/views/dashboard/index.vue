@@ -49,7 +49,6 @@ export default {
       this.currentRole = 'editorDashboard'
     }
     const token = getToken()
-    console.log(token, this.$socket)
     this.$socket.client.io.opts.query = { token }
     this.$socket.client.open()
   }

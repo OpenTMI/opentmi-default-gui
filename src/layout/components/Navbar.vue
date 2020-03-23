@@ -30,7 +30,7 @@
           <router-link to="/">
             <el-dropdown-item>Dashboard</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/opentmi/opentmi-ui/">
+          <a target="_blank" href="https://github.com/opentmi/opentmi-default-gui/">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">

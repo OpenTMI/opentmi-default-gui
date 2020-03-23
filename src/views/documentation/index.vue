@@ -1,7 +1,7 @@
 <template>
   <div class="app-container documentation-container">
     <a class="document-btn" target="_blank" href="https://github.com/opentmi/opentmi/">Github backend</a>
-    <a class="document-btn" target="_blank" href="https://github.com/opentmi/opentmi-ui/">Github Repository</a>
+    <a class="document-btn" target="_blank" href="https://github.com/opentmi/opentmi-default-gui/">Github Repository</a>
     <dropdown-menu class="document-btn" :items="addonList" title="Addons" />
   </div>
 </template>

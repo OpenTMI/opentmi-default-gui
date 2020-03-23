@@ -156,6 +156,6 @@ Modern browsers and Internet Explorer 10+.
 
 ## License
 
-[MIT](https://github.com/PanJiaChen/vue-element-admin/blob/master/LICENSE)
+[MIT](LICENSE)
 
-Copyright (c) 2012-present Jussi Vatjus-Anttila
+Copyright (c) 2019-present Jussi Vatjus-Anttila

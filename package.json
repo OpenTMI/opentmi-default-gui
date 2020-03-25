@@ -43,11 +43,11 @@
     "url": "https://github.com/opentmi/opentmi-default-gui/issues"
   },
   "dependencies": {
-    "axios": "0.18.1",
+    "axios": "0.19.2",
     "bootstrap-vue": "^2.7.0",
     "clipboard": "2.0.4",
     "codemirror": "5.52.0",
-    "driver.js": "0.9.5",
+    "driver.js": "0.9.8",
     "dropzone": "5.7.0",
     "echarts": "4.6.0",
     "element-ui": "2.13.0",
@@ -66,7 +66,7 @@
     "script-loader": "0.7.2",
     "showdown": "1.9.1",
     "socket.io-client": "^2.3.0",
-    "sortablejs": "1.8.4",
+    "sortablejs": "1.10.2",
     "tui-editor": "1.4.10",
     "vue": "2.6.10",
     "vue-authenticate": "^1.4.1",
@@ -78,7 +78,7 @@
     "vue-router": "3.1.6",
     "vue-socket.io-extended": "^4.0.1",
     "vue-splitpane": "1.0.4",
-    "vuedraggable": "2.20.0",
+    "vuedraggable": "2.23.2",
     "vuex": "3.1.0",
     "xlsx": "0.15.5"
   },

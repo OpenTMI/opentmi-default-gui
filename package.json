@@ -79,7 +79,7 @@
     "vue-socket.io-extended": "^4.0.1",
     "vue-splitpane": "1.0.4",
     "vuedraggable": "2.23.2",
-    "vuex": "3.1.0",
+    "vuex": "3.1.2",
     "xlsx": "0.15.5"
   },
   "devDependencies": {

@@ -77,7 +77,7 @@
     "vue-pivottable": "^0.3.63",
     "vue-router": "3.1.6",
     "vue-socket.io-extended": "^4.0.1",
-    "vue-splitpane": "1.0.4",
+    "vue-splitpane": "1.0.6",
     "vuedraggable": "2.23.2",
     "vuex": "3.1.0",
     "xlsx": "0.15.5"

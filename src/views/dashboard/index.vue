@@ -32,7 +32,11 @@ export default {
         duration: 2000
       })
     },
-    disconnect() {
+    error(error) {
+      console.error(`SIO error: ${error}`)
+    },
+    disconnect(reason) {
+      console.log(`SIO Disconnected, reason: ${reason}`)
       this.$notify({
         title: 'Offline',
         message: 'Disconnected',

@@ -4,7 +4,7 @@
       id="my-table"
       striped
       hover
-      :items="getList"
+      :items="_getList"
       :fields="fields"
       :busy.sync="listLoading"
       class="mt-3"
@@ -18,14 +18,38 @@
       select-mode="single"
       @row-clicked="rowClicked"
     >
-      <!-- Optional default data cell scoped slot -->
-      <template v-slot:cell(cre.time)="data">
-        <i>{{ data.value | moment('MM/DD/YYYY hh:mm') }}</i>
+
+      <!-- filter row -->
+      <template slot="top-row" slot-scope="{ fields }">
+        <td v-for="field in fields" :key="field.key">
+          <select v-if="field.key == 'exec.verdict'" v-model="listQuery[field.key]">
+            <option />
+            <option>pass</option>
+            <option>fail</option>
+            <option>inconclusive</option>
+          </select>
+          <input v-else v-model="listQuery[field.key]" :placeholder="field.label" @keyup.enter="_reload">
+        </td>
       </template>
-      <template v-slot:cell(exec.verdict)="{ value }">
+
+      <!-- Optional default data cell scoped slot -->
+      <template v-slot:cell(tcid)="{value}">
+        <div v-b-tooltip.hover placement="bottom" :title="value">
+          {{ lengthLimiter(value, 30) }}
+        </div>
+      </template>
+      <template v-slot:cell(cre.time)="{ value }">
+        <i>{{ value | moment('MM/DD/YYYY hh:mm') }}</i>
+      </template>
+      <template v-slot:cell(exec.verdict)="{value}">
         <span :style="`color: ${getVerdictColor(value)}`">
           {{ value }}
         </span>
+      </template>
+      <template v-slot:cell(exec.note)="{value}">
+        <div v-b-tooltip.hover placement="bottom" :title="value">
+          {{ lengthLimiter(value) }}
+        </div>
       </template>
       <template v-slot:table-busy>
         <div class="text-center text-danger my-2">
@@ -46,7 +70,6 @@
       aria-controls="my-table"
       first-number
       last-number
-      @change="updateList"
     />
   </div>
 </template>
@@ -105,6 +128,7 @@ export default {
           }
         }
       ],
+      reload: this._.debounce(this._reload, 2000),
       total: 0,
       sortBy: 'cre.time',
       sortDesc: true,
@@ -115,7 +139,22 @@ export default {
       }
     }
   },
+  watch: {
+    listQuery: {
+      handler() {
+        this.reload()
+      },
+      deep: true
+    }
+  },
   methods: {
+    lengthLimiter(value, maxLength = 20) {
+      let out = value.substr(0, maxLength)
+      if (value.length > maxLength) {
+        out += '...'
+      }
+      return out
+    },
     rowClicked(row) {
       this.$set(row, '_showDetails', !row._showDetails)
     },
@@ -133,10 +172,13 @@ export default {
     },
     updateList(page) {
       this.listQuery.page = page
+      this.reload()
+    },
+    _reload() {
       this.$root.$emit('bv::refresh::table', 'my-table')
     },
-    getList() {
-      const query = this._.clone(this.listQuery)
+    _getList() {
+      const query = this._.omitBy(this.listQuery, this._.isNil)
       query.l = query.limit
       query.sk = (query.page - 1) * query.limit
 
@@ -165,3 +207,10 @@ export default {
   }
 }
 </script>
+
+<style>
+.tooltip .tooltip-inner{
+  max-width: 500px !important;
+  width: 400px !important;
+}
+</style>

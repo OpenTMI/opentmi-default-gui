@@ -15,9 +15,21 @@ for (let i = 0; i < count; i++) {
         time: +Mock.Random.date('T'),
         user: '@first'
       },
-      campaign: +Mock.Random.string(),
+      campaign: +Mock.Random.pick(['camp-1', 'camp-2', 'camp-3']),
       exec: {
-        verdict: Mock.Random.pick(['pass', 'fail', 'inconclusive', 'blocked', 'error', 'skip'])
+        verdict: Mock.Random.pick(['pass', 'fail', 'pass', 'inconclusive', 'blocked', 'pass', 'error', 'skip']),
+        note: Mock.Random.pick(['', 'something happens', '', '']),
+        sut: {
+          gitUrl: Mock.Random.pick('github.com/...'),
+          branch: Mock.Random.pick(['master', 'dev']),
+          commitId: Mock.Random.uuid()
+        },
+        duts: [
+          {
+            vendor: Mock.Random.pick(['Samsung', 'Huawei', 'Nokia', 'Apple']),
+            model: Mock.Random.pick(['A', 'B', 'C', 'D'])
+          }
+        ]
       }
     })
   )

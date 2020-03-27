@@ -14,10 +14,18 @@
       :sort-changed="listLoading"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
+      selectable
+      select-mode="single"
+      @row-clicked="rowClicked"
     >
       <!-- Optional default data cell scoped slot -->
       <template v-slot:cell(cre.time)="data">
         <i>{{ data.value | moment('MM/DD/YYYY hh:mm') }}</i>
+      </template>
+      <template v-slot:cell(exec.verdict)="{ value }">
+        <span :style="`color: ${getVerdictColor(value)}`">
+          {{ value }}
+        </span>
       </template>
       <template v-slot:table-busy>
         <div class="text-center text-danger my-2">
@@ -26,12 +34,6 @@
         </div>
       </template>
 
-      <!-- Details button -->
-      <template v-slot:cell(show_details)="row">
-        <b-button size="sm" class="mr-2" @click="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-        </b-button>
-      </template>
       <!-- details view -->
       <template v-slot:row-details="row">
         <pre>{{ row.item | pretty }}</pre>
@@ -55,7 +57,7 @@ import { resultsList } from '@/api/results'
 export default {
   name: 'ResultList',
   filters: {
-    pretty: function(value) {
+    pretty(value) {
       return JSON.stringify(value, null, 2)
     }
   },
@@ -78,7 +80,19 @@ export default {
           label: 'Verdict'
         },
         {
-          key: 'show_details'
+          key: 'exec.note',
+          sortable: false,
+          label: 'Note'
+        },
+        {
+          key: 'exec.duts',
+          sortable: false,
+          label: 'Dut',
+          formatter: (value, key, item) => {
+            const defValue = { vendor: '', model: '' }
+            const dut0 = this._.get(item, 'exec.duts.0', defValue)
+            return `${dut0.vendor}-${dut0.model}`
+          }
         }
       ],
       total: 0,
@@ -92,6 +106,21 @@ export default {
     }
   },
   methods: {
+    rowClicked(row) {
+      this.$set(row, '_showDetails', !row._showDetails)
+    },
+    getVerdictColor(value) {
+      const colors = {
+        pass: '#2E7D32',
+        inconclusive: '#a15c00',
+        fail: '#C62828',
+        skip: '#455A64',
+        blocked: '#000c44',
+        error: '#C62828'
+      }
+      const color = colors[value]
+      return color || '#000000'
+    },
     updateList(page) {
       this.listQuery.page = page
       this.$root.$emit('bv::refresh::table', 'my-table')

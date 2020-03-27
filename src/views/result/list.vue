@@ -93,6 +93,16 @@ export default {
             const dut0 = this._.get(item, 'exec.duts.0', defValue)
             return `${dut0.vendor}-${dut0.model}`
           }
+        },
+        {
+          key: 'exec.sut',
+          sortable: false,
+          label: 'Sut',
+          formatter: (value, key, item) => {
+            const defValue = { branch: '', commitId: '' }
+            const sut = this._.get(item, 'exec.sut', defValue)
+            return `${sut.branch}/${sut.commitId.substr(0, 7)}`
+          }
         }
       ],
       total: 0,

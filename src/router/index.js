@@ -265,7 +265,7 @@ export const asyncRoutes = [
         path: 'resource',
         component: () => import('@/views/resource/create'),
         name: 'CreateResource',
-        meta: { title: 'Create TestCase', icon: 'edit' }
+        meta: { title: 'Create Resource', icon: 'edit' }
       },
       {
         path: 'edit/:id(\\s+)',

@@ -7,9 +7,10 @@ export default {
   },
   query: function(list, config) {
     console.log(`query([${list.length}] items`, config)
-    const { sk = 0, l = 20, s, t } = config.query
+    const { sk = 0, l = 20, s, t, f } = config.query
     const limit = parseInt(l)
     const skip = parseInt(sk)
+    const fields = f ? f.split(' ') : []
 
     let mockList = list
     if (!_.isEmpty(s)) {
@@ -22,14 +23,20 @@ export default {
         mockList = mockList.reverse()
       }
     }
-    const filter = _.omit(config.query, ['s', 'sk', 'l', 't'])
+    const filter = _.omit(config.query, ['s', 'sk', 'l', 't', 'f'])
     console.log({ filter })
     mockList = _.filter(mockList, filter)
 
     if (t === 'count') {
       return { count: mockList.length }
     }
+    if (t === 'distinct') {
+      console.log(`distinct by ${f}`)
+      const items = _.map(mockList, obj => _.get(obj, f))
+      return _.uniq(items)
+    }
     const data = _.slice(mockList, skip, skip + limit)
+    // data = _.map(data, obj => _.pick(obj, fields))
     return data
   }
 }

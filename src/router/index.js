@@ -279,13 +279,13 @@ export const asyncRoutes = [
         component: () => import('@/views/resource/list'),
         name: 'ResourceList',
         meta: { title: 'Resource List', icon: 'list' }
-      }/*,
+      },
       {
         path: 'Tree',
         component: () => import('@/views/resource/tree'),
         name: 'ResourceTree',
         meta: { title: 'Resource Tree', icon: 'list' }
-      }*/
+      }
     ]
   },
   /*

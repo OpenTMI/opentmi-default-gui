@@ -31,7 +31,7 @@
             <option>computer</option>
             <option>room</option>
           </select>
-          <select v-if="field.key == 'status.value'" v-model="listQuery[field.key]">
+          <select v-else-if="field.key == 'status.value'" v-model="listQuery[field.key]">
             <option />
             <option>active</option>
             <option>maintenance</option>

@@ -36,13 +36,13 @@ export default {
         } else if (level === 1) { // system
           const options = { level: 2, type, filters }
           this.getDistinct(options).then(resolve)
-        } else if (level === 1) { // computer
-          const options = { level: 2, type, filters }
+        } else if (level === 2) { // computer
+          const options = { level: 3, type, filters }
           return this.getDistinct(options).then(resolve)
         } else {
-          const icon = 'fa fa-check icon-state-success'
+          const icon = undefined // 'fa fa-check icon-state-success'
           const isLeaf = true
-          const options = { level: 3, type, filters, isLeaf, icon }
+          const options = { level: 4, type, filters, isLeaf, icon }
           return this.getDistinct(options).then(resolve)
         }
       } else {

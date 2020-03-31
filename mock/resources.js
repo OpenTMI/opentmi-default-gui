@@ -1,4 +1,4 @@
-import { filter } from 'lodash'
+import { filter, get } from 'lodash'
 import Mock from 'mockjs'
 import utils from './utils'
 
@@ -8,16 +8,29 @@ const List = []
 const count = 100
 
 
-
 for (let i = 0; i < count; i++) {
+  const type = Mock.Random.pick([
+    'system', 'dut', 'dut', 'dut',
+    'instrument', 'accessories', 'computer', 'computer', 'room'
+  ])
+  const nameTable = {
+    system: `system#${i}`,
+    room: `room#${i}`,
+    computer: `nuc0${i}`,
+    dut: Mock.Random.pick(['samsung', 'huawei', 'nokia']),
+    accessories: Mock.Random.pick(['usb-cable', 'power-cable']),
+    instrument: Mock.Random.pick(['powermeter', 'power', 'rf-switch'])
+  }
+  const name = get(nameTable, type, Mock.Random.first())
+
   List.push(Mock.mock({
     _id: '@increment',
     cre: {
       time: +Mock.Random.date('T'),
       user: Mock.Random.first()
     },
-    name: Mock.Random.first(),
-    type: Mock.Random.pick(['system', 'dut', 'instrument', 'accessories', 'computer', 'room']),
+    name,
+    type,
     status: {
       value: Mock.Random.pick(['active', 'maintenance', 'storage', 'broken']),
       note: Mock.Random.string()
@@ -47,7 +60,7 @@ List.forEach(obj => {
   }
 })
 
-console.log(rooms, systems, computers)
+// console.log(rooms, systems, computers)
 
 export default [
   {

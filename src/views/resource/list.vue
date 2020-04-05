@@ -20,8 +20,8 @@
     >
 
       <!-- filter row -->
-      <template slot="top-row" slot-scope="{ fields }">
-        <td v-for="field in fields" :key="field.key">
+      <template slot="top-row" slot-scope="data">
+        <td v-for="field in data.fields" :key="field.key">
           <select v-if="field.key == 'type'" v-model="listQuery[field.key]">
             <option />
             <option>system</option>
@@ -97,7 +97,8 @@ export default {
         },
         {
           key: 'status.value',
-          sortable: true
+          sortable: true,
+          label: 'Status'
         }
       ],
       reload: this._.debounce(this._reload, 2000),

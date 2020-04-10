@@ -25,8 +25,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
  // import driver.js
 
  // import driver.js css
@@ -40,7 +38,10 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    this.driver = new driver_js__WEBPACK_IMPORTED_MODULE_0___default.a();
+    this.driver = new driver_js__WEBPACK_IMPORTED_MODULE_0___default.a({
+      // there seems to be problem with driver to focus with dark theme when animate is on
+      animate: false
+    });
   },
   methods: {
     guide: function guide() {
@@ -71,7 +72,7 @@ var render = function() {
     "div",
     { staticClass: "app-container" },
     [
-      _vm._m(0),
+      _c("aside", [_vm._v("\n    Press button below to start guide.. :)\n  ")]),
       _vm._v(" "),
       _c(
         "el-button",
@@ -91,28 +92,7 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("aside", [
-      _vm._v(
-        "\n    The guide page is useful for some people who entered the project for the first time. You can briefly introduce the\n    features of the project. Demo is based on\n    "
-      ),
-      _c(
-        "a",
-        {
-          attrs: {
-            href: "https://github.com/kamranahmedse/driver.js",
-            target: "_blank"
-          }
-        },
-        [_vm._v("driver.js.")]
-      )
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -218,14 +198,50 @@ __webpack_require__.r(__webpack_exports__);
 var steps = [{
   element: '#hamburger-container',
   popover: {
-    title: 'Hamburger',
-    description: 'Open && Close sidebar',
+    title: 'Sidebar',
+    description: 'Open and Close sidebar',
     position: 'bottom'
   }
 }, {
+  element: '#results-menu',
+  stageBackground: '#304156',
+  popover: {
+    title: 'Results',
+    description: 'Browse and analyse results.<br>Options to browse results are old-fashion table view, tree view and pivottable.',
+    position: 'right'
+  },
+  padding: 0
+}, {
+  element: '#testcases-menu',
+  stageBackground: '#304156',
+  popover: {
+    title: 'Testcases',
+    description: 'Browse test cases',
+    position: 'right'
+  },
+  padding: 0
+}, {
+  element: '#resources-menu',
+  stageBackground: '#304156',
+  popover: {
+    title: 'Resources',
+    description: 'Browse Resources.<br>Tree view is also available.',
+    position: 'right'
+  },
+  padding: 0
+}, {
+  element: '#log-menu',
+  stageBackground: '#304156',
+  popover: {
+    title: 'Logs',
+    description: 'Monitor server side logs',
+    position: 'right'
+  },
+  padding: 0
+}, {
   element: '#breadcrumb-container',
   popover: {
-    title: 'Breadcrumb',
+    title: 'Location',
     description: 'Indicate the current page location',
     position: 'bottom'
   }
@@ -251,9 +267,9 @@ var steps = [{
     position: 'left'
   }
 }, {
-  element: '#tags-view-container',
+  element: '#tabs-view-container',
   popover: {
-    title: 'Tags view',
+    title: 'Tabs view',
     description: 'The history of the page you visited',
     position: 'bottom'
   },

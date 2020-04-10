@@ -35,8 +35,10 @@ export default {
       const items = _.map(mockList, obj => _.get(obj, f))
       return _.uniq(items)
     }
-    const data = _.slice(mockList, skip, skip + limit)
-    // data = _.map(data, obj => _.pick(obj, fields))
+    let data = _.slice(mockList, skip, skip + limit)
+    if (fields) {
+      data = _.map(data, obj => _.pick(obj, fields))
+    }
     return data
   }
 }

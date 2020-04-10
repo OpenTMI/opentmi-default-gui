@@ -176,6 +176,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/result/list',
     name: 'Results',
+    id: 'results-menu',
     meta: {
       title: 'Result',
       icon: 'result'
@@ -202,6 +203,7 @@ export const asyncRoutes = [
       },
       {
         path: 'Analyse',
+        id: 'results-analyse-submenu',
         component: () => import('@/views/result/pivot'),
         name: 'ResultAnalyse',
         meta: { title: 'Result Analysis', icon: 'chart' }
@@ -216,6 +218,7 @@ export const asyncRoutes = [
   },
   {
     path: '/testcases',
+    id: 'testcases-menu',
     component: Layout,
     redirect: '/testcases/list',
     name: 'Testcases',
@@ -253,6 +256,7 @@ export const asyncRoutes = [
   },
   {
     path: '/resources',
+    id: 'resources-menu',
     component: Layout,
     redirect: '/resources/list',
     name: 'Resources',
@@ -265,7 +269,7 @@ export const asyncRoutes = [
         path: 'resource',
         component: () => import('@/views/resource/create'),
         name: 'CreateResource',
-        meta: { title: 'Create TestCase', icon: 'edit' }
+        meta: { title: 'Create Resource', icon: 'edit' }
       },
       {
         path: 'edit/:id(\\s+)',
@@ -279,13 +283,13 @@ export const asyncRoutes = [
         component: () => import('@/views/resource/list'),
         name: 'ResourceList',
         meta: { title: 'Resource List', icon: 'list' }
-      }/*,
+      },
       {
         path: 'Tree',
         component: () => import('@/views/resource/tree'),
         name: 'ResourceTree',
         meta: { title: 'Resource Tree', icon: 'list' }
-      }*/
+      }
     ]
   },
   /*
@@ -381,6 +385,7 @@ export const asyncRoutes = [
   {
     path: '/log',
     component: Layout,
+    id: 'log-menu',
     children: [
       {
         path: 'log',
@@ -429,41 +434,6 @@ export const asyncRoutes = [
     ]
   },
 
-  {
-    path: '/zip',
-    component: Layout,
-    redirect: '/zip/download',
-    alwaysShow: true,
-    name: 'Zip',
-    meta: { title: 'Zip', icon: 'zip' },
-    children: [
-      {
-        path: 'download',
-        component: () => import('@/views/zip/index'),
-        name: 'ExportZip',
-        meta: { title: 'Export Zip' }
-      }
-    ]
-  },
-
-  {
-    path: '/pdf',
-    component: Layout,
-    redirect: '/pdf/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/pdf/index'),
-        name: 'PDF',
-        meta: { title: 'PDF', icon: 'pdf' }
-      }
-    ]
-  },
-  {
-    path: '/pdf/download',
-    component: () => import('@/views/pdf/download'),
-    hidden: true
-  },
 */
   {
     path: '/theme',

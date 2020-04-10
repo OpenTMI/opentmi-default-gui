@@ -26,10 +26,10 @@ jobs:
             ${{ runner.os }}-node-
 
       - run: npm ci
-      - run: npm run build:prod
+      - run: npm run dev-mock
 
       - name: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+          publish_dir: ./dist

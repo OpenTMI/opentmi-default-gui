@@ -60,8 +60,6 @@ List.forEach(obj => {
   }
 })
 
-// console.log(rooms, systems, computers)
-
 export default [
   {
     url: '/api/v0/resources',

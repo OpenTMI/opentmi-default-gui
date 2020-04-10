@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 export default {
-  getItem: function(list, config){
+  getItem: function(list, config) {
     const { _id } = config.params
     return _.find(list, { _id })
   },

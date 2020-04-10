@@ -7,7 +7,6 @@ const { query, getItem } = utils
 const List = []
 const count = 100
 
-
 for (let i = 0; i < count; i++) {
   const type = Mock.Random.pick([
     'system', 'dut', 'dut', 'dut',

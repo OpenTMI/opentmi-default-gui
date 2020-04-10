@@ -176,6 +176,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/result/list',
     name: 'Results',
+    id: 'results-menu',
     meta: {
       title: 'Result',
       icon: 'result'
@@ -202,6 +203,7 @@ export const asyncRoutes = [
       },
       {
         path: 'Analyse',
+        id: 'results-analyse-submenu',
         component: () => import('@/views/result/pivot'),
         name: 'ResultAnalyse',
         meta: { title: 'Result Analysis', icon: 'chart' }
@@ -216,6 +218,7 @@ export const asyncRoutes = [
   },
   {
     path: '/testcases',
+    id: 'testcases-menu',
     component: Layout,
     redirect: '/testcases/list',
     name: 'Testcases',
@@ -253,6 +256,7 @@ export const asyncRoutes = [
   },
   {
     path: '/resources',
+    id: 'resources-menu',
     component: Layout,
     redirect: '/resources/list',
     name: 'Resources',
@@ -381,6 +385,7 @@ export const asyncRoutes = [
   {
     path: '/log',
     component: Layout,
+    id: 'log-menu',
     children: [
       {
         path: 'log',

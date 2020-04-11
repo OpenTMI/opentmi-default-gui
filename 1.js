@@ -728,7 +728,20 @@ var _default = BaseBarSeries.extend({
     clip: true,
     // If use caps on two sides of bars
     // Only available on tangential polar bar
-    roundCap: false
+    roundCap: false,
+    showBackground: false,
+    backgroundStyle: {
+      color: 'rgba(180, 180, 180, 0.2)',
+      borderColor: null,
+      borderWidth: 0,
+      borderType: 'solid',
+      borderRadius: 0,
+      shadowBlur: 0,
+      shadowColor: null,
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      opacity: 1
+    }
   }
 });
 
@@ -782,6 +795,8 @@ var Model = __webpack_require__(/*! ../../model/Model */ "./node_modules/echarts
 var barItemStyle = __webpack_require__(/*! ./barItemStyle */ "./node_modules/echarts/lib/chart/bar/barItemStyle.js");
 
 var Path = __webpack_require__(/*! zrender/lib/graphic/Path */ "./node_modules/zrender/lib/graphic/Path.js");
+
+var Group = __webpack_require__(/*! zrender/lib/container/Group */ "./node_modules/zrender/lib/container/Group.js");
 
 var _throttle = __webpack_require__(/*! ../../util/throttle */ "./node_modules/echarts/lib/util/throttle.js");
 
@@ -894,13 +909,24 @@ var _default = echarts.extendChartView({
     // And don't want the label are clipped.
 
     var roundCap = seriesModel.get('roundCap', true);
+    var drawBackground = seriesModel.get('showBackground', true);
+    var backgroundModel = seriesModel.getModel('backgroundStyle');
+    var bgEls = [];
+    var oldBgEls = this._backgroundEls || [];
     data.diff(oldData).add(function (dataIndex) {
+      var itemModel = data.getItemModel(dataIndex);
+      var layout = getLayout[coord.type](data, dataIndex, itemModel);
+
+      if (drawBackground) {
+        var bgEl = createBackgroundEl(coord, isHorizontalOrRadial, layout);
+        bgEl.useStyle(backgroundModel.getBarItemStyle());
+        bgEls[dataIndex] = bgEl;
+      } // If dataZoom in filteMode: 'empty', the baseValue can be set as NaN in "axisProxy".
+
+
       if (!data.hasValue(dataIndex)) {
         return;
       }
-
-      var itemModel = data.getItemModel(dataIndex);
-      var layout = getLayout[coord.type](data, dataIndex, itemModel);
 
       if (needsClip) {
         // Clip will modify the layout params.
@@ -918,15 +944,25 @@ var _default = echarts.extendChartView({
       group.add(el);
       updateStyle(el, data, dataIndex, itemModel, layout, seriesModel, isHorizontalOrRadial, coord.type === 'polar');
     }).update(function (newIndex, oldIndex) {
+      var itemModel = data.getItemModel(newIndex);
+      var layout = getLayout[coord.type](data, newIndex, itemModel);
+
+      if (drawBackground) {
+        var bgEl = oldBgEls[oldIndex];
+        bgEl.useStyle(backgroundModel.getBarItemStyle());
+        bgEls[newIndex] = bgEl;
+        var shape = createBackgroundShape(isHorizontalOrRadial, layout, coord);
+        graphic.updateProps(bgEl, {
+          shape: shape
+        }, animationModel, newIndex);
+      }
+
       var el = oldData.getItemGraphicEl(oldIndex);
 
       if (!data.hasValue(newIndex)) {
         group.remove(el);
         return;
       }
-
-      var itemModel = data.getItemModel(newIndex);
-      var layout = getLayout[coord.type](data, newIndex, itemModel);
 
       if (needsClip) {
         var isClipped = clip[coord.type](coordSysClipArea, layout);
@@ -958,6 +994,15 @@ var _default = echarts.extendChartView({
         el && removeSector(dataIndex, animationModel, el);
       }
     }).execute();
+    var bgGroup = this._backgroundGroup || (this._backgroundGroup = new Group());
+    bgGroup.removeAll();
+
+    for (var i = 0; i < bgEls.length; ++i) {
+      bgGroup.add(bgEls[i]);
+    }
+
+    group.add(bgGroup);
+    this._backgroundEls = bgEls;
     this._data = data;
   },
   _renderLarge: function (seriesModel, ecModel, api) {
@@ -974,6 +1019,8 @@ var _default = echarts.extendChartView({
     }
   },
   _incrementalRenderLarge: function (params, seriesModel) {
+    this._removeBackground();
+
     createLarge(seriesModel, this.group, true);
   },
   dispose: zrUtil.noop,
@@ -985,6 +1032,9 @@ var _default = echarts.extendChartView({
     var data = this._data;
 
     if (ecModel && ecModel.get('animation') && data && !this._isLargeDraw) {
+      this._removeBackground();
+
+      this._backgroundEls = [];
       data.eachItemGraphicEl(function (el) {
         if (el.type === 'sector') {
           removeSector(el.dataIndex, ecModel, el);
@@ -997,6 +1047,10 @@ var _default = echarts.extendChartView({
     }
 
     this._data = null;
+  },
+  _removeBackground: function () {
+    this.group.remove(this._backgroundGroup);
+    this._backgroundGroup = null;
   }
 });
 
@@ -1046,8 +1100,10 @@ var clip = {
 var elementCreator = {
   cartesian2d: function (dataIndex, layout, isHorizontal, animationModel, isUpdate) {
     var rect = new graphic.Rect({
-      shape: zrUtil.extend({}, layout)
-    }); // Animation
+      shape: zrUtil.extend({}, layout),
+      z2: 1
+    });
+    rect.name = 'item'; // Animation
 
     if (animationModel) {
       var rectShape = rect.shape;
@@ -1072,8 +1128,10 @@ var elementCreator = {
     var sector = new ShapeClass({
       shape: zrUtil.defaults({
         clockwise: clockwise
-      }, layout)
-    }); // Animation
+      }, layout),
+      z2: 1
+    });
+    sector.name = 'item'; // Animation
 
     if (animationModel) {
       var sectorShape = sector.shape;
@@ -1178,8 +1236,11 @@ function updateStyle(el, data, dataIndex, itemModel, layout, seriesModel, isHori
 
 
 function getLineWidth(itemModel, rawLayout) {
-  var lineWidth = itemModel.get(BAR_BORDER_WIDTH_QUERY) || 0;
-  return Math.min(lineWidth, Math.abs(rawLayout.width), Math.abs(rawLayout.height));
+  var lineWidth = itemModel.get(BAR_BORDER_WIDTH_QUERY) || 0; // width or height may be NaN for empty data
+
+  var width = isNaN(rawLayout.width) ? Number.MAX_VALUE : Math.abs(rawLayout.width);
+  var height = isNaN(rawLayout.height) ? Number.MAX_VALUE : Math.abs(rawLayout.height);
+  return Math.min(lineWidth, width, height);
 }
 
 var LargePath = Path.extend({
@@ -1208,6 +1269,31 @@ function createLarge(seriesModel, group, incremental) {
   var startPoint = [];
   var baseDimIdx = data.getLayout('valueAxisHorizontal') ? 1 : 0;
   startPoint[1 - baseDimIdx] = data.getLayout('valueAxisStart');
+  var largeDataIndices = data.getLayout('largeDataIndices');
+  var barWidth = data.getLayout('barWidth');
+  var backgroundModel = seriesModel.getModel('backgroundStyle');
+  var drawBackground = seriesModel.get('showBackground', true);
+
+  if (drawBackground) {
+    var points = data.getLayout('largeBackgroundPoints');
+    var backgroundStartPoint = [];
+    backgroundStartPoint[1 - baseDimIdx] = data.getLayout('backgroundStart');
+    var bgEl = new LargePath({
+      shape: {
+        points: points
+      },
+      incremental: !!incremental,
+      __startPoint: backgroundStartPoint,
+      __baseDimIdx: baseDimIdx,
+      __largeDataIndices: largeDataIndices,
+      __barWidth: barWidth,
+      silent: true,
+      z2: 0
+    });
+    setLargeBackgroundStyle(bgEl, backgroundModel, data);
+    group.add(bgEl);
+  }
+
   var el = new LargePath({
     shape: {
       points: data.getLayout('largePoints')
@@ -1215,8 +1301,8 @@ function createLarge(seriesModel, group, incremental) {
     incremental: !!incremental,
     __startPoint: startPoint,
     __baseDimIdx: baseDimIdx,
-    __largeDataIndices: data.getLayout('largeDataIndices'),
-    __barWidth: data.getLayout('barWidth')
+    __largeDataIndices: largeDataIndices,
+    __barWidth: barWidth
   });
   group.add(el);
   setLargeStyle(el, seriesModel, data); // Enable tooltip and user mouse/touch event handlers.
@@ -1270,6 +1356,53 @@ function setLargeStyle(el, seriesModel, data) {
   el.style.fill = null;
   el.style.stroke = borderColor;
   el.style.lineWidth = data.getLayout('barWidth');
+}
+
+function setLargeBackgroundStyle(el, backgroundModel, data) {
+  var borderColor = backgroundModel.get('borderColor') || backgroundModel.get('color');
+  var itemStyle = backgroundModel.getItemStyle(['color', 'borderColor']);
+  el.useStyle(itemStyle);
+  el.style.fill = null;
+  el.style.stroke = borderColor;
+  el.style.lineWidth = data.getLayout('barWidth');
+}
+
+function createBackgroundShape(isHorizontalOrRadial, layout, coord) {
+  var coordLayout;
+  var isPolar = coord.type === 'polar';
+
+  if (isPolar) {
+    coordLayout = coord.getArea();
+  } else {
+    coordLayout = coord.grid.getRect();
+  }
+
+  if (isPolar) {
+    return {
+      cx: coordLayout.cx,
+      cy: coordLayout.cy,
+      r0: isHorizontalOrRadial ? coordLayout.r0 : layout.r0,
+      r: isHorizontalOrRadial ? coordLayout.r : layout.r,
+      startAngle: isHorizontalOrRadial ? layout.startAngle : 0,
+      endAngle: isHorizontalOrRadial ? layout.endAngle : Math.PI * 2
+    };
+  } else {
+    return {
+      x: isHorizontalOrRadial ? layout.x : coordLayout.x,
+      y: isHorizontalOrRadial ? coordLayout.y : layout.y,
+      width: isHorizontalOrRadial ? layout.width : coordLayout.width,
+      height: isHorizontalOrRadial ? coordLayout.height : layout.height
+    };
+  }
+}
+
+function createBackgroundEl(coord, isHorizontalOrRadial, layout) {
+  var ElementClz = coord.type === 'polar' ? graphic.Sector : graphic.Rect;
+  return new ElementClz({
+    shape: createBackgroundShape(isHorizontalOrRadial, layout, coord),
+    silent: true,
+    z2: 0
+  });
 }
 
 module.exports = _default;
@@ -3775,7 +3908,6 @@ var _default = {
   performRawSeries: true,
   reset: function (seriesModel, ecModel) {
     var data = seriesModel.getData();
-    var isLargeRender = seriesModel.pipelineContext.large;
     data.setVisual({
       legendSymbol: 'roundRect',
       colorP: getColor(1, seriesModel),
@@ -3788,6 +3920,7 @@ var _default = {
       return;
     }
 
+    var isLargeRender = seriesModel.pipelineContext.large;
     return !isLargeRender && {
       progress: progress
     };
@@ -4946,8 +5079,6 @@ var echarts = __webpack_require__(/*! ../../echarts */ "./node_modules/echarts/l
 
 var zrUtil = __webpack_require__(/*! zrender/lib/core/util */ "./node_modules/zrender/lib/core/util.js");
 
-var bind = zrUtil.bind;
-
 var createListSimply = __webpack_require__(/*! ../helper/createListSimply */ "./node_modules/echarts/lib/chart/helper/createListSimply.js");
 
 var _model = __webpack_require__(/*! ../../util/model */ "./node_modules/echarts/lib/util/model.js");
@@ -4984,7 +5115,7 @@ var FunnelSeries = echarts.extendSeriesModel({
     FunnelSeries.superApply(this, 'init', arguments); // Enable legend selection for each data item
     // Use a function instead of direct access because data reference may changed
 
-    this.legendVisualProvider = new LegendVisualProvider(bind(this.getData, this), bind(this.getRawData, this)); // Extend labelLine emphasis
+    this.legendVisualProvider = new LegendVisualProvider(zrUtil.bind(this.getData, this), zrUtil.bind(this.getRawData, this)); // Extend labelLine emphasis
 
     this._defaultLabelLine(option);
   },
@@ -6534,7 +6665,8 @@ var GraphSeries = echarts.extendSeriesModel({
     edgeSymbol: ['none', 'none'],
     edgeSymbolSize: 10,
     edgeLabel: {
-      position: 'middle'
+      position: 'middle',
+      distance: 5
     },
     draggable: false,
     roam: false,
@@ -6870,8 +7002,7 @@ var _default = echarts.extendChartView({
     }
   },
   focusNodeAdjacency: function (seriesModel, ecModel, api, payload) {
-    var data = this._model.getData();
-
+    var data = seriesModel.getData();
     var graph = data.graph;
     var dataIndex = payload.dataIndex;
     var edgeDataIndex = payload.edgeDataIndex;
@@ -6909,8 +7040,7 @@ var _default = echarts.extendChartView({
     }
   },
   unfocusNodeAdjacency: function (seriesModel, ecModel, api, payload) {
-    var graph = this._model.getData().graph;
-
+    var graph = seriesModel.getData().graph;
     graph.eachNode(function (node) {
       fadeOutItem(node, nodeOpacityPath);
     });
@@ -9278,6 +9408,7 @@ effectLineProto._updateEffectSymbol = function (lineData, idx) {
   symbol.setColor(color);
   symbol.attr('scale', size);
   this._symbolType = symbolType;
+  this._symbolScale = size;
 
   this._updateEffectAnimation(lineData, effectModel, idx);
 };
@@ -9361,6 +9492,7 @@ effectLineProto.updateSymbolPosition = function (symbol) {
   var cp1 = symbol.__cp1;
   var t = symbol.__t;
   var pos = symbol.position;
+  var lastPos = [pos[0], pos[1]];
   var quadraticAt = curveUtil.quadraticAt;
   var quadraticDerivativeAt = curveUtil.quadraticDerivativeAt;
   pos[0] = quadraticAt(p1[0], cp1[0], p2[0], t);
@@ -9368,7 +9500,27 @@ effectLineProto.updateSymbolPosition = function (symbol) {
 
   var tx = quadraticDerivativeAt(p1[0], cp1[0], p2[0], t);
   var ty = quadraticDerivativeAt(p1[1], cp1[1], p2[1], t);
-  symbol.rotation = -Math.atan2(ty, tx) - Math.PI / 2;
+  symbol.rotation = -Math.atan2(ty, tx) - Math.PI / 2; // enable continuity trail for 'line', 'rect', 'roundRect' symbolType
+
+  if (this._symbolType === 'line' || this._symbolType === 'rect' || this._symbolType === 'roundRect') {
+    if (symbol.__lastT !== undefined && symbol.__lastT < symbol.__t) {
+      var scaleY = vec2.dist(lastPos, pos) * 1.05;
+      symbol.attr('scale', [symbol.scale[0], scaleY]); // make sure the last segment render within endPoint
+
+      if (t === 1) {
+        pos[0] = lastPos[0] + (pos[0] - lastPos[0]) / 2;
+        pos[1] = lastPos[1] + (pos[1] - lastPos[1]) / 2;
+      }
+    } else if (symbol.__lastT === 1) {
+      // After first loop, symbol.__t does NOT start with 0, so connect p1 to pos directly.
+      var scaleY = 2 * vec2.dist(p1, pos);
+      symbol.attr('scale', [symbol.scale[0], scaleY]);
+    } else {
+      symbol.attr('scale', this._symbolScale);
+    }
+  }
+
+  symbol.__lastT = symbol.__t;
   symbol.ignore = false;
 };
 
@@ -10581,40 +10733,93 @@ function updateSymbolAndLabelBeforeLineUpdate() {
     var textPosition;
     var textAlign;
     var textVerticalAlign;
-    var distance = 5 * invScale; // End
+    var textOrigin;
+    var distance = label.__labelDistance;
+    var distanceX = distance[0] * invScale;
+    var distanceY = distance[1] * invScale;
+    var halfPercent = percent / 2;
+    var tangent = line.tangentAt(halfPercent);
+    var n = [tangent[1], -tangent[0]];
+    var cp = line.pointAt(halfPercent);
 
-    if (label.__position === 'end') {
-      textPosition = [d[0] * distance + toPos[0], d[1] * distance + toPos[1]];
-      textAlign = d[0] > 0.8 ? 'left' : d[0] < -0.8 ? 'right' : 'center';
-      textVerticalAlign = d[1] > 0.8 ? 'top' : d[1] < -0.8 ? 'bottom' : 'middle';
-    } // Middle
-    else if (label.__position === 'middle') {
-        var halfPercent = percent / 2;
-        var tangent = line.tangentAt(halfPercent);
-        var n = [tangent[1], -tangent[0]];
-        var cp = line.pointAt(halfPercent);
+    if (n[1] > 0) {
+      n[0] = -n[0];
+      n[1] = -n[1];
+    }
 
-        if (n[1] > 0) {
-          n[0] = -n[0];
-          n[1] = -n[1];
-        }
+    var dir = tangent[0] < 0 ? -1 : 1;
 
-        textPosition = [cp[0] + n[0] * distance, cp[1] + n[1] * distance];
-        textAlign = 'center';
+    if (label.__position !== 'start' && label.__position !== 'end') {
+      var rotation = -Math.atan2(tangent[1], tangent[0]);
+
+      if (toPos[0] < fromPos[0]) {
+        rotation = Math.PI + rotation;
+      }
+
+      label.attr('rotation', rotation);
+    }
+
+    var dy;
+
+    switch (label.__position) {
+      case 'insideStartTop':
+      case 'insideMiddleTop':
+      case 'insideEndTop':
+      case 'middle':
+        dy = -distanceY;
         textVerticalAlign = 'bottom';
-        var rotation = -Math.atan2(tangent[1], tangent[0]);
+        break;
 
-        if (toPos[0] < fromPos[0]) {
-          rotation = Math.PI + rotation;
-        }
+      case 'insideStartBottom':
+      case 'insideMiddleBottom':
+      case 'insideEndBottom':
+        dy = distanceY;
+        textVerticalAlign = 'top';
+        break;
 
-        label.attr('rotation', rotation);
-      } // Start
-      else {
-          textPosition = [-d[0] * distance + fromPos[0], -d[1] * distance + fromPos[1]];
-          textAlign = d[0] > 0.8 ? 'right' : d[0] < -0.8 ? 'left' : 'center';
-          textVerticalAlign = d[1] > 0.8 ? 'bottom' : d[1] < -0.8 ? 'top' : 'middle';
-        }
+      default:
+        dy = 0;
+        textVerticalAlign = 'middle';
+    }
+
+    switch (label.__position) {
+      case 'end':
+        textPosition = [d[0] * distanceX + toPos[0], d[1] * distanceY + toPos[1]];
+        textAlign = d[0] > 0.8 ? 'left' : d[0] < -0.8 ? 'right' : 'center';
+        textVerticalAlign = d[1] > 0.8 ? 'top' : d[1] < -0.8 ? 'bottom' : 'middle';
+        break;
+
+      case 'start':
+        textPosition = [-d[0] * distanceX + fromPos[0], -d[1] * distanceY + fromPos[1]];
+        textAlign = d[0] > 0.8 ? 'right' : d[0] < -0.8 ? 'left' : 'center';
+        textVerticalAlign = d[1] > 0.8 ? 'bottom' : d[1] < -0.8 ? 'top' : 'middle';
+        break;
+
+      case 'insideStartTop':
+      case 'insideStart':
+      case 'insideStartBottom':
+        textPosition = [distanceX * dir + fromPos[0], fromPos[1] + dy];
+        textAlign = tangent[0] < 0 ? 'right' : 'left';
+        textOrigin = [-distanceX * dir, -dy];
+        break;
+
+      case 'insideMiddleTop':
+      case 'insideMiddle':
+      case 'insideMiddleBottom':
+      case 'middle':
+        textPosition = [cp[0], cp[1] + dy];
+        textAlign = 'center';
+        textOrigin = [0, -dy];
+        break;
+
+      case 'insideEndTop':
+      case 'insideEnd':
+      case 'insideEndBottom':
+        textPosition = [-distanceX * dir + toPos[0], toPos[1] + dy];
+        textAlign = tangent[0] >= 0 ? 'right' : 'left';
+        textOrigin = [distanceX * dir, -dy];
+        break;
+    }
 
     label.attr({
       style: {
@@ -10623,7 +10828,8 @@ function updateSymbolAndLabelBeforeLineUpdate() {
         textAlign: label.__textAlign || textAlign
       },
       position: textPosition,
-      scale: [invScale, invScale]
+      scale: [invScale, invScale],
+      origin: textOrigin
     });
   }
 }
@@ -10767,6 +10973,13 @@ lineProto._updateCommonStl = function (lineData, idx, seriesScope) {
     label.__verticalAlign = labelStyle.textVerticalAlign; // 'start', 'middle', 'end'
 
     label.__position = labelModel.get('position') || 'middle';
+    var distance = labelModel.get('distance');
+
+    if (!zrUtil.isArray(distance)) {
+      distance = [distance, distance];
+    }
+
+    label.__labelDistance = distance;
   }
 
   if (emphasisText != null) {
@@ -12460,9 +12673,12 @@ function _default() {
     var fields = inner(seriesModel);
     var pipelineContext = seriesModel.pipelineContext;
     var originalLarge = fields.large;
-    var originalProgressive = fields.progressiveRender;
-    var large = fields.large = pipelineContext.large;
-    var progressive = fields.progressiveRender = pipelineContext.progressiveRender;
+    var originalProgressive = fields.progressiveRender; // FIXME: if the planner works on a filtered series, `pipelineContext` does not
+    // exists. See #11611 . Probably we need to modify this structure, see the comment
+    // on `performRawSeries` in `Schedular.js`.
+
+    var large = fields.large = pipelineContext && pipelineContext.large;
+    var progressive = fields.progressiveRender = pipelineContext && pipelineContext.progressiveRender;
     return !!(originalLarge ^ large || originalProgressive ^ progressive) && 'reset';
   };
 }
@@ -17408,7 +17624,7 @@ piePieceProto.updateData = function (data, idx, firstCreate) {
   var cursorStyle = itemModel.getShallow('cursor');
   cursorStyle && sector.attr('cursor', cursorStyle); // Toggle selected
 
-  toggleItemSelected(this, data.getItemLayout(idx), seriesModel.isSelected(null, idx), seriesModel.get('selectedOffset'), seriesModel.get('animation')); // Label and text animation should be applied only for transition type animation when update
+  toggleItemSelected(this, data.getItemLayout(idx), seriesModel.isSelected(data.getName(idx)), seriesModel.get('selectedOffset'), seriesModel.get('animation')); // Label and text animation should be applied only for transition type animation when update
 
   var withAnimation = !firstCreate && animationTypeUpdate === 'transition';
 
@@ -18346,6 +18562,26 @@ var RadarSeries = SeriesModel.extend({
       return encodeHTML(axis.name + ' : ' + val);
     }).join('<br />');
   },
+
+  /**
+   * @implement
+   */
+  getTooltipPosition: function (dataIndex) {
+    if (dataIndex != null) {
+      var data = this.getData();
+      var coordSys = this.coordinateSystem;
+      var values = data.getValues(zrUtil.map(coordSys.dimensions, function (dim) {
+        return data.mapDimension(dim);
+      }), dataIndex, true);
+
+      for (var i = 0, len = values.length; i < len; i++) {
+        if (!isNaN(values[i])) {
+          var indicatorAxes = coordSys.getIndicatorAxes();
+          return coordSys.coordToPoint(indicatorAxes[i].dataToCoord(values[i]), i);
+        }
+      }
+    }
+  },
   defaultOption: {
     zlevel: 0,
     z: 2,
@@ -19012,6 +19248,18 @@ var SankeySeries = SeriesModel.extend({
       option.focusNodeAdjacency = 'allEdges';
     }
   },
+  // Override Series.getDataParams()
+  getDataParams: function (dataIndex, dataType) {
+    var params = SankeySeries.superCall(this, 'getDataParams', dataIndex, dataType);
+
+    if (params.value == null && dataType === 'node') {
+      var node = this.getGraph().getNodeByIndex(dataIndex);
+      var nodeValue = node.getLayout().value;
+      params.value = nodeValue;
+    }
+
+    return params;
+  },
   defaultOption: {
     zlevel: 0,
     z: 2,
@@ -19057,7 +19305,7 @@ var SankeySeries = SeriesModel.extend({
         show: true
       },
       lineStyle: {
-        opacity: 0.6
+        opacity: 0.5
       }
     },
     animationEasing: 'linear',
@@ -19121,7 +19369,9 @@ var zrUtil = __webpack_require__(/*! zrender/lib/core/util */ "./node_modules/zr
 * under the License.
 */
 var nodeOpacityPath = ['itemStyle', 'opacity'];
+var hoverNodeOpacityPath = ['emphasis', 'itemStyle', 'opacity'];
 var lineOpacityPath = ['lineStyle', 'opacity'];
+var hoverLineOpacityPath = ['emphasis', 'lineStyle', 'opacity'];
 
 function getItemOpacity(item, opacityPath) {
   return item.getVisual('opacity') || item.getModel().get(opacityPath);
@@ -19147,12 +19397,13 @@ function fadeOutItem(item, opacityPath, opacityRatio) {
 function fadeInItem(item, opacityPath) {
   var opacity = getItemOpacity(item, opacityPath);
   var el = item.getGraphicEl();
-  el.highlight && el.highlight();
   el.traverse(function (child) {
     if (child.type !== 'group') {
       child.setStyle('opacity', opacity);
     }
-  });
+  }); // Support emphasis here.
+
+  el.highlight && el.highlight();
 }
 
 var SankeyShape = graphic.extendShape({
@@ -19182,6 +19433,12 @@ var SankeyShape = graphic.extendShape({
     }
 
     ctx.closePath();
+  },
+  highlight: function () {
+    this.trigger('emphasis');
+  },
+  downplay: function () {
+    this.trigger('normal');
   }
 });
 
@@ -19344,8 +19601,19 @@ var _default = echarts.extendChartView({
         el.cursor = 'move';
       }
 
+      el.highlight = function () {
+        this.trigger('emphasis');
+      };
+
+      el.downplay = function () {
+        this.trigger('normal');
+      };
+
+      el.focusNodeAdjHandler && el.off('mouseover', el.focusNodeAdjHandler);
+      el.unfocusNodeAdjHandler && el.off('mouseout', el.unfocusNodeAdjHandler);
+
       if (itemModel.get('focusNodeAdjacency')) {
-        el.off('mouseover').on('mouseover', function () {
+        el.on('mouseover', el.focusNodeAdjHandler = function () {
           if (!sankeyView._focusAdjacencyDisabled) {
             sankeyView._clearTimer();
 
@@ -19356,7 +19624,7 @@ var _default = echarts.extendChartView({
             });
           }
         });
-        el.off('mouseout').on('mouseout', function () {
+        el.on('mouseout', el.unfocusNodeAdjHandler = function () {
           if (!sankeyView._focusAdjacencyDisabled) {
             sankeyView._dispatchUnfocus(api);
           }
@@ -19365,9 +19633,11 @@ var _default = echarts.extendChartView({
     });
     edgeData.eachItemGraphicEl(function (el, dataIndex) {
       var edgeModel = edgeData.getItemModel(dataIndex);
+      el.focusNodeAdjHandler && el.off('mouseover', el.focusNodeAdjHandler);
+      el.unfocusNodeAdjHandler && el.off('mouseout', el.unfocusNodeAdjHandler);
 
       if (edgeModel.get('focusNodeAdjacency')) {
-        el.off('mouseover').on('mouseover', function () {
+        el.on('mouseover', el.focusNodeAdjHandler = function () {
           if (!sankeyView._focusAdjacencyDisabled) {
             sankeyView._clearTimer();
 
@@ -19378,7 +19648,7 @@ var _default = echarts.extendChartView({
             });
           }
         });
-        el.off('mouseout').on('mouseout', function () {
+        el.on('mouseout', el.unfocusNodeAdjHandler = function () {
           if (!sankeyView._focusAdjacencyDisabled) {
             sankeyView._dispatchUnfocus(api);
           }
@@ -19417,8 +19687,7 @@ var _default = echarts.extendChartView({
     }
   },
   focusNodeAdjacency: function (seriesModel, ecModel, api, payload) {
-    var data = this._model.getData();
-
+    var data = seriesModel.getData();
     var graph = data.graph;
     var dataIndex = payload.dataIndex;
     var itemModel = data.getItemModel(dataIndex);
@@ -19438,7 +19707,7 @@ var _default = echarts.extendChartView({
     });
 
     if (node) {
-      fadeInItem(node, nodeOpacityPath);
+      fadeInItem(node, hoverNodeOpacityPath);
       var focusNodeAdj = itemModel.get('focusNodeAdjacency');
 
       if (focusNodeAdj === 'outEdges') {
@@ -19447,8 +19716,8 @@ var _default = echarts.extendChartView({
             return;
           }
 
-          fadeInItem(edge, lineOpacityPath);
-          fadeInItem(edge.node2, nodeOpacityPath);
+          fadeInItem(edge, hoverLineOpacityPath);
+          fadeInItem(edge.node2, hoverNodeOpacityPath);
         });
       } else if (focusNodeAdj === 'inEdges') {
         zrUtil.each(node.inEdges, function (edge) {
@@ -19456,8 +19725,8 @@ var _default = echarts.extendChartView({
             return;
           }
 
-          fadeInItem(edge, lineOpacityPath);
-          fadeInItem(edge.node1, nodeOpacityPath);
+          fadeInItem(edge, hoverLineOpacityPath);
+          fadeInItem(edge.node1, hoverNodeOpacityPath);
         });
       } else if (focusNodeAdj === 'allEdges') {
         zrUtil.each(node.edges, function (edge) {
@@ -19465,22 +19734,21 @@ var _default = echarts.extendChartView({
             return;
           }
 
-          fadeInItem(edge, lineOpacityPath);
-          fadeInItem(edge.node1, nodeOpacityPath);
-          fadeInItem(edge.node2, nodeOpacityPath);
+          fadeInItem(edge, hoverLineOpacityPath);
+          edge.node1 !== node && fadeInItem(edge.node1, hoverNodeOpacityPath);
+          edge.node2 !== node && fadeInItem(edge.node2, hoverNodeOpacityPath);
         });
       }
     }
 
     if (edge) {
-      fadeInItem(edge, lineOpacityPath);
-      fadeInItem(edge.node1, nodeOpacityPath);
-      fadeInItem(edge.node2, nodeOpacityPath);
+      fadeInItem(edge, hoverLineOpacityPath);
+      fadeInItem(edge.node1, hoverNodeOpacityPath);
+      fadeInItem(edge.node2, hoverNodeOpacityPath);
     }
   },
   unfocusNodeAdjacency: function (seriesModel, ecModel, api, payload) {
-    var graph = this._model.getGraph();
-
+    var graph = seriesModel.getGraph();
     graph.eachNode(function (node) {
       fadeOutItem(node, nodeOpacityPath);
     });
@@ -19502,8 +19770,7 @@ function createGridClipShape(rect, seriesModel, cb) {
   });
   graphic.initProps(rectEl, {
     shape: {
-      width: rect.width + 20,
-      height: rect.height + 20
+      width: rect.width + 20
     }
   }, seriesModel, cb);
   return rectEl;
@@ -19685,7 +19952,8 @@ function computeNodeValues(nodes) {
   zrUtil.each(nodes, function (node) {
     var value1 = sum(node.outEdges, getEdgeValue);
     var value2 = sum(node.inEdges, getEdgeValue);
-    var value = Math.max(value1, value2);
+    var nodeRawValue = node.getValue() || 0;
+    var value = Math.max(value1, value2, nodeRawValue);
     node.setLayout({
       value: value
     }, true);
@@ -20076,13 +20344,13 @@ function getEdgeValue(edge) {
   return edge.getValue();
 }
 
-function sum(array, f, orient) {
+function sum(array, cb, orient) {
   var sum = 0;
   var len = array.length;
   var i = -1;
 
   while (++i < len) {
-    var value = +f.call(array, array[i], orient);
+    var value = +cb.call(array, array[i], orient);
 
     if (!isNaN(value)) {
       sum += value;
@@ -22935,6 +23203,9 @@ var _default = SeriesModel.extend({
     bottom: '12%',
     // the layout of the tree, two value can be selected, 'orthogonal' or 'radial'
     layout: 'orthogonal',
+    // value can be 'polyline'
+    edgeShape: 'curve',
+    edgeForkPosition: '50%',
     // true | false | 'move' | 'scale', see module:component/helper/RoamController.
     roam: false,
     // Symbol size scale ratio in roam
@@ -23029,6 +23300,14 @@ var _cursorHelper = __webpack_require__(/*! ../../component/helper/cursorHelper 
 
 var onIrrelevantElement = _cursorHelper.onIrrelevantElement;
 
+var _config = __webpack_require__(/*! ../../config */ "./node_modules/echarts/lib/config.js");
+
+var __DEV__ = _config.__DEV__;
+
+var _number = __webpack_require__(/*! ../../util/number */ "./node_modules/echarts/lib/util/number.js");
+
+var parsePercent = _number.parsePercent;
+
 /*
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements.  See the NOTICE file
@@ -23047,6 +23326,55 @@ var onIrrelevantElement = _cursorHelper.onIrrelevantElement;
 * specific language governing permissions and limitations
 * under the License.
 */
+var TreeShape = graphic.extendShape({
+  shape: {
+    parentPoint: [],
+    childPoints: [],
+    orient: '',
+    forkPosition: ''
+  },
+  style: {
+    stroke: '#000',
+    fill: null
+  },
+  buildPath: function (ctx, shape) {
+    var childPoints = shape.childPoints;
+    var childLen = childPoints.length;
+    var parentPoint = shape.parentPoint;
+    var firstChildPos = childPoints[0];
+    var lastChildPos = childPoints[childLen - 1];
+
+    if (childLen === 1) {
+      ctx.moveTo(parentPoint[0], parentPoint[1]);
+      ctx.lineTo(firstChildPos[0], firstChildPos[1]);
+      return;
+    }
+
+    var orient = shape.orient;
+    var forkDim = orient === 'TB' || orient === 'BT' ? 0 : 1;
+    var otherDim = 1 - forkDim;
+    var forkPosition = parsePercent(shape.forkPosition, 1);
+    var tmpPoint = [];
+    tmpPoint[forkDim] = parentPoint[forkDim];
+    tmpPoint[otherDim] = parentPoint[otherDim] + (lastChildPos[otherDim] - parentPoint[otherDim]) * forkPosition;
+    ctx.moveTo(parentPoint[0], parentPoint[1]);
+    ctx.lineTo(tmpPoint[0], tmpPoint[1]);
+    ctx.moveTo(firstChildPos[0], firstChildPos[1]);
+    tmpPoint[forkDim] = firstChildPos[forkDim];
+    ctx.lineTo(tmpPoint[0], tmpPoint[1]);
+    tmpPoint[forkDim] = lastChildPos[forkDim];
+    ctx.lineTo(tmpPoint[0], tmpPoint[1]);
+    ctx.lineTo(lastChildPos[0], lastChildPos[1]);
+
+    for (var i = 1; i < childLen - 1; i++) {
+      var point = childPoints[i];
+      ctx.moveTo(point[0], point[1]);
+      tmpPoint[forkDim] = point[forkDim];
+      ctx.lineTo(tmpPoint[0], tmpPoint[1]);
+    }
+  }
+});
+
 var _default = echarts.extendChartView({
   type: 'tree',
 
@@ -23099,6 +23427,8 @@ var _default = echarts.extendChartView({
     var seriesScope = {
       expandAndCollapse: seriesModel.get('expandAndCollapse'),
       layout: layout,
+      edgeShape: seriesModel.get('edgeShape'),
+      edgeForkPosition: seriesModel.get('edgeForkPosition'),
       orient: seriesModel.getOrient(),
       curvature: seriesModel.get('lineStyle.curveness'),
       symbolRotate: seriesModel.get('symbolRotate'),
@@ -23374,27 +23704,72 @@ function updateNode(data, dataIndex, symbolEl, group, seriesModel, seriesScope) 
     });
   }
 
-  if (node.parentNode && node.parentNode !== virtualRoot) {
-    var edge = symbolEl.__edge;
+  drawEdge(seriesModel, node, virtualRoot, symbolEl, sourceOldLayout, sourceLayout, targetLayout, group, seriesScope);
+}
 
-    if (!edge) {
-      edge = symbolEl.__edge = new graphic.BezierCurve({
-        shape: getEdgeShape(seriesScope, sourceOldLayout, sourceOldLayout),
-        style: zrUtil.defaults({
-          opacity: 0,
-          strokeNoScale: true
-        }, seriesScope.lineStyle)
-      });
-    }
+function drawEdge(seriesModel, node, virtualRoot, symbolEl, sourceOldLayout, sourceLayout, targetLayout, group, seriesScope) {
+  var edgeShape = seriesScope.edgeShape;
+  var edge = symbolEl.__edge;
 
-    graphic.updateProps(edge, {
-      shape: getEdgeShape(seriesScope, sourceLayout, targetLayout),
-      style: {
-        opacity: 1
+  if (edgeShape === 'curve') {
+    if (node.parentNode && node.parentNode !== virtualRoot) {
+      if (!edge) {
+        edge = symbolEl.__edge = new graphic.BezierCurve({
+          shape: getEdgeShape(seriesScope, sourceOldLayout, sourceOldLayout),
+          style: zrUtil.defaults({
+            opacity: 0,
+            strokeNoScale: true
+          }, seriesScope.lineStyle)
+        });
       }
-    }, seriesModel);
-    group.add(edge);
+
+      graphic.updateProps(edge, {
+        shape: getEdgeShape(seriesScope, sourceLayout, targetLayout),
+        style: {
+          opacity: 1
+        }
+      }, seriesModel);
+    }
+  } else if (edgeShape === 'polyline') {
+    if (seriesScope.layout === 'orthogonal') {
+      if (node !== virtualRoot && node.children && node.children.length !== 0 && node.isExpand === true) {
+        var children = node.children;
+        var childPoints = [];
+
+        for (var i = 0; i < children.length; i++) {
+          var childLayout = children[i].getLayout();
+          childPoints.push([childLayout.x, childLayout.y]);
+        }
+
+        if (!edge) {
+          edge = symbolEl.__edge = new TreeShape({
+            shape: {
+              parentPoint: [targetLayout.x, targetLayout.y],
+              childPoints: [[targetLayout.x, targetLayout.y]],
+              orient: seriesScope.orient,
+              forkPosition: seriesScope.edgeForkPosition
+            },
+            style: zrUtil.defaults({
+              opacity: 0,
+              strokeNoScale: true
+            }, seriesScope.lineStyle)
+          });
+        }
+
+        graphic.updateProps(edge, {
+          shape: {
+            parentPoint: [targetLayout.x, targetLayout.y],
+            childPoints: childPoints
+          },
+          style: {
+            opacity: 1
+          }
+        }, seriesModel);
+      }
+    } else {}
   }
+
+  group.add(edge);
 }
 
 function removeNode(data, dataIndex, symbolEl, group, seriesModel, seriesScope) {
@@ -23403,6 +23778,7 @@ function removeNode(data, dataIndex, symbolEl, group, seriesModel, seriesScope) 
   var itemModel = node.getModel();
   var seriesScope = getTreeNodeStyle(node, itemModel, seriesScope);
   var source = node.parentNode === virtualRoot ? node : node.parentNode || node;
+  var edgeShape = seriesScope.edgeShape;
   var sourceLayout;
 
   while (sourceLayout = source.getLayout(), sourceLayout == null) {
@@ -23418,17 +23794,38 @@ function removeNode(data, dataIndex, symbolEl, group, seriesModel, seriesScope) 
   symbolEl.fadeOut(null, {
     keepLabel: true
   });
-  var edge = symbolEl.__edge;
+  var sourceSymbolEl = data.getItemGraphicEl(source.dataIndex);
+  var sourceEdge = sourceSymbolEl.__edge; // 1. when expand the sub tree, delete the children node should delete the edge of
+  // the source at the same time. because the polyline edge shape is only owned by the source.
+  // 2.when the node is the only children of the source, delete the node should delete the edge of
+  // the source at the same time. the same reason as above.
+
+  var edge = symbolEl.__edge || (source.isExpand === false || source.children.length === 1 ? sourceEdge : undefined);
+  var edgeShape = seriesScope.edgeShape;
 
   if (edge) {
-    graphic.updateProps(edge, {
-      shape: getEdgeShape(seriesScope, sourceLayout, sourceLayout),
-      style: {
-        opacity: 0
-      }
-    }, seriesModel, function () {
-      group.remove(edge);
-    });
+    if (edgeShape === 'curve') {
+      graphic.updateProps(edge, {
+        shape: getEdgeShape(seriesScope, sourceLayout, sourceLayout),
+        style: {
+          opacity: 0
+        }
+      }, seriesModel, function () {
+        group.remove(edge);
+      });
+    } else if (edgeShape === 'polyline' && seriesScope.layout === 'orthogonal') {
+      graphic.updateProps(edge, {
+        shape: {
+          parentPoint: [sourceLayout.x, sourceLayout.y],
+          childPoints: [[sourceLayout.x, sourceLayout.y]]
+        },
+        style: {
+          opacity: 0
+        }
+      }, seriesModel, function () {
+        group.remove(edge);
+      });
+    }
   }
 }
 
@@ -25604,6 +26001,10 @@ function renderNode(seriesModel, thisStorage, oldStorage, reRoot, lastsForAnimat
 
 
   var thisLayout = thisNode.getLayout();
+  var data = seriesModel.getData(); // Only for enabling highlight/downplay. Clear firstly.
+  // Because some node will not be rendered.
+
+  data.setItemGraphicEl(thisNode.dataIndex, null);
 
   if (!thisLayout || !thisLayout.isInView) {
     return;
@@ -25637,15 +26038,37 @@ function renderNode(seriesModel, thisStorage, oldStorage, reRoot, lastsForAnimat
 
   if (thisLayout.isAboveViewRoot) {
     return group;
-  } // Background
+  }
 
+  var nodeModel = thisNode.getModel(); // Background
 
   var bg = giveGraphic('background', Rect, depth, Z_BG);
   bg && renderBackground(group, bg, isParent && thisLayout.upperHeight); // No children, render content.
 
-  if (!isParent) {
+  if (isParent) {
+    // Because of the implementation about "traverse" in graphic hover style, we
+    // can not set hover listener on the "group" of non-leaf node. Otherwise the
+    // hover event from the descendents will be listenered.
+    if (graphic.isHighDownDispatcher(group)) {
+      graphic.setAsHighDownDispatcher(group, false);
+    }
+
+    if (bg) {
+      graphic.setAsHighDownDispatcher(bg, true); // Only for enabling highlight/downplay.
+
+      data.setItemGraphicEl(thisNode.dataIndex, bg);
+    }
+  } else {
     var content = giveGraphic('content', Rect, depth, Z_CONTENT);
     content && renderContent(group, content);
+
+    if (bg && graphic.isHighDownDispatcher(bg)) {
+      graphic.setAsHighDownDispatcher(bg, false);
+    }
+
+    graphic.setAsHighDownDispatcher(group, true); // Only for enabling highlight/downplay.
+
+    data.setItemGraphicEl(thisNode.dataIndex, group);
   }
 
   return group; // ----------------------------
@@ -25662,9 +26085,16 @@ function renderNode(seriesModel, thisStorage, oldStorage, reRoot, lastsForAnimat
       width: thisWidth,
       height: thisHeight
     });
-    var visualBorderColor = thisNode.getVisual('borderColor', true);
-    var emphasisBorderColor = itemStyleEmphasisModel.get('borderColor');
-    updateStyle(bg, function () {
+
+    if (thisInvisible) {
+      // If invisible, do not set visual, otherwise the element will
+      // change immediately before animation. We think it is OK to
+      // remain its origin color when moving out of the view window.
+      processInvisible(bg);
+    } else {
+      bg.invisible = false;
+      var visualBorderColor = thisNode.getVisual('borderColor', true);
+      var emphasisBorderColor = itemStyleEmphasisModel.get('borderColor');
       var normalStyle = getItemStyleNormal(itemStyleNormalModel);
       normalStyle.fill = visualBorderColor;
       var emphasisStyle = getItemStyleEmphasis(itemStyleEmphasisModel);
@@ -25684,8 +26114,9 @@ function renderNode(seriesModel, thisStorage, oldStorage, reRoot, lastsForAnimat
         }
 
       bg.setStyle(normalStyle);
-      graphic.setHoverStyle(bg, emphasisStyle);
-    });
+      graphic.setElementHoverStyle(bg, emphasisStyle);
+    }
+
     group.add(bg);
   }
 
@@ -25702,37 +26133,33 @@ function renderNode(seriesModel, thisStorage, oldStorage, reRoot, lastsForAnimat
       width: contentWidth,
       height: contentHeight
     });
-    var visualColor = thisNode.getVisual('color', true);
-    updateStyle(content, function () {
+
+    if (thisInvisible) {
+      // If invisible, do not set visual, otherwise the element will
+      // change immediately before animation. We think it is OK to
+      // remain its origin color when moving out of the view window.
+      processInvisible(content);
+    } else {
+      content.invisible = false;
+      var visualColor = thisNode.getVisual('color', true);
       var normalStyle = getItemStyleNormal(itemStyleNormalModel);
       normalStyle.fill = visualColor;
       var emphasisStyle = getItemStyleEmphasis(itemStyleEmphasisModel);
       prepareText(normalStyle, emphasisStyle, visualColor, contentWidth, contentHeight);
       content.setStyle(normalStyle);
-      graphic.setHoverStyle(content, emphasisStyle);
-    });
+      graphic.setElementHoverStyle(content, emphasisStyle);
+    }
+
     group.add(content);
   }
 
-  function updateStyle(element, cb) {
-    if (!thisInvisible) {
-      // If invisible, do not set visual, otherwise the element will
-      // change immediately before animation. We think it is OK to
-      // remain its origin color when moving out of the view window.
-      cb();
-
-      if (!element.__tmWillVisible) {
-        element.invisible = false;
-      }
-    } else {
-      // Delay invisible setting utill animation finished,
-      // avoid element vanish suddenly before animation.
-      !element.invisible && willInvisibleEls.push(element);
-    }
+  function processInvisible(element) {
+    // Delay invisible setting utill animation finished,
+    // avoid element vanish suddenly before animation.
+    !element.invisible && willInvisibleEls.push(element);
   }
 
   function prepareText(normalStyle, emphasisStyle, visualColor, width, height, upperLabelRect) {
-    var nodeModel = thisNode.getModel();
     var text = zrUtil.retrieve(seriesModel.getFormattedLabel(thisNode.dataIndex, 'normal', null, null, upperLabelRect ? 'upperLabel' : 'label'), nodeModel.get('name'));
 
     if (!upperLabelRect && thisLayout.isLeafRoot) {
@@ -27188,7 +27615,6 @@ var retrieve = _util.retrieve;
 var defaults = _util.defaults;
 var extend = _util.extend;
 var each = _util.each;
-var map = _util.map;
 
 var formatUtil = __webpack_require__(/*! ../../util/format */ "./node_modules/echarts/lib/util/format.js");
 
@@ -28033,6 +28459,11 @@ var AxisView = __webpack_require__(/*! ./AxisView */ "./node_modules/echarts/lib
 
 var cartesianAxisHelper = __webpack_require__(/*! ../../coord/cartesian/cartesianAxisHelper */ "./node_modules/echarts/lib/coord/cartesian/cartesianAxisHelper.js");
 
+var _axisSplitHelper = __webpack_require__(/*! ./axisSplitHelper */ "./node_modules/echarts/lib/component/axis/axisSplitHelper.js");
+
+var rectCoordAxisBuildSplitArea = _axisSplitHelper.rectCoordAxisBuildSplitArea;
+var rectCoordAxisHandleRemove = _axisSplitHelper.rectCoordAxisHandleRemove;
+
 /*
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements.  See the NOTICE file
@@ -28086,7 +28517,7 @@ var CartesianAxisView = AxisView.extend({
     CartesianAxisView.superCall(this, 'render', axisModel, ecModel, api, payload);
   },
   remove: function () {
-    this._splitAreaColors = null;
+    rectCoordAxisHandleRemove(this);
   },
 
   /**
@@ -28209,89 +28640,7 @@ var CartesianAxisView = AxisView.extend({
    * @private
    */
   _splitArea: function (axisModel, gridModel) {
-    var axis = axisModel.axis;
-
-    if (axis.scale.isBlank()) {
-      return;
-    }
-
-    var splitAreaModel = axisModel.getModel('splitArea');
-    var areaStyleModel = splitAreaModel.getModel('areaStyle');
-    var areaColors = areaStyleModel.get('color');
-    var gridRect = gridModel.coordinateSystem.getRect();
-    var ticksCoords = axis.getTicksCoords({
-      tickModel: splitAreaModel,
-      clamp: true
-    });
-
-    if (!ticksCoords.length) {
-      return;
-    } // For Making appropriate splitArea animation, the color and anid
-    // should be corresponding to previous one if possible.
-
-
-    var areaColorsLen = areaColors.length;
-    var lastSplitAreaColors = this._splitAreaColors;
-    var newSplitAreaColors = zrUtil.createHashMap();
-    var colorIndex = 0;
-
-    if (lastSplitAreaColors) {
-      for (var i = 0; i < ticksCoords.length; i++) {
-        var cIndex = lastSplitAreaColors.get(ticksCoords[i].tickValue);
-
-        if (cIndex != null) {
-          colorIndex = (cIndex + (areaColorsLen - 1) * i) % areaColorsLen;
-          break;
-        }
-      }
-    }
-
-    var prev = axis.toGlobalCoord(ticksCoords[0].coord);
-    var areaStyle = areaStyleModel.getAreaStyle();
-    areaColors = zrUtil.isArray(areaColors) ? areaColors : [areaColors];
-
-    for (var i = 1; i < ticksCoords.length; i++) {
-      var tickCoord = axis.toGlobalCoord(ticksCoords[i].coord);
-      var x;
-      var y;
-      var width;
-      var height;
-
-      if (axis.isHorizontal()) {
-        x = prev;
-        y = gridRect.y;
-        width = tickCoord - x;
-        height = gridRect.height;
-        prev = x + width;
-      } else {
-        x = gridRect.x;
-        y = prev;
-        width = gridRect.width;
-        height = tickCoord - y;
-        prev = y + height;
-      }
-
-      var tickValue = ticksCoords[i - 1].tickValue;
-      tickValue != null && newSplitAreaColors.set(tickValue, colorIndex);
-
-      this._axisGroup.add(new graphic.Rect({
-        anid: tickValue != null ? 'area_' + tickValue : null,
-        shape: {
-          x: x,
-          y: y,
-          width: width,
-          height: height
-        },
-        style: zrUtil.defaults({
-          fill: areaColors[colorIndex]
-        }, areaStyle),
-        silent: true
-      }));
-
-      colorIndex = (colorIndex + 1) % areaColorsLen;
-    }
-
-    this._splitAreaColors = newSplitAreaColors;
+    rectCoordAxisBuildSplitArea(this, this._axisGroup, axisModel, gridModel);
   }
 });
 CartesianAxisView.extend({
@@ -28764,6 +29113,11 @@ var singleAxisHelper = __webpack_require__(/*! ../../coord/single/singleAxisHelp
 
 var AxisView = __webpack_require__(/*! ./AxisView */ "./node_modules/echarts/lib/component/axis/AxisView.js");
 
+var _axisSplitHelper = __webpack_require__(/*! ./axisSplitHelper */ "./node_modules/echarts/lib/component/axis/axisSplitHelper.js");
+
+var rectCoordAxisBuildSplitArea = _axisSplitHelper.rectCoordAxisBuildSplitArea;
+var rectCoordAxisHandleRemove = _axisSplitHelper.rectCoordAxisHandleRemove;
+
 /*
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements.  See the NOTICE file
@@ -28783,23 +29137,30 @@ var AxisView = __webpack_require__(/*! ./AxisView */ "./node_modules/echarts/lib
 * under the License.
 */
 var axisBuilderAttrs = ['axisLine', 'axisTickLabel', 'axisName'];
-var selfBuilderAttr = 'splitLine';
+var selfBuilderAttrs = ['splitArea', 'splitLine'];
 var SingleAxisView = AxisView.extend({
   type: 'singleAxis',
   axisPointerClass: 'SingleAxisPointer',
   render: function (axisModel, ecModel, api, payload) {
     var group = this.group;
     group.removeAll();
+    var oldAxisGroup = this._axisGroup;
+    this._axisGroup = new graphic.Group();
     var layout = singleAxisHelper.layout(axisModel);
     var axisBuilder = new AxisBuilder(axisModel, layout);
     zrUtil.each(axisBuilderAttrs, axisBuilder.add, axisBuilder);
+    group.add(this._axisGroup);
     group.add(axisBuilder.getGroup());
-
-    if (axisModel.get(selfBuilderAttr + '.show')) {
-      this['_' + selfBuilderAttr](axisModel);
-    }
-
+    zrUtil.each(selfBuilderAttrs, function (name) {
+      if (axisModel.get(name + '.show')) {
+        this['_' + name](axisModel);
+      }
+    }, this);
+    graphic.groupTransition(oldAxisGroup, this._axisGroup, axisModel);
     SingleAxisView.superCall(this, 'render', axisModel, ecModel, api, payload);
+  },
+  remove: function () {
+    rectCoordAxisHandleRemove(this);
   },
   _splitLine: function (axisModel) {
     var axis = axisModel.axis;
@@ -28865,10 +29226,155 @@ var SingleAxisView = AxisView.extend({
         silent: true
       }));
     }
+  },
+  _splitArea: function (axisModel) {
+    rectCoordAxisBuildSplitArea(this, this._axisGroup, axisModel, axisModel);
   }
 });
 var _default = SingleAxisView;
 module.exports = _default;
+
+/***/ }),
+
+/***/ "./node_modules/echarts/lib/component/axis/axisSplitHelper.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/echarts/lib/component/axis/axisSplitHelper.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/*
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
+
+var zrUtil = __webpack_require__(/*! zrender/lib/core/util */ "./node_modules/zrender/lib/core/util.js");
+
+var graphic = __webpack_require__(/*! ../../util/graphic */ "./node_modules/echarts/lib/util/graphic.js");
+
+/*
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
+function rectCoordAxisBuildSplitArea(axisView, axisGroup, axisModel, gridModel) {
+  var axis = axisModel.axis;
+
+  if (axis.scale.isBlank()) {
+    return;
+  }
+
+  var splitAreaModel = axisModel.getModel('splitArea');
+  var areaStyleModel = splitAreaModel.getModel('areaStyle');
+  var areaColors = areaStyleModel.get('color');
+  var gridRect = gridModel.coordinateSystem.getRect();
+  var ticksCoords = axis.getTicksCoords({
+    tickModel: splitAreaModel,
+    clamp: true
+  });
+
+  if (!ticksCoords.length) {
+    return;
+  } // For Making appropriate splitArea animation, the color and anid
+  // should be corresponding to previous one if possible.
+
+
+  var areaColorsLen = areaColors.length;
+  var lastSplitAreaColors = axisView.__splitAreaColors;
+  var newSplitAreaColors = zrUtil.createHashMap();
+  var colorIndex = 0;
+
+  if (lastSplitAreaColors) {
+    for (var i = 0; i < ticksCoords.length; i++) {
+      var cIndex = lastSplitAreaColors.get(ticksCoords[i].tickValue);
+
+      if (cIndex != null) {
+        colorIndex = (cIndex + (areaColorsLen - 1) * i) % areaColorsLen;
+        break;
+      }
+    }
+  }
+
+  var prev = axis.toGlobalCoord(ticksCoords[0].coord);
+  var areaStyle = areaStyleModel.getAreaStyle();
+  areaColors = zrUtil.isArray(areaColors) ? areaColors : [areaColors];
+
+  for (var i = 1; i < ticksCoords.length; i++) {
+    var tickCoord = axis.toGlobalCoord(ticksCoords[i].coord);
+    var x;
+    var y;
+    var width;
+    var height;
+
+    if (axis.isHorizontal()) {
+      x = prev;
+      y = gridRect.y;
+      width = tickCoord - x;
+      height = gridRect.height;
+      prev = x + width;
+    } else {
+      x = gridRect.x;
+      y = prev;
+      width = gridRect.width;
+      height = tickCoord - y;
+      prev = y + height;
+    }
+
+    var tickValue = ticksCoords[i - 1].tickValue;
+    tickValue != null && newSplitAreaColors.set(tickValue, colorIndex);
+    axisGroup.add(new graphic.Rect({
+      anid: tickValue != null ? 'area_' + tickValue : null,
+      shape: {
+        x: x,
+        y: y,
+        width: width,
+        height: height
+      },
+      style: zrUtil.defaults({
+        fill: areaColors[colorIndex]
+      }, areaStyle),
+      silent: true
+    }));
+    colorIndex = (colorIndex + 1) % areaColorsLen;
+  }
+
+  axisView.__splitAreaColors = newSplitAreaColors;
+}
+
+function rectCoordAxisHandleRemove(axisView) {
+  axisView.__splitAreaColors = null;
+}
+
+exports.rectCoordAxisBuildSplitArea = rectCoordAxisBuildSplitArea;
+exports.rectCoordAxisHandleRemove = rectCoordAxisHandleRemove;
 
 /***/ }),
 
@@ -31895,6 +32401,10 @@ var zrUtil = __webpack_require__(/*! zrender/lib/core/util */ "./node_modules/zr
 
 var BrushController = __webpack_require__(/*! ../helper/BrushController */ "./node_modules/echarts/lib/component/helper/BrushController.js");
 
+var _visualEncoding = __webpack_require__(/*! ./visualEncoding */ "./node_modules/echarts/lib/component/brush/visualEncoding.js");
+
+var layoutCovers = _visualEncoding.layoutCovers;
+
 /*
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements.  See the NOTICE file
@@ -31952,7 +32462,13 @@ var _default = echarts.extendComponentView({
   /**
    * @override
    */
-  updateTransform: updateController,
+  updateTransform: function (brushModel, ecModel) {
+    // PENDING: `updateTransform` is a little tricky, whose layout need
+    // to be calculate mandatorily and other stages will not be performed.
+    // Take care the correctness of the logic. See #11754 .
+    layoutCovers(ecModel);
+    return updateController.apply(this, arguments);
+  },
 
   /**
    * @override
@@ -32421,13 +32937,22 @@ echarts.registerLayout(PRIORITY_BRUSH, function (ecModel, api, payload) {
     payload && payload.type === 'takeGlobalCursor' && brushModel.setBrushOption(payload.key === 'brush' ? payload.brushOption : {
       brushType: false
     });
+  });
+  layoutCovers(ecModel);
+});
+
+function layoutCovers(ecModel) {
+  ecModel.eachComponent({
+    mainType: 'brush'
+  }, function (brushModel) {
     var brushTargetManager = brushModel.brushTargetManager = new BrushTargetManager(brushModel.option, ecModel);
     brushTargetManager.setInputRanges(brushModel.areas, ecModel);
   });
-});
+}
 /**
  * Register the visual encoding if this modules required.
  */
+
 
 echarts.registerVisual(PRIORITY_BRUSH, function (ecModel, api, payload) {
   var brushSelected = [];
@@ -32671,6 +33196,8 @@ var boundingRectBuilders = {
 function getBoundingRectFromMinMax(minMax) {
   return new BoundingRect(minMax[0][0], minMax[1][0], minMax[0][1] - minMax[0][0], minMax[1][1] - minMax[1][0]);
 }
+
+exports.layoutCovers = layoutCovers;
 
 /***/ }),
 
@@ -39271,14 +39798,12 @@ MapDraw.prototype = {
 
     var regionsGroup = this._regionsGroup;
     var group = this.group;
-
-    if (geo._roamTransformable.transform) {
-      group.transform = geo._roamTransformable.transform.slice();
-      group.decomposeTransform();
-    }
-
-    var scale = geo._rawTransformable.scale;
-    var position = geo._rawTransformable.position;
+    var transformInfo = geo.getTransformInfo();
+    group.transform = transformInfo.roamTransform;
+    group.decomposeTransform();
+    group.dirty();
+    var scale = transformInfo.rawScale;
+    var position = transformInfo.rawPosition;
     regionsGroup.removeAll();
     var itemStyleAccessPath = ['itemStyle'];
     var hoverItemStyleAccessPath = ['emphasis', 'itemStyle'];
@@ -41976,28 +42501,28 @@ var ScrollableLegendView = LegendView.extend({
     }
   },
   _findTargetItemIndex: function (targetDataIndex) {
+    if (!this._showController) {
+      return 0;
+    }
+
     var index;
     var contentGroup = this.getContentGroup();
     var defaultIndex;
+    contentGroup.eachChild(function (child, idx) {
+      var legendDataIdx = child.__legendDataIndex; // FIXME
+      // If the given targetDataIndex (from model) is illegal,
+      // we use defualtIndex. But the index on the legend model and
+      // action payload is still illegal. That case will not be
+      // changed until some scenario requires.
 
-    if (this._showController) {
-      contentGroup.eachChild(function (child, idx) {
-        var legendDataIdx = child.__legendDataIndex; // FIXME
-        // If the given targetDataIndex (from model) is illegal,
-        // we use defualtIndex. But the index on the legend model and
-        // action payload is still illegal. That case will not be
-        // changed until some scenario requires.
+      if (defaultIndex == null && legendDataIdx != null) {
+        defaultIndex = idx;
+      }
 
-        if (defaultIndex == null && legendDataIdx != null) {
-          defaultIndex = idx;
-        }
-
-        if (legendDataIdx === targetDataIndex) {
-          index = idx;
-        }
-      });
-    }
-
+      if (legendDataIdx === targetDataIndex) {
+        index = idx;
+      }
+    });
     return index != null ? index : defaultIndex;
   }
 });
@@ -42950,7 +43475,8 @@ var _default = MarkerModel.extend({
     },
     label: {
       show: true,
-      position: 'end'
+      position: 'end',
+      distance: 5
     },
     lineStyle: {
       type: 'dashed'
@@ -43987,7 +44513,8 @@ function markerTypeCalculatorWithExtent(mlType, data, otherDataDim, targetDataDi
   var value = numCalculate(data, calcDataDim, mlType);
   var dataIndex = data.indicesOfNearest(calcDataDim, value)[0];
   coordArr[otherCoordIndex] = data.get(otherDataDim, dataIndex);
-  coordArr[targetCoordIndex] = data.get(targetDataDim, dataIndex); // Make it simple, do not visit all stacked value to count precision.
+  coordArr[targetCoordIndex] = data.get(calcDataDim, dataIndex);
+  var coordArrValue = data.get(targetDataDim, dataIndex); // Make it simple, do not visit all stacked value to count precision.
 
   var precision = numberUtil.getPrecision(data.get(targetDataDim, dataIndex));
   precision = Math.min(precision, 20);
@@ -43996,7 +44523,7 @@ function markerTypeCalculatorWithExtent(mlType, data, otherDataDim, targetDataDi
     coordArr[targetCoordIndex] = +coordArr[targetCoordIndex].toFixed(precision);
   }
 
-  return coordArr;
+  return [coordArr, coordArrValue];
 }
 
 var curry = zrUtil.curry; // TODO Specified percent
@@ -44053,9 +44580,11 @@ function dataTransform(seriesModel, item) {
     if (item.type && markerTypeCalculator[item.type] && axisInfo.baseAxis && axisInfo.valueAxis) {
       var otherCoordIndex = indexOf(dims, axisInfo.baseAxis.dim);
       var targetCoordIndex = indexOf(dims, axisInfo.valueAxis.dim);
-      item.coord = markerTypeCalculator[item.type](data, axisInfo.baseDataDim, axisInfo.valueDataDim, otherCoordIndex, targetCoordIndex); // Force to use the value of calculated value.
+      var coordInfo = markerTypeCalculator[item.type](data, axisInfo.baseDataDim, axisInfo.valueDataDim, otherCoordIndex, targetCoordIndex);
+      item.coord = coordInfo[0]; // Force to use the value of calculated value.
+      // let item use the value without stack.
 
-      item.value = item.coord[targetCoordIndex];
+      item.value = coordInfo[1];
     } else {
       // FIXME Only has one of xAxis and yAxis.
       var coord = [item.xAxis != null ? item.xAxis : item.radiusAxis, item.yAxis != null ? item.yAxis : item.angleAxis]; // Each coord support max, min, average
@@ -48619,6 +49148,8 @@ var zrColor = __webpack_require__(/*! zrender/lib/tool/color */ "./node_modules/
 
 var eventUtil = __webpack_require__(/*! zrender/lib/core/event */ "./node_modules/zrender/lib/core/event.js");
 
+var domUtil = __webpack_require__(/*! zrender/lib/core/dom */ "./node_modules/zrender/lib/core/dom.js");
+
 var env = __webpack_require__(/*! zrender/lib/core/env */ "./node_modules/zrender/lib/core/env.js");
 
 var formatUtil = __webpack_require__(/*! ../../util/format */ "./node_modules/echarts/lib/util/format.js");
@@ -48719,24 +49250,65 @@ function assembleCssText(tooltipModel) {
   }
 
   return cssText.join(';') + ';';
+} // If not able to make, do not modify the input `out`.
+
+
+function makeStyleCoord(out, zr, appendToBody, zrX, zrY) {
+  var zrPainter = zr && zr.painter;
+
+  if (appendToBody) {
+    var zrViewportRoot = zrPainter && zrPainter.getViewportRoot();
+
+    if (zrViewportRoot) {
+      // Some APPs might use scale on body, so we support CSS transform here.
+      domUtil.transformLocalCoord(out, zrViewportRoot, document.body, zrX, zrY);
+    }
+  } else {
+    out[0] = zrX;
+    out[1] = zrY; // xy should be based on canvas root. But tooltipContent is
+    // the sibling of canvas root. So padding of ec container
+    // should be considered here.
+
+    var viewportRootOffset = zrPainter && zrPainter.getViewportRootOffset();
+
+    if (viewportRootOffset) {
+      out[0] += viewportRootOffset.offsetLeft;
+      out[1] += viewportRootOffset.offsetTop;
+    }
+  }
 }
 /**
  * @alias module:echarts/component/tooltip/TooltipContent
+ * @param {HTMLElement} container
+ * @param {ExtensionAPI} api
+ * @param {Object} [opt]
+ * @param {boolean} [opt.appendToBody]
+ *        `false`: the DOM element will be inside the container. Default value.
+ *        `true`: the DOM element will be appended to HTML body, which avoid
+ *                some overflow clip but intrude outside of the container.
  * @constructor
  */
 
 
-function TooltipContent(container, api) {
+function TooltipContent(container, api, opt) {
   if (env.wxa) {
     return null;
   }
 
   var el = document.createElement('div');
-  var zr = this._zr = api.getZr();
+  el.domBelongToZr = true;
   this.el = el;
-  this._x = api.getWidth() / 2;
-  this._y = api.getHeight() / 2;
-  container.appendChild(el);
+  var zr = this._zr = api.getZr();
+  var appendToBody = this._appendToBody = opt && opt.appendToBody;
+  this._styleCoord = [0, 0];
+  makeStyleCoord(this._styleCoord, zr, appendToBody, api.getWidth() / 2, api.getHeight() / 2);
+
+  if (appendToBody) {
+    document.body.appendChild(el);
+  } else {
+    container.appendChild(el);
+  }
+
   this._container = container;
   this._show = false;
   /**
@@ -48770,7 +49342,8 @@ function TooltipContent(container, api) {
       // Try trigger zrender event to avoid mouse
       // in and out shape too frequently
       var handler = zr.handler;
-      eventUtil.normalizeEvent(container, e, true);
+      var zrViewportRoot = zr.painter.getViewportRoot();
+      eventUtil.normalizeEvent(zrViewportRoot, e, true);
       handler.dispatch('mousemove', e);
     }
   };
@@ -48815,10 +49388,11 @@ TooltipContent.prototype = {
   show: function (tooltipModel) {
     clearTimeout(this._hideTimeout);
     var el = this.el;
+    var styleCoord = this._styleCoord;
     el.style.cssText = gCssText + assembleCssText(tooltipModel) // Because of the reason described in:
     // http://stackoverflow.com/questions/21125587/css3-transition-not-working-in-chrome-anymore
     // we should set initial value to `left` and `top`.
-    + ';left:' + this._x + 'px;top:' + this._y + 'px;' + (tooltipModel.get('extraCssText') || '');
+    + ';left:' + styleCoord[0] + 'px;top:' + styleCoord[1] + 'px;' + (tooltipModel.get('extraCssText') || '');
     el.style.display = el.innerHTML ? 'block' : 'none'; // If mouse occsionally move over the tooltip, a mouseout event will be
     // triggered by canvas, and cuase some unexpectable result like dragging
     // stop, "unfocusAdjacency". Here `pointer-events: none` is used to solve
@@ -48838,23 +49412,12 @@ TooltipContent.prototype = {
     var el = this.el;
     return [el.clientWidth, el.clientHeight];
   },
-  moveTo: function (x, y) {
-    // xy should be based on canvas root. But tooltipContent is
-    // the sibling of canvas root. So padding of ec container
-    // should be considered here.
-    var zr = this._zr;
-    var viewportRootOffset;
-
-    if (zr && zr.painter && (viewportRootOffset = zr.painter.getViewportRootOffset())) {
-      x += viewportRootOffset.offsetLeft;
-      y += viewportRootOffset.offsetTop;
-    }
-
+  moveTo: function (zrX, zrY) {
+    var styleCoord = this._styleCoord;
+    makeStyleCoord(styleCoord, this._zr, this._appendToBody, zrX, zrY);
     var style = this.el.style;
-    style.left = x + 'px';
-    style.top = y + 'px';
-    this._x = x;
-    this._y = y;
+    style.left = styleCoord[0] + 'px';
+    style.top = styleCoord[1] + 'px';
   },
   hide: function () {
     this.el.style.display = 'none';
@@ -48874,6 +49437,9 @@ TooltipContent.prototype = {
   },
   isShow: function () {
     return this._show;
+  },
+  dispose: function () {
+    this.el.parentNode.removeChild(this.el);
   },
   getOuterSize: function () {
     var width = this.el.clientWidth;
@@ -49347,7 +49913,9 @@ var _default = echarts.extendComponentView({
     var tooltipContent;
 
     if (this._renderMode === 'html') {
-      tooltipContent = new TooltipContent(api.getDom(), api);
+      tooltipContent = new TooltipContent(api.getDom(), api, {
+        appendToBody: tooltipModel.get('appendToBody', true)
+      });
       this._newLine = '<br/>';
     } else {
       tooltipContent = new TooltipRichContent(api);
@@ -49482,7 +50050,6 @@ var _default = echarts.extendComponentView({
         offsetX: payload.x,
         offsetY: payload.y,
         position: payload.position,
-        event: {},
         dataByCoordSys: payload.dataByCoordSys,
         tooltipOption: payload.tooltipOption
       }, dispatchAction);
@@ -49500,8 +50067,7 @@ var _default = echarts.extendComponentView({
           offsetX: cx,
           offsetY: cy,
           position: payload.position,
-          target: pointInfo.el,
-          event: {}
+          target: pointInfo.el
         }, dispatchAction);
       }
     } else if (payload.x != null && payload.y != null) {
@@ -49517,8 +50083,7 @@ var _default = echarts.extendComponentView({
         offsetX: payload.x,
         offsetY: payload.y,
         position: payload.position,
-        target: api.getZr().findHover(payload.x, payload.y).target,
-        event: {}
+        target: api.getZr().findHover(payload.x, payload.y).target
       }, dispatchAction);
     }
   },
@@ -49912,7 +50477,7 @@ var _default = echarts.extendComponentView({
       return;
     }
 
-    this._tooltipContent.hide();
+    this._tooltipContent.dispose();
 
     globalListener.unregister('itemTooltip', api);
   }
@@ -54008,6 +54573,15 @@ View.prototype = {
     this.invTransform = this.invTransform || [];
     matrix.invert(this.invTransform, this.transform);
     this.decomposeTransform();
+  },
+  getTransformInfo: function () {
+    var roamTransform = this._roamTransformable.transform;
+    var rawTransformable = this._rawTransformable;
+    return {
+      roamTransform: roamTransform ? zrUtil.slice(roamTransform) : matrix.create(),
+      rawScale: zrUtil.slice(rawTransformable.scale),
+      rawPosition: zrUtil.slice(rawTransformable.position)
+    };
   },
 
   /**
@@ -61997,12 +62571,12 @@ Radar.prototype.update = function (ecModel, api) {
 
       if (nicedSplitNumber > splitNumber) {
         interval = increaseInterval(interval);
-      } // PENDING
+      } // TODO
 
 
-      var center = Math.round((rawExtent[0] + rawExtent[1]) / 2 / interval) * interval;
-      var halfSplitNumber = Math.round(splitNumber / 2);
-      scale.setExtent(numberUtil.round(center - halfSplitNumber * interval), numberUtil.round(center + (splitNumber - halfSplitNumber) * interval));
+      var max = Math.ceil(rawExtent[1] / interval) * interval;
+      var min = numberUtil.round(max - interval * splitNumber);
+      scale.setExtent(min, max);
       scale.setInterval(interval);
     }
   });
@@ -69220,9 +69794,9 @@ var each = zrUtil.each;
 var isFunction = zrUtil.isFunction;
 var isObject = zrUtil.isObject;
 var parseClassType = ComponentModel.parseClassType;
-var version = '4.6.0';
+var version = '4.7.0';
 var dependencies = {
-  zrender: '4.2.0'
+  zrender: '4.3.0'
 };
 var TEST_FRAME_REMAIN_TIME = 1;
 var PRIORITY_PROCESSOR_FILTER = 1000;
@@ -72308,12 +72882,7 @@ function layout(seriesType, ecModel) {
 
     for (var idx = 0, len = data.count(); idx < len; idx++) {
       var value = data.get(valueDim, idx);
-      var baseValue = data.get(baseDim, idx); // If dataZoom in filteMode: 'empty', the baseValue can be set as NaN in "axisProxy".
-
-      if (isNaN(value) || isNaN(baseValue)) {
-        continue;
-      }
-
+      var baseValue = data.get(baseDim, idx);
       var sign = value >= 0 ? 'p' : 'n';
       var baseCoord = valueAxisStart; // Because of the barMinHeight, we can not use the value in
       // stackResultDimension directly.
@@ -72347,9 +72916,12 @@ function layout(seriesType, ecModel) {
 
         if (Math.abs(width) < barMinHeight) {
           width = (width < 0 ? -1 : 1) * barMinHeight;
-        }
+        } // Ignore stack from NaN value
 
-        stacked && (lastStackCoords[stackId][baseValue][sign] += width);
+
+        if (!isNaN(width)) {
+          stacked && (lastStackCoords[stackId][baseValue][sign] += width);
+        }
       } else {
         var coord = cartesian.dataToPoint([baseValue, value]);
         x = coord[0] + columnOffset;
@@ -72360,9 +72932,12 @@ function layout(seriesType, ecModel) {
         if (Math.abs(height) < barMinHeight) {
           // Include zero to has a positive bar
           height = (height <= 0 ? -1 : 1) * barMinHeight;
-        }
+        } // Ignore stack from NaN value
 
-        stacked && (lastStackCoords[stackId][baseValue][sign] += height);
+
+        if (!isNaN(height)) {
+          stacked && (lastStackCoords[stackId][baseValue][sign] += height);
+        }
       }
 
       data.setItemLayout(idx, {
@@ -72386,6 +72961,7 @@ var largeLayout = {
 
     var data = seriesModel.getData();
     var cartesian = seriesModel.coordinateSystem;
+    var coordLayout = cartesian.grid.getRect();
     var baseAxis = cartesian.getBaseAxis();
     var valueAxis = cartesian.getOtherAxis(baseAxis);
     var valueDim = data.mapDimension(valueAxis.dim);
@@ -72406,6 +72982,7 @@ var largeLayout = {
     function progress(params, data) {
       var count = params.count;
       var largePoints = new LargeArr(count * 2);
+      var largeBackgroundPoints = new LargeArr(count * 2);
       var largeDataIndices = new LargeArr(count);
       var dataIndex;
       var coord = [];
@@ -72418,7 +72995,9 @@ var largeLayout = {
         valuePair[1 - valueDimIdx] = data.get(baseDim, dataIndex);
         coord = cartesian.dataToPoint(valuePair, null, coord); // Data index might not be in order, depends on `progressiveChunkMode`.
 
+        largeBackgroundPoints[pointsOffset] = valueAxisHorizontal ? coordLayout.x + coordLayout.width : coord[0];
         largePoints[pointsOffset++] = coord[0];
+        largeBackgroundPoints[pointsOffset] = valueAxisHorizontal ? coord[1] : coordLayout.y + coordLayout.height;
         largePoints[pointsOffset++] = coord[1];
         largeDataIndices[idxOffset++] = dataIndex;
       }
@@ -72426,8 +73005,10 @@ var largeLayout = {
       data.setLayout({
         largePoints: largePoints,
         largeDataIndices: largeDataIndices,
+        largeBackgroundPoints: largeBackgroundPoints,
         barWidth: barWidth,
         valueAxisStart: getValueAxisStart(baseAxis, valueAxis, false),
+        backgroundStart: valueAxisHorizontal ? coordLayout.x : coordLayout.y,
         valueAxisHorizontal: valueAxisHorizontal
       });
     }
@@ -72561,11 +73142,6 @@ function barLayoutPolar(seriesType, ecModel, api) {
     for (var idx = 0, len = data.count(); idx < len; idx++) {
       var value = data.get(valueDim, idx);
       var baseValue = data.get(baseDim, idx);
-
-      if (isNaN(value)) {
-        continue;
-      }
-
       var sign = value >= 0 ? 'p' : 'n';
       var baseCoord = valueAxisStart; // Because of the barMinHeight, we can not use the value in
       // stackResultDimension directly.
@@ -77326,7 +77902,7 @@ var IntervalScale = Scale.extend({
 
     if (extent[0] < niceTickExtent[0]) {
       if (expandToNicedExtent) {
-        ticks.push(roundNumber(niceTickExtent[0] - interval));
+        ticks.push(roundNumber(niceTickExtent[0] - interval, intervalPrecision));
       } else {
         ticks.push(extent[0]);
       }
@@ -77356,7 +77932,7 @@ var IntervalScale = Scale.extend({
 
     if (extent[1] > lastNiceTick) {
       if (expandToNicedExtent) {
-        ticks.push(lastNiceTick + interval);
+        ticks.push(roundNumber(lastNiceTick + interval, intervalPrecision));
       } else {
         ticks.push(extent[1]);
       }
@@ -78761,7 +79337,15 @@ function performStageTasks(scheduler, stageHandlers, ecModel, payload, opt) {
           task.dirty();
         }
 
-        var performArgs = scheduler.getPerformArgs(task, opt.block);
+        var performArgs = scheduler.getPerformArgs(task, opt.block); // FIXME
+        // if intending to decalare `performRawSeries` in handlers, only
+        // stream-independent (specifically, data item independent) operations can be
+        // performed. Because is a series is filtered, most of the tasks will not
+        // be performed. A stream-dependent operation probably cause wrong biz logic.
+        // Perhaps we should not provide a separate callback for this case instead
+        // of providing the config `performRawSeries`. The stream-dependent operaions
+        // and stream-independent operations should better not be mixed.
+
         performArgs.skip = !stageHandler.performRawSeries && ecModel.isSeriesFiltered(task.context.model);
         updatePayload(task, payload);
         unfinished |= task.perform(performArgs);
@@ -81771,7 +82355,7 @@ function animateOrSetProps(isUpdate, el, props, animatableModel, dataIndex, cb) 
  * configuration in series.
  *
  * Caution: this method will stop previous animation.
- * So if do not use this method to one element twice before
+ * So do not use this method to one element twice before
  * animation starts, unless you know what you are doing.
  *
  * @param {module:zrender/Element} el
@@ -81798,7 +82382,7 @@ function updateProps(el, props, animatableModel, dataIndex, cb) {
  * configuration in series.
  *
  * Caution: this method will stop previous animation.
- * So if do not use this method to one element twice before
+ * So do not use this method to one element twice before
  * animation starts, unless you know what you are doing.
  *
  * @param {module:zrender/Element} el
@@ -88949,7 +89533,7 @@ var requestAnimationFrame = __webpack_require__(/*! ./requestAnimationFrame */ "
 var Animator = __webpack_require__(/*! ./Animator */ "./node_modules/zrender/lib/animation/Animator.js");
 
 /**
- * 动画主类, 调度和管理所有动画控制器
+ * Animation main class, dispatch and manage all animation controllers
  *
  * @module zrender/animation/Animation
  * @author pissang(https://github.com/pissang)
@@ -89006,7 +89590,7 @@ Animation.prototype = {
   constructor: Animation,
 
   /**
-   * 添加 clip
+   * Add clip
    * @param {module:zrender/animation/Clip} clip
    */
   addClip: function (clip) {
@@ -89014,7 +89598,7 @@ Animation.prototype = {
   },
 
   /**
-   * 添加 animator
+   * Add animator
    * @param {module:zrender/animation/Animator} animator
    */
   addAnimator: function (animator) {
@@ -89027,7 +89611,7 @@ Animation.prototype = {
   },
 
   /**
-   * 删除动画片段
+   * Delete animation clip
    * @param {module:zrender/animation/Clip} clip
    */
   removeClip: function (clip) {
@@ -89039,7 +89623,7 @@ Animation.prototype = {
   },
 
   /**
-   * 删除动画片段
+   * Delete animation clip
    * @param {module:zrender/animation/Animator} animator
    */
   removeAnimator: function (animator) {
@@ -89635,7 +90219,7 @@ var Animator = function (target, loop, getter, setter) {
 
 Animator.prototype = {
   /**
-   * 设置动画关键帧
+   * Set Animation keyframe
    * @param  {number} time 关键帧时间，单位是ms
    * @param  {Object} props 关键帧的属性值，key-value表示
    * @return {module:zrender/animation/Animator}
@@ -89722,7 +90306,7 @@ Animator.prototype = {
   },
 
   /**
-   * 开始执行动画
+   * Start the animation
    * @param  {string|Function} [easing]
    *         动画缓动函数，详见{@link module:zrender/animation/easing}
    * @param  {boolean} forceAnimate
@@ -89786,7 +90370,7 @@ Animator.prototype = {
   },
 
   /**
-   * 停止动画
+   * Stop animation
    * @param {boolean} forwardToLast If move to last frame before stop
    */
   stop: function (forwardToLast) {
@@ -89808,7 +90392,7 @@ Animator.prototype = {
   },
 
   /**
-   * 设置动画延迟开始的时间
+   * Set when animation delay starts
    * @param  {number} time 单位ms
    * @return {module:zrender/animation/Animator}
    */
@@ -89818,7 +90402,7 @@ Animator.prototype = {
   },
 
   /**
-   * 添加动画结束的回调
+   * Add callback for animation end
    * @param  {Function} cb
    * @return {module:zrender/animation/Animator}
    */
@@ -94426,6 +95010,154 @@ exports.quadraticProjectPoint = quadraticProjectPoint;
 
 /***/ }),
 
+/***/ "./node_modules/zrender/lib/core/dom.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zrender/lib/core/dom.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var env = __webpack_require__(/*! ./env */ "./node_modules/zrender/lib/core/env.js");
+
+var _fourPointsTransform = __webpack_require__(/*! ./fourPointsTransform */ "./node_modules/zrender/lib/core/fourPointsTransform.js");
+
+var buildTransformer = _fourPointsTransform.buildTransformer;
+var EVENT_SAVED_PROP = '___zrEVENTSAVED';
+var _calcOut = [];
+/**
+ * Transform "local coord" from `elFrom` to `elTarget`.
+ * "local coord": the coord based on the input `el`. The origin point is at
+ *     the position of "left: 0; top: 0;" in the `el`.
+ *
+ * Support when CSS transform is used.
+ *
+ * Having the `out` (that is, `[outX, outY]`), we can create an DOM element
+ * and set the CSS style as "left: outX; top: outY;" and append it to `elTarge`
+ * to locate the element.
+ *
+ * For example, this code below positions a child of `document.body` on the event
+ * point, no matter whether `body` has `margin`/`paddin`/`transfrom`/... :
+ * ```js
+ * transformLocalCoord(out, container, document.body, event.offsetX, event.offsetY);
+ * if (!eqNaN(out[0])) {
+ *     // Then locate the tip element on the event point.
+ *     var tipEl = document.createElement('div');
+ *     tipEl.style.cssText = 'position: absolute; left:' + out[0] + ';top:' + out[1] + ';';
+ *     document.body.appendChild(tipEl);
+ * }
+ * ```
+ *
+ * Notice: In some env this method is not supported. If called, `out` will be `[NaN, NaN]`.
+ *
+ * @param {Array.<number>} out [inX: number, inY: number] The output..
+ *        If can not transform, `out` will not be modified but return `false`.
+ * @param {HTMLElement} elFrom The `[inX, inY]` is based on elFrom.
+ * @param {HTMLElement} elTarget The `out` is based on elTarget.
+ * @param {number} inX
+ * @param {number} inY
+ * @return {boolean} Whether transform successfully.
+ */
+
+function transformLocalCoord(out, elFrom, elTarget, inX, inY) {
+  return transformCoordWithViewport(_calcOut, elFrom, inX, inY, true) && transformCoordWithViewport(out, elTarget, _calcOut[0], _calcOut[1]);
+}
+/**
+ * Transform between a "viewport coord" and a "local coord".
+ * "viewport coord": the coord based on the left-top corner of the viewport
+ *     of the browser.
+ * "local coord": the coord based on the input `el`. The origin point is at
+ *     the position of "left: 0; top: 0;" in the `el`.
+ *
+ * Support the case when CSS transform is used on el.
+ *
+ * @param {Array.<number>} out [inX: number, inY: number] The output. If `inverse: false`,
+ *        it represents "local coord", otherwise "vireport coord".
+ *        If can not transform, `out` will not be modified but return `false`.
+ * @param {HTMLElement} el The "local coord" is based on the `el`, see comment above.
+ * @param {number} inX If `inverse: false`,
+ *        it represents "vireport coord", otherwise "local coord".
+ * @param {number} inY If `inverse: false`,
+ *        it represents "vireport coord", otherwise "local coord".
+ * @param {boolean} [inverse=false]
+ *        `true`: from "viewport coord" to "local coord".
+ *        `false`: from "local coord" to "viewport coord".
+ * @return {boolean} Whether transform successfully.
+ */
+
+
+function transformCoordWithViewport(out, el, inX, inY, inverse) {
+  if (el.getBoundingClientRect && env.domSupported && !isCanvasEl(el)) {
+    var saved = el[EVENT_SAVED_PROP] || (el[EVENT_SAVED_PROP] = {});
+    var markers = prepareCoordMarkers(el, saved);
+    var transformer = preparePointerTransformer(markers, saved, inverse);
+
+    if (transformer) {
+      transformer(out, inX, inY);
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function prepareCoordMarkers(el, saved) {
+  var markers = saved.markers;
+
+  if (markers) {
+    return markers;
+  }
+
+  markers = saved.markers = [];
+  var propLR = ['left', 'right'];
+  var propTB = ['top', 'bottom'];
+
+  for (var i = 0; i < 4; i++) {
+    var marker = document.createElement('div');
+    var stl = marker.style;
+    var idxLR = i % 2;
+    var idxTB = (i >> 1) % 2;
+    stl.cssText = ['position: absolute', 'visibility: hidden', 'padding: 0', 'margin: 0', 'border-width: 0', 'user-select: none', 'width:0', 'height:0', // 'width: 5px',
+    // 'height: 5px',
+    propLR[idxLR] + ':0', propTB[idxTB] + ':0', propLR[1 - idxLR] + ':auto', propTB[1 - idxTB] + ':auto', ''].join('!important;');
+    el.appendChild(marker);
+    markers.push(marker);
+  }
+
+  return markers;
+}
+
+function preparePointerTransformer(markers, saved, inverse) {
+  var transformerName = inverse ? 'invTrans' : 'trans';
+  var transformer = saved[transformerName];
+  var oldSrcCoords = saved.srcCoords;
+  var oldCoordTheSame = true;
+  var srcCoords = [];
+  var destCoords = [];
+
+  for (var i = 0; i < 4; i++) {
+    var rect = markers[i].getBoundingClientRect();
+    var ii = 2 * i;
+    var x = rect.left;
+    var y = rect.top;
+    srcCoords.push(x, y);
+    oldCoordTheSame = oldCoordTheSame && oldSrcCoords && x === oldSrcCoords[ii] && y === oldSrcCoords[ii + 1];
+    destCoords.push(markers[i].offsetLeft, markers[i].offsetTop);
+  } // Cache to avoid time consuming of `buildTransformer`.
+
+
+  return oldCoordTheSame && transformer ? transformer : (saved.srcCoords = srcCoords, saved[transformerName] = inverse ? buildTransformer(destCoords, srcCoords) : buildTransformer(srcCoords, destCoords));
+}
+
+function isCanvasEl(el) {
+  return el.nodeName.toUpperCase() === 'CANVAS';
+}
+
+exports.transformLocalCoord = transformLocalCoord;
+exports.transformCoordWithViewport = transformCoordWithViewport;
+exports.isCanvasEl = isCanvasEl;
+
+/***/ }),
+
 /***/ "./node_modules/zrender/lib/core/env.js":
 /*!**********************************************!*\
   !*** ./node_modules/zrender/lib/core/env.js ***!
@@ -94619,16 +95351,16 @@ exports.Dispatcher = Eventful;
 
 var env = __webpack_require__(/*! ./env */ "./node_modules/zrender/lib/core/env.js");
 
-var _fourPointsTransform = __webpack_require__(/*! ./fourPointsTransform */ "./node_modules/zrender/lib/core/fourPointsTransform.js");
+var _dom = __webpack_require__(/*! ./dom */ "./node_modules/zrender/lib/core/dom.js");
 
-var buildTransformer = _fourPointsTransform.buildTransformer;
+var isCanvasEl = _dom.isCanvasEl;
+var transformCoordWithViewport = _dom.transformCoordWithViewport;
 
 /**
  * Utilities for mouse or touch events.
  */
 var isDomLevel2 = typeof window !== 'undefined' && !!window.addEventListener;
 var MOUSE_EVENT_REG = /^(?:mouse|pointer|contextmenu|drag|drop)|click/;
-var EVENT_SAVED_PROP = '___zrEVENTSAVED';
 var _calcOut = [];
 /**
  * Get the `zrX` and `zrY`, which are relative to the top-left of
@@ -94688,11 +95420,11 @@ function clientToLocal(el, e, out, calculate) {
 
 function calculateZrXY(el, e, out) {
   // BlackBerry 5, iOS 3 (original iPhone) don't have getBoundingRect.
-  if (el.getBoundingClientRect && env.domSupported) {
+  if (env.domSupported && el.getBoundingClientRect) {
     var ex = e.clientX;
     var ey = e.clientY;
 
-    if (el.nodeName.toUpperCase() === 'CANVAS') {
+    if (isCanvasEl(el)) {
       // Original approach, which do not support CSS transform.
       // marker can not be locationed in a canvas container
       // (getBoundingClientRect is always 0). We do not support
@@ -94703,11 +95435,7 @@ function calculateZrXY(el, e, out) {
       out.zrY = ey - box.top;
       return;
     } else {
-      var saved = el[EVENT_SAVED_PROP] || (el[EVENT_SAVED_PROP] = {});
-      var transformer = preparePointerTransformer(prepareCoordMarkers(el, saved), saved);
-
-      if (transformer) {
-        transformer(_calcOut, ex, ey);
+      if (transformCoordWithViewport(_calcOut, el, ex, ey)) {
         out.zrX = _calcOut[0];
         out.zrY = _calcOut[1];
         return;
@@ -94716,53 +95444,6 @@ function calculateZrXY(el, e, out) {
   }
 
   out.zrX = out.zrY = 0;
-}
-
-function prepareCoordMarkers(el, saved) {
-  var markers = saved.markers;
-
-  if (markers) {
-    return markers;
-  }
-
-  markers = saved.markers = [];
-  var propLR = ['left', 'right'];
-  var propTB = ['top', 'bottom'];
-
-  for (var i = 0; i < 4; i++) {
-    var marker = document.createElement('div');
-    var stl = marker.style;
-    var idxLR = i % 2;
-    var idxTB = (i >> 1) % 2;
-    stl.cssText = ['position:absolute', 'visibility: hidden', 'padding: 0', 'margin: 0', 'border-width: 0', 'width:0', 'height:0', // 'width: 5px',
-    // 'height: 5px',
-    propLR[idxLR] + ':0', propTB[idxTB] + ':0', propLR[1 - idxLR] + ':auto', propTB[1 - idxTB] + ':auto', ''].join('!important;');
-    el.appendChild(marker);
-    markers.push(marker);
-  }
-
-  return markers;
-}
-
-function preparePointerTransformer(markers, saved) {
-  var transformer = saved.transformer;
-  var oldSrcCoords = saved.srcCoords;
-  var useOld = true;
-  var srcCoords = [];
-  var destCoords = [];
-
-  for (var i = 0; i < 4; i++) {
-    var rect = markers[i].getBoundingClientRect();
-    var ii = 2 * i;
-    var x = rect.left;
-    var y = rect.top;
-    srcCoords.push(x, y);
-    useOld &= oldSrcCoords && x === oldSrcCoords[ii] && y === oldSrcCoords[ii + 1];
-    destCoords.push(markers[i].offsetLeft, markers[i].offsetTop);
-  } // Cache to avoid time consuming of `buildTransformer`.
-
-
-  return useOld ? transformer : (saved.srcCoords = srcCoords, saved.transformer = buildTransformer(srcCoords, destCoords));
 }
 /**
  * Find native event compat for legency IE.
@@ -95014,6 +95695,8 @@ function buildTransformer(src, dest) {
   var det = determinant(mA, 8, 0, 0, 0, detCache);
 
   if (det === 0) {
+    // can not make transformer when and only when
+    // any three of the markers are collinear.
     return;
   } // `invert(mA) * dest`, that is, `adj(mA) / det * dest`.
 
@@ -97148,11 +97831,12 @@ function normalizeGlobalEvent(instance, event) {
 
 
 function isLocalEl(instance, el) {
+  var elTmp = el;
   var isLocal = false;
 
-  do {
-    el = el && el.parentNode;
-  } while (el && el.nodeType !== 9 && !(isLocal = el === instance.painterRoot));
+  while (elTmp && elTmp.nodeType !== 9 && !(isLocal = elTmp.domBelongToZr || elTmp !== el && elTmp === instance.painterRoot)) {
+    elTmp = elTmp.parentNode;
+  }
 
   return isLocal;
 }
@@ -99836,13 +100520,11 @@ var round = Math.round;
  * @param {number} [inputShape.x2]
  * @param {number} [inputShape.y2]
  * @param {Object} [style]
- * @param {number} [style.lineWidth]
+ * @param {number} [style.lineWidth] If `null`/`undefined`/`0`, do not optimize.
  */
 
 function subPixelOptimizeLine(outputShape, inputShape, style) {
-  var lineWidth = style && style.lineWidth;
-
-  if (!inputShape || !lineWidth) {
+  if (!inputShape) {
     return;
   }
 
@@ -99850,19 +100532,22 @@ function subPixelOptimizeLine(outputShape, inputShape, style) {
   var x2 = inputShape.x2;
   var y1 = inputShape.y1;
   var y2 = inputShape.y2;
+  outputShape.x1 = x1;
+  outputShape.x2 = x2;
+  outputShape.y1 = y1;
+  outputShape.y2 = y2;
+  var lineWidth = style && style.lineWidth;
+
+  if (!lineWidth) {
+    return;
+  }
 
   if (round(x1 * 2) === round(x2 * 2)) {
     outputShape.x1 = outputShape.x2 = subPixelOptimize(x1, lineWidth, true);
-  } else {
-    outputShape.x1 = x1;
-    outputShape.x2 = x2;
   }
 
   if (round(y1 * 2) === round(y2 * 2)) {
     outputShape.y1 = outputShape.y2 = subPixelOptimize(y1, lineWidth, true);
-  } else {
-    outputShape.y1 = y1;
-    outputShape.y2 = y2;
   }
 }
 /**
@@ -99878,14 +100563,12 @@ function subPixelOptimizeLine(outputShape, inputShape, style) {
  * @param {number} [inputShape.width]
  * @param {number} [inputShape.height]
  * @param {Object} [style]
- * @param {number} [style.lineWidth]
+ * @param {number} [style.lineWidth] If `null`/`undefined`/`0`, do not optimize.
  */
 
 
 function subPixelOptimizeRect(outputShape, inputShape, style) {
-  var lineWidth = style && style.lineWidth;
-
-  if (!inputShape || !lineWidth) {
+  if (!inputShape) {
     return;
   }
 
@@ -99893,6 +100576,16 @@ function subPixelOptimizeRect(outputShape, inputShape, style) {
   var originY = inputShape.y;
   var originWidth = inputShape.width;
   var originHeight = inputShape.height;
+  outputShape.x = originX;
+  outputShape.y = originY;
+  outputShape.width = originWidth;
+  outputShape.height = originHeight;
+  var lineWidth = style && style.lineWidth;
+
+  if (!lineWidth) {
+    return;
+  }
+
   outputShape.x = subPixelOptimize(originX, lineWidth, true);
   outputShape.y = subPixelOptimize(originY, lineWidth, true);
   outputShape.width = Math.max(subPixelOptimize(originX + originWidth, lineWidth, false) - outputShape.x, originWidth === 0 ? 0 : 1);
@@ -99902,15 +100595,19 @@ function subPixelOptimizeRect(outputShape, inputShape, style) {
  * Sub pixel optimize for canvas
  *
  * @param {number} position Coordinate, such as x, y
- * @param {number} lineWidth Should be nonnegative integer.
+ * @param {number} lineWidth If `null`/`undefined`/`0`, do not optimize.
  * @param {boolean=} positiveOrNegative Default false (negative).
  * @return {number} Optimized position.
  */
 
 
 function subPixelOptimize(position, lineWidth, positiveOrNegative) {
-  // Assure that (position + lineWidth / 2) is near integer edge,
+  if (!lineWidth) {
+    return position;
+  } // Assure that (position + lineWidth / 2) is near integer edge,
   // otherwise line will be fuzzy in canvas.
+
+
   var doubledPosition = round(position * 2);
   return (doubledPosition + round(lineWidth)) % 2 === 0 ? doubledPosition / 2 : (doubledPosition + (positiveOrNegative ? 1 : -1)) / 2;
 }
@@ -101137,7 +101834,7 @@ var isArrayLike = _util.isArrayLike;
 var indexOf = _util.indexOf;
 
 /**
- * @alias modue:zrender/mixin/Animatable
+ * @alias module:zrender/mixin/Animatable
  * @constructor
  */
 var Animatable = function () {
@@ -101427,9 +102124,13 @@ function Draggable() {
 Draggable.prototype = {
   constructor: Draggable,
   _dragStart: function (e) {
-    var draggingTarget = e.target;
+    var draggingTarget = e.target; // Find if there is draggable in the ancestor
 
-    if (draggingTarget && draggingTarget.draggable) {
+    while (draggingTarget && !draggingTarget.draggable) {
+      draggingTarget = draggingTarget.parent;
+    }
+
+    if (draggingTarget) {
       this._draggingTarget = draggingTarget;
       draggingTarget.dragging = true;
       this._x = e.offsetX;
@@ -107230,7 +107931,7 @@ var instances = {}; // ZRender实例map索引
  * @type {string}
  */
 
-var version = '4.2.0';
+var version = '4.3.0';
 /**
  * Initializing a zrender instance
  * @param {HTMLElement} dom

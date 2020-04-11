@@ -5,6 +5,7 @@
   "author": "Jussi Vatjus-Anttila <jussiva@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "postinstall": "NODE_ENV=production npm run build:prod",
     "dev": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",

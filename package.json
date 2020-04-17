@@ -75,7 +75,7 @@
     "vue-jstree": "^2.1.6",
     "vue-lodash": "^2.1.2",
     "vue-moment": "^4.1.0",
-    "vue-pivottable": "^0.3.63",
+    "vue-pivottable": "^0.3.64",
     "vue-router": "3.1.6",
     "vue-socket.io-extended": "^4.0.1",
     "vue-splitpane": "1.0.6",

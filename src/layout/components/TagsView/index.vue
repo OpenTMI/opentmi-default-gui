@@ -1,6 +1,6 @@
 <template>
-  <div id="tags-view-container" class="tags-view-container">
-    <scroll-pane ref="scrollPane" class="tags-view-wrapper">
+  <div id="tabs-view-container" class="tabs-view-container">
+    <scroll-pane ref="scrollPane" class="tabs-view-wrapper">
       <router-link
         v-for="tag in visitedViews"
         ref="tag"
@@ -8,7 +8,7 @@
         :class="isActive(tag)?'active':''"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
         tag="span"
-        class="tags-view-item"
+        class="tabs-view-item"
         @click.middle.native="!isAffix(tag)?closeSelectedTag(tag):''"
         @contextmenu.prevent.native="openMenu(tag,$event)"
       >
@@ -195,14 +195,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.tags-view-container {
+.tabs-view-container {
   height: 34px;
   width: 100%;
   background: #fff;
   border-bottom: 1px solid #d8dce5;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
-  .tags-view-wrapper {
-    .tags-view-item {
+  .tabs-view-wrapper {
+    .tabs-view-item {
       display: inline-block;
       position: relative;
       cursor: pointer;
@@ -264,8 +264,8 @@ export default {
 
 <style lang="scss">
 //reset element css of el-icon-close
-.tags-view-wrapper {
-  .tags-view-item {
+.tabs-view-wrapper {
+  .tabs-view-item {
     .el-icon-close {
       width: 16px;
       height: 16px;

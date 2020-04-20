@@ -1,9 +1,7 @@
 <template>
   <div class="app-container">
     <aside>
-      The guide page is useful for some people who entered the project for the first time. You can briefly introduce the
-      features of the project. Demo is based on
-      <a href="https://github.com/kamranahmedse/driver.js" target="_blank">driver.js.</a>
+      Press button below to start guide.. :)
     </aside>
     <el-button icon="el-icon-question" type="primary" @click.prevent.stop="guide">
       Show Guide
@@ -24,7 +22,10 @@ export default {
     }
   },
   mounted() {
-    this.driver = new Driver()
+    this.driver = new Driver({
+      // there seems to be problem with driver to focus with dark theme when animate is on
+      animate: false
+    })
   },
   methods: {
     guide() {

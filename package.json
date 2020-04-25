@@ -45,7 +45,7 @@
   "dependencies": {
     "@femessage/log-viewer": "^1.4.1",
     "axios": "0.19.2",
-    "bootstrap-vue": "^2.9.0",
+    "bootstrap-vue": "^2.10.0",
     "clipboard": "2.0.6",
     "codemirror": "5.52.2",
     "driver.js": "0.9.8",
@@ -56,7 +56,7 @@
     "fuse.js": "3.6.1",
     "js-cookie": "2.2.1",
     "jsonlint": "1.6.3",
-    "jszip": "3.2.2",
+    "jszip": "3.3.0",
     "lodash": "^4.17.15",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",

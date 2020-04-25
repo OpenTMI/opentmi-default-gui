@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
     <h3>Results Pivottable</h3>
+    <div class="filter-container">
+      <el-date-picker v-model="dateFrom" type="datetime" format="yyyy-MM-dd" placeholder="From" />
+      <!--<el-date-picker v-model="dateTo" type="datetime" format="yyyy-MM-dd" placeholder="To" /> -->
+      <el-input-number v-model="limit" />
+      <el-button v-waves class="filter-item" type="mini" icon="el-icon-search" @click="refreshData">
+        Submit
+        <el-button />
+      </el-button></div>
     <vue-pivottable-ui
       :data="pivotData"
       :cols="cols"
@@ -29,6 +37,9 @@ export default {
   data() {
     const dateFormat = (field, format) => record => Vue.moment(record[field]).format(format)
     return {
+      dateFrom: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      dateTo: new Date(),
+      limit: 1000,
       aggregatorName: 'Count',
       pivotData: [],
       rendererName: 'Table Heatmap',
@@ -56,15 +67,19 @@ export default {
     refreshData() {
       const query = {
         fl: true,
-        s: { 'cre.time': -1 }
+        'cre.time': {
+          $gt: this.dateFrom.toISOString()
+          // $lt: this.dateTo.toISOString()
+        },
+        s: { 'cre.time': -1 },
+        l: this.limit,
+        f: '-__v -_id -exec.duts.0.__v -exec.duts._id'
       }
       resultsList(query)
         .then(({ data }) => {
           const results = this._.map(data, (r) => {
-            // not need these keys
-            delete r['__v']
-            delete r['_id._bsontype']
-            delete r['_id.id']
+            console.log(r)
+
             // round duration by 10s
             r.duration = this.bin(parseFloat(r['exec.duration']), 10)
             delete r['exec.duration']
@@ -75,11 +90,12 @@ export default {
               if (k.match(/\.\d/)) {
                 if (k.match(/\.fut\.\d/)) {
                   features.push(r[k].toLowerCase())
+                  delete r[k]
                 }
                 if (k.match(/\.cut\.\d/)) {
                   components.push(r[k].toLowerCase())
+                  delete r[k]
                 }
-                delete r[k]
               }
             }
             delete r['exec.sut.tag']

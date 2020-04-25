@@ -1,9 +1,11 @@
 <template>
   <div class="app-container">
     <el-dialog title="Similarity Note table" :visible.sync="similarityDialogTableVisible">
+      <el-input-number v-model="similarityValue" :precision="2" :step="0.1" :max="1" :min="0" />
       <el-button @click="addRow">Add</el-button>
-      <el-button @click="saveAll">Save All</el-button>
-      <el-button @click="resetDefaults">Reset defaults</el-button>
+      <el-button @click="saveSimilarityConfig">Save</el-button>
+      <el-button @click="resetDefaults">Reset</el-button>
+      <el-button @click="analyseSimilarities">Analyse</el-button>
       <el-table
         :data="similarNotes"
         style="width: 100%;"
@@ -40,17 +42,22 @@
         format="yyyy-MM-dd"
       />
       <el-input-number v-model="limit" size="small" step="1000" min="100" />
-      <el-button type="primary" size="small" icon="el-icon-search" @click="refreshData">
+      <el-button type="primary" size="small" icon="el-icon-refresh" @click="refreshData">
         Refresh
       </el-button>
+      <el-button type="primary" size="small" icon="el-icon-save" @click="storeView">
+        Store view
+      </el-button>
+      <el-checkbox v-model="similarityEnabled">Enable</el-checkbox>
       <el-tooltip content="These rules allows to categorize exec.notes. Normally there is notes when test fails." placement="bottom">
-        <el-button type="primary" size="small" @click="similarityDialogTableVisible = true">
-          similarityNote rules
+        <el-button :disabled="!similarityEnabled" type="primary" size="small" icon="el-icon-edit" @click="similarityDialogTableVisible = true">
+          noteSimilar rules
         </el-button>
       </el-tooltip>
     </div>
     <vue-pivottable-ui
       id="pivot"
+      v-loading="loading"
       :data="pivotData"
       :cols="cols"
       :rows="rows"
@@ -84,11 +91,9 @@ export default {
     const dateFormat = (field, format) => record => Vue.moment(record[field]).format(format)
     return {
       similarityDialogTableVisible: false,
-      defaultNotes: [
-        { value: 'TimeoutError: tx complete timeout' },
-        { value: "Element 'id=open' did not appear in" },
-        { value: 'Parent suite setup failed: WebDriverException: Message: An unknown server-side error occurred while processing the command. Original error: Error executing adbExec. Original error: \'Command \'/lib/android-sdk/platform-tools/adb -P 5037 push app.apk /data/local/tmp/appium_cache/app.apk\' timed out after 90000ms\'. Try to increase the 90000ms adb execution timeout represented by \'adbExecTimeout\' capability\t' }
-      ],
+      similarityEnabled: true,
+      similarityValue: 0.6,
+      defaultNotes: [],
       dateRange: [
         new Date(Date.now() - 3600 * 1000 * 24 * 7),
         new Date(Date.now() + 3600 * 1000 * 24)],
@@ -123,6 +128,7 @@ export default {
           }
         }]
       },
+      loading: true,
       limit: 1000,
       aggregatorName: 'Count',
       pivotData: [],
@@ -151,12 +157,36 @@ export default {
       prefix: 'result_pivot_',
       driver: 'local'
     })
+    let config = {
+      aggregatorName: this.aggregatorName,
+      rendererName: this.rendererName,
+      rows: this.rows,
+      cols: this.cols
+    }
+    config = this.$storage.get('currentView', config)
+    this._.merge(this, this._.pick(config, Object.keys(config)))
+    this.similarityValue = this.$storage.get('similarityValue', 0.6)
     this.refreshData()
   },
 
   methods: {
     bin(value, binWidth) {
       return value - value % binWidth
+    },
+    analyseSimilarities() {
+      const notes = this._.filter(this._.uniq(this.pivotData.map(r => r['exec.note'])), r => !this._.isEmpty(r))
+      if (this._.isEmpty(notes)) {
+        return
+      }
+      const similars = [notes[0]]
+      this._.forEach(notes, (note) => {
+        if (this._.isEmpty(note)) return
+        const { bestMatch } = this.$ss.findBestMatch(note, similars)
+        if (bestMatch.rating < this.similarityValue) {
+          similars.push(note)
+        }
+      })
+      this.similarNotes = similars.map(value => ({ value }))
     },
     resetDefaults() {
       this.$confirm('This will permanently restore defaults similarity notes. Continue?', 'Warning', {
@@ -165,7 +195,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.similarNotes = this.defaultNotes
-        this.saveAll()
+        this.saveSimilarityConfig()
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -180,20 +210,33 @@ export default {
       const newRow = { value: '' }
       this.similarNotes = [newRow, ...this.similarNotes]
     },
-    saveAll() {
+    saveSimilarityConfig() {
       this.$storage.set('similarNotes', this.similarNotes)
+      this.$storage.set('similarityValue', this.similarityValue)
     },
     getSimilarityTable() {
       return this._.map(this.similarNotes, 'value')
     },
     findSimilarity(note) {
+      if (!this.similarityEnabled) return note
       if (this._.isEmpty(note)) return ''
-      const { bestMatch } = this.$ss.findBestMatch(note, this.getSimilarityTable())
-      console.log(`${bestMatch.rating}: ${note.substr(0, 200)}`)
-      if (bestMatch.rating > 0.6) {
+      const similars = this.getSimilarityTable()
+      if (similars.length === 0) return note
+      const { bestMatch } = this.$ss.findBestMatch(note, similars)
+      // console.log(`${bestMatch.rating}: ${note.substr(0, 200)}`)
+      if (bestMatch.rating > this.similarityValue) {
         return bestMatch.target
       }
       return note
+    },
+    storeView() {
+      const config = {
+        aggregatorName: this.aggregatorName,
+        rendererName: this.rendererName,
+        rows: this.rows,
+        cols: this.cols
+      }
+      this.$storage.set('currentView', config)
     },
     refreshData() {
       const query = {
@@ -206,6 +249,7 @@ export default {
         l: this.limit,
         f: '-__v -_id -exec.duts.0.__v -exec.duts._id'
       }
+      this.loading = true
       resultsList(query)
         .then(({ data }) => {
           const results = this._.map(data, (r) => {
@@ -238,6 +282,7 @@ export default {
             return r
           })
           this.pivotData = results
+          this.loading = false
         })
     }
   }

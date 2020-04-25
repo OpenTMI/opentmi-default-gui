@@ -2,14 +2,23 @@
   <div class="app-container">
     <h3>Results Pivottable</h3>
     <div class="filter-container">
-      <el-date-picker v-model="dateFrom" type="datetime" format="yyyy-MM-dd" placeholder="From" />
-      <!--<el-date-picker v-model="dateTo" type="datetime" format="yyyy-MM-dd" placeholder="To" /> -->
-      <el-input-number v-model="limit" />
-      <el-button v-waves class="filter-item" type="mini" icon="el-icon-search" @click="refreshData">
+      <el-date-picker
+        v-model="dateRange"
+        type="daterange"
+        size="small"
+        range-separator="To"
+        start-placeholder="Start date"
+        end-placeholder="End date"
+        :picker-options="pickerOptions"
+        format="yyyy-MM-dd"
+      />
+      <el-input-number v-model="limit" size="small" step="1000" min="1000" />
+      <el-button v-waves size="small" class="filter-item" type="primary" icon="el-icon-search" @click="refreshData">
         Submit
-        <el-button />
-      </el-button></div>
+      </el-button>
+    </div>
     <vue-pivottable-ui
+      id="pivot"
       :data="pivotData"
       :cols="cols"
       :rows="rows"
@@ -37,8 +46,40 @@ export default {
   data() {
     const dateFormat = (field, format) => record => Vue.moment(record[field]).format(format)
     return {
-      dateFrom: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      dateTo: new Date(),
+      dateRange: [
+        new Date(Date.now() - 3600 * 1000 * 24 * 7),
+        new Date(Date.now() + 3600 * 1000 * 24)],
+      pickerOptions: {
+        firstDayOfWeek: 1,
+        shortcuts: [{
+          text: 'Last week',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            end.setTime(end.getTime() + 3600 * 1000 * 24)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: 'Last month',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            end.setTime(end.getTime() + 3600 * 1000 * 24)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: 'Last 3 months',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            end.setTime(end.getTime() + 3600 * 1000 * 24)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
       limit: 1000,
       aggregatorName: 'Count',
       pivotData: [],
@@ -68,8 +109,8 @@ export default {
       const query = {
         fl: true,
         'cre.time': {
-          $gt: this.dateFrom.toISOString()
-          // $lt: this.dateTo.toISOString()
+          $gt: this.dateRange[0].toISOString(),
+          $lt: this.dateRange[1].toISOString()
         },
         s: { 'cre.time': -1 },
         l: this.limit,
@@ -78,8 +119,6 @@ export default {
       resultsList(query)
         .then(({ data }) => {
           const results = this._.map(data, (r) => {
-            console.log(r)
-
             // round duration by 10s
             r.duration = this.bin(parseFloat(r['exec.duration']), 10)
             delete r['exec.duration']
@@ -117,3 +156,15 @@ export default {
   }
 }
 </script>
+<style>
+.pvtUi {
+  margin-left: 0px;
+  #table-layout:fixed;
+}
+.pvtTable th {
+  max-width: 600px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

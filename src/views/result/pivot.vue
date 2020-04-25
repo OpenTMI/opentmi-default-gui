@@ -36,6 +36,9 @@ import { resultsList } from '@/api/results'
 import { VuePivottable, VuePivottableUi } from 'vue-pivottable'
 import 'vue-pivottable/dist/vue-pivottable.css'
 
+import stringSimilarity from 'string-similarity'
+Object.defineProperty(Vue.prototype, '$ss', { value: stringSimilarity })
+
 export default {
   name: 'ResultPivot',
   components: {
@@ -94,7 +97,12 @@ export default {
         'day name': dateFormat('cre.time', 'ddd'),
         'Week number': dateFormat('cre.time', 'W')
       },
-      hiddenAttributes: ['exec.logs']
+      hiddenAttributes: ['exec.logs'],
+      similarNotes: [
+        'TimeoutError: tx complete timeout',
+        "Element 'id=XX' did not appear in",
+        'InvalidElementStateException: Message: XX The application under test with bundle id is not running, possibly crashed'
+      ]
     }
   },
   created() {
@@ -104,6 +112,15 @@ export default {
   methods: {
     bin(value, binWidth) {
       return value - value % binWidth
+    },
+    findSimilarity(note) {
+      if (this._.isEmpty(note)) return ''
+      const { bestMatch } = this.$ss.findBestMatch(note, this.similarNotes)
+      console.log(`${bestMatch.rating}: ${note}`)
+      if (bestMatch.rating > 0.6) {
+        return bestMatch.target
+      }
+      return note
     },
     refreshData() {
       const query = {
@@ -142,7 +159,7 @@ export default {
             delete r['exec.sut.fut']
             r.component = components.sort().join(',')
             r.feature = features.sort().join(',')
-
+            r.noteSimilar = this.findSimilarity(r['exec.note'])
             r.passrate = r['exec.verdict'] === 'pass' ? 100.0 : 0
             r.inconcRate = r['exec.verdict'] === 'inconclusive' ? 100.0 : 0
             return r

@@ -1,5 +1,32 @@
 <template>
   <div class="app-container">
+    <el-dialog title="Similarity Note table" :visible.sync="similarityDialogTableVisible">
+      <el-button @click="addRow">Add</el-button>
+      <el-button @click="saveAll">Save All</el-button>
+      <el-button @click="resetDefaults">Reset defaults</el-button>
+      <el-table
+        :data="similarNotes"
+        style="width: 100%;"
+        height="250"
+      >
+        <el-table-column property="value" label="Note">
+          <template slot-scope="scope">
+            <el-input
+              v-model="scope.row.value"
+              size="small"
+              style="text-align:center"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="Operations" width="120">
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click.native.prevent="deleteRow(scope.$index, scope.row)">
+              Delete
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
     <h3>Results Pivottable</h3>
     <div class="filter-container">
       <el-date-picker
@@ -12,10 +39,15 @@
         :picker-options="pickerOptions"
         format="yyyy-MM-dd"
       />
-      <el-input-number v-model="limit" size="small" step="1000" min="1000" />
-      <el-button v-waves size="small" class="filter-item" type="primary" icon="el-icon-search" @click="refreshData">
-        Submit
+      <el-input-number v-model="limit" size="small" step="1000" min="100" />
+      <el-button type="primary" size="small" icon="el-icon-search" @click="refreshData">
+        Refresh
       </el-button>
+      <el-tooltip content="These rules allows to categorize exec.notes. Normally there is notes when test fails." placement="bottom">
+        <el-button type="primary" size="small" @click="similarityDialogTableVisible = true">
+          similarityNote rules
+        </el-button>
+      </el-tooltip>
     </div>
     <vue-pivottable-ui
       id="pivot"
@@ -32,12 +64,14 @@
 
 <script>
 import Vue from 'vue'
+import { Vue2Storage } from 'vue2-storage'
 import { resultsList } from '@/api/results'
 import { VuePivottable, VuePivottableUi } from 'vue-pivottable'
 import 'vue-pivottable/dist/vue-pivottable.css'
 
 import stringSimilarity from 'string-similarity'
 Object.defineProperty(Vue.prototype, '$ss', { value: stringSimilarity })
+Vue.use(Vue2Storage)
 
 export default {
   name: 'ResultPivot',
@@ -49,6 +83,12 @@ export default {
   data() {
     const dateFormat = (field, format) => record => Vue.moment(record[field]).format(format)
     return {
+      similarityDialogTableVisible: false,
+      defaultNotes: [
+        { value: 'TimeoutError: tx complete timeout' },
+        { value: "Element 'id=open' did not appear in" },
+        { value: 'Parent suite setup failed: WebDriverException: Message: An unknown server-side error occurred while processing the command. Original error: Error executing adbExec. Original error: \'Command \'/lib/android-sdk/platform-tools/adb -P 5037 push app.apk /data/local/tmp/appium_cache/app.apk\' timed out after 90000ms\'. Try to increase the 90000ms adb execution timeout represented by \'adbExecTimeout\' capability\t' }
+      ],
       dateRange: [
         new Date(Date.now() - 3600 * 1000 * 24 * 7),
         new Date(Date.now() + 3600 * 1000 * 24)],
@@ -98,14 +138,19 @@ export default {
         'Week number': dateFormat('cre.time', 'W')
       },
       hiddenAttributes: ['exec.logs'],
-      similarNotes: [
-        'TimeoutError: tx complete timeout',
-        "Element 'id=XX' did not appear in",
-        'InvalidElementStateException: Message: XX The application under test with bundle id is not running, possibly crashed'
-      ]
+      similarNotes: []
     }
   },
+  mounted() {
+    this.similarNotes = this.$storage.get('similarNotes', this.defaultNotes)
+  },
   created() {
+    // The configuration of the plugin can be changed at any time.
+    // Just call the setOptions method and pass the object with the settings to it.
+    this.$storage.setOptions({
+      prefix: 'result_pivot_',
+      driver: 'local'
+    })
     this.refreshData()
   },
 
@@ -113,10 +158,38 @@ export default {
     bin(value, binWidth) {
       return value - value % binWidth
     },
+    resetDefaults() {
+      this.$confirm('This will permanently restore defaults similarity notes. Continue?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.similarNotes = this.defaultNotes
+        this.saveAll()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Canceled'
+        })
+      })
+    },
+    deleteRow(index, rows) {
+      this.similarNotes.splice(index, 1)
+    },
+    addRow() {
+      const newRow = { value: '' }
+      this.similarNotes = [newRow, ...this.similarNotes]
+    },
+    saveAll() {
+      this.$storage.set('similarNotes', this.similarNotes)
+    },
+    getSimilarityTable() {
+      return this._.map(this.similarNotes, 'value')
+    },
     findSimilarity(note) {
       if (this._.isEmpty(note)) return ''
-      const { bestMatch } = this.$ss.findBestMatch(note, this.similarNotes)
-      console.log(`${bestMatch.rating}: ${note}`)
+      const { bestMatch } = this.$ss.findBestMatch(note, this.getSimilarityTable())
+      console.log(`${bestMatch.rating}: ${note.substr(0, 200)}`)
       if (bestMatch.rating > 0.6) {
         return bestMatch.target
       }
@@ -166,9 +239,6 @@ export default {
           })
           this.pivotData = results
         })
-    },
-    toggle: function(todo) {
-      todo.done = !todo.done
     }
   }
 }
@@ -183,5 +253,12 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.el-table__row .el-input .el-input__inner{
+  border-style:none;
+}
+.hover-row .el-input .el-input__inner{
+  border-style:solid;
 }
 </style>

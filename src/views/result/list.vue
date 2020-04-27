@@ -28,6 +28,26 @@
             <option>fail</option>
             <option>inconclusive</option>
           </select>
+          <!--<el-date-picker
+            v-else-if="field.key == 'cre.time'"
+            v-model="listQuery['cre.time']"
+            type="daterange"
+            size="small"
+            range-separator="To"
+            start-placeholder="Start date"
+            end-placeholder="End date"
+            format="yyyy-MM-dd"
+          /> -->
+          <input
+            v-else-if="field.key == 'exec.duts'"
+            v-model="listQuery['exec.duts.model']"
+            placeholder="Dut Model"
+          >
+          <input
+            v-else-if="field.key == 'exec.sut'"
+            v-model="listQuery['exec.sut.branch']"
+            placeholder="Branch"
+          >
           <input v-else v-model="listQuery[field.key]" :placeholder="field.label" @keyup.enter="_reload">
         </td>
       </template>

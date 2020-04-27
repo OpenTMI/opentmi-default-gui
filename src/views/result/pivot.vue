@@ -42,6 +42,15 @@
         format="yyyy-MM-dd"
       />
       <el-input-number v-model="limit" size="small" step="1000" min="100" />
+      <el-input v-model.trim="filter.campaign" style="width:150px;" size="small" placeholder="Campaign" />
+      <el-select v-model="filter['exec.verdict']" size="small" multiple placeholder="Verdict">
+        <el-option
+          v-for="item in ['pass', 'inconclusive', 'fail', 'skip']"
+          :key="item"
+          :label="item"
+          :value="item"
+        />
+      </el-select>
       <el-button type="primary" size="small" icon="el-icon-refresh" @click="refreshData">
         Refresh
       </el-button>
@@ -133,8 +142,8 @@ export default {
       aggregatorName: 'Count',
       pivotData: [],
       rendererName: 'Table Heatmap',
-      rows: ['campaign'],
-      cols: ['exec.verdict'],
+      rows: ['exec.duts.0.model'],
+      cols: ['month name', 'day', 'exec.verdict'],
       derivedAttributes: {
         'year': dateFormat('cre.time', 'YYYY'),
         'month': dateFormat('cre.time', 'M'),
@@ -144,7 +153,11 @@ export default {
         'Week number': dateFormat('cre.time', 'W')
       },
       hiddenAttributes: ['exec.logs'],
-      similarNotes: []
+      similarNotes: [],
+      filter: {
+        'branch': '',
+        'exec.verdict': ''
+      }
     }
   },
   mounted() {
@@ -248,6 +261,11 @@ export default {
         s: { 'cre.time': -1 },
         l: this.limit,
         f: '-__v -_id -exec.duts.0.__v -exec.duts._id'
+      }
+      this._.merge(query, this._.omitBy(this.filter, this._.isEmpty))
+      if (query['exec.verdict']) {
+        console.log(query['exec.verdict'])
+        query['exec.verdict'] = `{in}${query['exec.verdict'].join(',')}`
       }
       this.loading = true
       resultsList(query)

@@ -1,8 +1,28 @@
 <template>
   <div class="app-container">
+
+    <el-select
+      v-model="selectedColumns"
+      multiple
+      style="width: 100%;"
+      type="small"
+      placeholder="Select columns"
+      @change="columnChange"
+    >
+      <el-option
+        v-for="item in columns"
+        :key="item.key"
+        :label="item.label"
+        :value="item.key"
+      />
+    </el-select>
+
     <b-table
       id="my-table"
-      striped
+      striped="true"
+      bordered="true"
+      head-variant="light"
+      small="true"
       hover
       :items="_getList"
       :fields="fields"
@@ -11,7 +31,6 @@
       responsive="sm"
       no-local-sorting
       primary-key="_id"
-      :sort-changed="listLoading"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       selectable
@@ -80,7 +99,11 @@
 
       <!-- details view -->
       <template v-slot:row-details="row">
-        <pre>{{ row.item | pretty }}</pre>
+        <el-collapse style="margin-left: 50px; margin-right: 50px">
+          <el-collapse-item title="View Raw data" accordion="true">
+            <pre>{{ row.item | pretty }}</pre>
+          </el-collapse-item>
+        </el-collapse>
       </template>
     </b-table>
     <b-pagination
@@ -88,6 +111,7 @@
       :total-rows="total"
       :per-page="listQuery.limit"
       aria-controls="my-table"
+      align="center"
       first-number
       last-number
     />
@@ -106,7 +130,9 @@ export default {
   },
   data() {
     return {
-      fields: [
+      selectedColumns: [],
+      fields: [],
+      columns: [
         {
           key: 'cre.time',
           sortable: true,
@@ -116,6 +142,11 @@ export default {
           key: 'tcid',
           sortable: true,
           label: 'Testcase ID'
+        },
+        {
+          key: 'campaign',
+          sortable: true,
+          label: 'Campaign'
         },
         {
           key: 'exec.verdict',
@@ -128,24 +159,28 @@ export default {
           label: 'Note'
         },
         {
-          key: 'exec.duts',
+          key: 'exec.duts.vendor',
           sortable: false,
-          label: 'Dut',
-          formatter: (value, key, item) => {
-            const defValue = { vendor: '', model: '' }
-            const dut0 = this._.get(item, 'exec.duts.0', defValue)
-            return `${dut0.vendor}-${dut0.model}`
-          }
+          label: 'Dut0 Vendor',
+          formatter: (value, key, item) => this._.get(item, 'exec.duts.0.vendor', '')
         },
         {
-          key: 'exec.sut',
+          key: 'exec.duts.model',
           sortable: false,
-          label: 'Sut',
-          formatter: (value, key, item) => {
-            const defValue = { branch: '', commitId: '' }
-            const sut = this._.get(item, 'exec.sut', defValue)
-            return `${sut.branch}/${sut.commitId.substr(0, 7)}`
-          }
+          label: 'Dut0 Model',
+          formatter: (value, key, item) => this._.get(item, 'exec.duts.0.model', '')
+        },
+        {
+          key: 'exec.sut.branch',
+          sortable: false,
+          label: 'Sut Branch',
+          formatter: (value, key, item) => this._.get(item, 'exec.sut.branch', '')
+        },
+        {
+          key: 'exec.sut.branch',
+          sortable: false,
+          label: 'Sut commitId',
+          formatter: (value, key, item) => this._.get(item, 'exec.sut.commitId', '').substr(0, 7)
         }
       ],
       reload: this._.debounce(this._reload, 2000),
@@ -155,7 +190,7 @@ export default {
       listLoading: false,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 20
       }
     }
   },
@@ -167,6 +202,13 @@ export default {
       deep: true
     }
   },
+  mounted() {
+    this.selectedColumns = [
+      'cre.time', 'tcid', 'campaign',
+      'exec.verdict', 'exec.duts', 'exec.sut',
+      'exec.note', 'exec.duts.model']
+    this.columnChange()
+  },
   methods: {
     lengthLimiter(value, maxLength = 20) {
       let out = value.substr(0, maxLength)
@@ -174,6 +216,9 @@ export default {
         out += '...'
       }
       return out
+    },
+    columnChange() {
+      this.fields = this.selectedColumns.map(key => this.columns.find(obj => obj.key === key))
     },
     rowClicked(row) {
       this.$set(row, '_showDetails', !row._showDetails)
@@ -201,14 +246,32 @@ export default {
       const query = this._.omitBy(this.listQuery, this._.isNil)
       query.l = query.limit
       query.sk = (query.page - 1) * query.limit
+      this._.unset(query, 'limit')
+      this._.unset(query, 'page')
 
       if (this.sortBy) {
         query.s = { [this.sortBy]: this.sortDesc ? -1 : 1 }
       } else {
         query.s = '{"cre.time": -1}'
       }
-      this._.unset(query, 'limit')
-      this._.unset(query, 'page')
+      Object.keys(query).map((key) => {
+        if (this._.includes(['cre.time', 'exec.verdict', 't', 'l', 'sk', 's'], key)) {
+          return
+        }
+        let value = query[key]
+        if (value.startsWith('*')) {
+          value = value.slice(1)
+          if (value.endsWith('*')) {
+            query[key] = `/${value.slice(0, -1)}/`
+          } else {
+            query[key] = `{ei}${value}`
+          }
+        } else if (value.endsWith('*')) {
+          value = value.slice(0, -1)
+          query[key] = `{bi}${value}`
+        }
+      })
+
       const countQuery = this._.merge({ t: 'count' }, this._.omit(query, ['s', 'l', 'sk']))
       return resultsList(countQuery)
         .then(({ data }) => {

@@ -102,6 +102,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -168,8 +177,8 @@ vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
       aggregatorName: 'Count',
       pivotData: [],
       rendererName: 'Table Heatmap',
-      rows: ['campaign'],
-      cols: ['exec.verdict'],
+      rows: ['exec.duts.0.model'],
+      cols: ['month name', 'day', 'exec.verdict'],
       derivedAttributes: {
         'year': dateFormat('cre.time', 'YYYY'),
         'month': dateFormat('cre.time', 'M'),
@@ -179,7 +188,11 @@ vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
         'Week number': dateFormat('cre.time', 'W')
       },
       hiddenAttributes: ['exec.logs'],
-      similarNotes: []
+      similarNotes: [],
+      filter: {
+        'branch': '',
+        'exec.verdict': ''
+      }
     };
   },
   mounted: function mounted() {
@@ -315,6 +328,14 @@ vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
         l: this.limit,
         f: '-__v -_id -exec.duts.0.__v -exec.duts._id'
       };
+
+      this._.merge(query, this._.omitBy(this.filter, this._.isEmpty));
+
+      if (query['exec.verdict']) {
+        console.log(query['exec.verdict']);
+        query['exec.verdict'] = "{in}".concat(query['exec.verdict'].join(','));
+      }
+
       this.loading = true;
       Object(_api_results__WEBPACK_IMPORTED_MODULE_7__["resultsList"])(query).then(function (_ref) {
         var data = _ref.data;
@@ -518,6 +539,43 @@ var render = function() {
               expression: "limit"
             }
           }),
+          _vm._v(" "),
+          _c("el-input", {
+            staticStyle: { width: "150px" },
+            attrs: { size: "small", placeholder: "Campaign" },
+            model: {
+              value: _vm.filter.campaign,
+              callback: function($$v) {
+                _vm.$set(
+                  _vm.filter,
+                  "campaign",
+                  typeof $$v === "string" ? $$v.trim() : $$v
+                )
+              },
+              expression: "filter.campaign"
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "el-select",
+            {
+              attrs: { size: "small", multiple: "", placeholder: "Verdict" },
+              model: {
+                value: _vm.filter["exec.verdict"],
+                callback: function($$v) {
+                  _vm.$set(_vm.filter, "exec.verdict", $$v)
+                },
+                expression: "filter['exec.verdict']"
+              }
+            },
+            _vm._l(["pass", "inconclusive", "fail", "skip"], function(item) {
+              return _c("el-option", {
+                key: item,
+                attrs: { label: item, value: item }
+              })
+            }),
+            1
+          ),
           _vm._v(" "),
           _c(
             "el-button",

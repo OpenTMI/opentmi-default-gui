@@ -40,9 +40,17 @@
         end-placeholder="End date"
         :picker-options="pickerOptions"
         format="yyyy-MM-dd"
+        @change="daterangeChange"
       />
-      <el-input-number v-model="limit" size="small" step="1000" min="100" />
-      <el-input v-model.trim="filter.campaign" style="width:150px;" size="small" placeholder="Campaign" />
+      <el-input-number v-model="limit" size="small" :disabled="count<5000" step="1000" :max="count" min="1000" />
+      <el-select v-model="filter.campaign" size="small" placeholder="Campaign">
+        <el-option
+          v-for="item in campaigns"
+          :key="item"
+          :label="item"
+          :value="item"
+        />
+      </el-select>
       <el-select v-model="filter['exec.verdict']" size="small" multiple placeholder="Verdict">
         <el-option
           v-for="item in ['pass', 'inconclusive', 'fail', 'skip']"
@@ -54,7 +62,7 @@
       <el-button type="primary" size="small" icon="el-icon-refresh" @click="refreshData">
         Refresh
       </el-button>
-      <el-button type="primary" size="small" icon="el-icon-save" @click="storeView">
+      <el-button type="primary" size="small" icon="el-icon-collection-tag" @click="storeView">
         Store view
       </el-button>
       <el-checkbox v-model="similarityEnabled">Enable</el-checkbox>
@@ -102,10 +110,11 @@ export default {
       similarityDialogTableVisible: false,
       similarityEnabled: true,
       similarityValue: 0.6,
+      campaigns: [],
       defaultNotes: [],
       dateRange: [
         new Date(Date.now() - 3600 * 1000 * 24 * 7),
-        new Date(Date.now() + 3600 * 1000 * 24)],
+        new Date(Date.now())],
       pickerOptions: {
         firstDayOfWeek: 1,
         shortcuts: [{
@@ -138,7 +147,8 @@ export default {
         }]
       },
       loading: true,
-      limit: 1000,
+      count: 0,
+      limit: 0,
       aggregatorName: 'Count',
       pivotData: [],
       rendererName: 'Table Heatmap',
@@ -163,7 +173,7 @@ export default {
   mounted() {
     this.similarNotes = this.$storage.get('similarNotes', this.defaultNotes)
   },
-  created() {
+  async created() {
     // The configuration of the plugin can be changed at any time.
     // Just call the setOptions method and pass the object with the settings to it.
     this.$storage.setOptions({
@@ -174,12 +184,15 @@ export default {
       aggregatorName: this.aggregatorName,
       rendererName: this.rendererName,
       rows: this.rows,
-      cols: this.cols
+      cols: this.cols,
+      filter: this.filter
     }
     config = this.$storage.get('currentView', config)
-    this._.merge(this, this._.pick(config, Object.keys(config)))
+    this._.assign(this, this._.pick(config, Object.keys(config)))
     this.similarityValue = this.$storage.get('similarityValue', 0.6)
-    this.refreshData()
+    await this.refreshCount()
+    await this.refreshCampaigns()
+    await this.refreshData()
   },
 
   methods: {
@@ -226,6 +239,7 @@ export default {
     saveSimilarityConfig() {
       this.$storage.set('similarNotes', this.similarNotes)
       this.$storage.set('similarityValue', this.similarityValue)
+      this.similarityDialogTableVisible = false
     },
     getSimilarityTable() {
       return this._.map(this.similarNotes, 'value')
@@ -247,26 +261,62 @@ export default {
         aggregatorName: this.aggregatorName,
         rendererName: this.rendererName,
         rows: this.rows,
-        cols: this.cols
+        cols: this.cols,
+        filter: {
+          campaign: this._.get(this.filter, 'campaign', null)
+        }
       }
       this.$storage.set('currentView', config)
     },
-    refreshData() {
+    async daterangeChange() {
+      await this.refreshCampaigns()
+      await this.refreshCount()
+    },
+    async refreshCount() {
+      const query = this.getQuery({
+        t: 'count'
+      })
+      await resultsList(query)
+        .then(({ data }) => {
+          const { count } = data
+          this.count = count
+        })
+    },
+    async refreshCampaigns() {
+      const query = this.getQuery({
+        t: 'distinct',
+        f: 'campaign'
+      })
+      delete query.q.campaign
+      await resultsList(query)
+        .then(({ data }) => {
+          this.campaigns = data
+        })
+    },
+    getQuery(additionals = {}) {
       const query = {
         fl: true,
-        'cre.time': {
-          $gt: this.dateRange[0].toISOString(),
-          $lt: this.dateRange[1].toISOString()
+        q: {
+          'cre.time': {
+            $gt: this.dateRange[0].toISOString(),
+            $lt: new Date(this.dateRange[1].getTime() + 3600 * 1000 * 24).toISOString()
+          }
         },
         s: { 'cre.time': -1 },
-        l: this.limit,
         f: '-__v -_id -exec.duts.0.__v -exec.duts._id'
       }
-      this._.merge(query, this._.omitBy(this.filter, this._.isEmpty))
-      if (query['exec.verdict']) {
-        console.log(query['exec.verdict'])
-        query['exec.verdict'] = `{in}${query['exec.verdict'].join(',')}`
+      if (this.count > 5000) {
+        query.l = this.limit
       }
+      this._.merge(query.q, this._.omitBy(this.filter, this._.isEmpty))
+      if (query.q['exec.verdict']) {
+        query.q['exec.verdict'] = { $in: query.q['exec.verdict'] }
+      }
+      this._.merge(query, additionals)
+      return query
+    },
+    refreshData() {
+      const query = this.getQuery()
       this.loading = true
       resultsList(query)
         .then(({ data }) => {

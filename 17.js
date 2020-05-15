@@ -18,120 +18,133 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var core_js_modules_es6_object_keys__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es6.object.keys */ "./node_modules/core-js/modules/es6.object.keys.js");
 /* harmony import */ var core_js_modules_es6_object_keys__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_object_keys__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js");
-/* harmony import */ var vue2_storage__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue2-storage */ "./node_modules/vue2-storage/dist/vue2-storage.esm.js");
-/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
-/* harmony import */ var vue_pivottable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue-pivottable */ "./node_modules/vue-pivottable/src/index.js");
-/* harmony import */ var vue_pivottable_dist_vue_pivottable_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue-pivottable/dist/vue-pivottable.css */ "./node_modules/vue-pivottable/dist/vue-pivottable.css");
-/* harmony import */ var vue_pivottable_dist_vue_pivottable_css__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(vue_pivottable_dist_vue_pivottable_css__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var string_similarity__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! string-similarity */ "./node_modules/string-similarity/src/index.js");
-/* harmony import */ var string_similarity__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(string_similarity__WEBPACK_IMPORTED_MODULE_10__);
-
-
-
-
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js");
+/* harmony import */ var vue2_storage__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue2-storage */ "./node_modules/vue2-storage/dist/vue2-storage.esm.js");
+/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
+/* harmony import */ var vue_pivottable__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vue-pivottable */ "./node_modules/vue-pivottable/src/index.js");
+/* harmony import */ var vue_pivottable_dist_vue_pivottable_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vue-pivottable/dist/vue-pivottable.css */ "./node_modules/vue-pivottable/dist/vue-pivottable.css");
+/* harmony import */ var vue_pivottable_dist_vue_pivottable_css__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vue_pivottable_dist_vue_pivottable_css__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var string_similarity__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! string-similarity */ "./node_modules/string-similarity/src/index.js");
+/* harmony import */ var string_similarity__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(string_similarity__WEBPACK_IMPORTED_MODULE_12__);
 
 
 
 
 
 
-Object.defineProperty(vue__WEBPACK_IMPORTED_MODULE_5__["default"].prototype, '$ss', {
-  value: string_similarity__WEBPACK_IMPORTED_MODULE_10___default.a
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+
+Object.defineProperty(vue__WEBPACK_IMPORTED_MODULE_7__["default"].prototype, '$ss', {
+  value: string_similarity__WEBPACK_IMPORTED_MODULE_12___default.a
 });
-vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_MODULE_6__["Vue2Storage"]);
+vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_MODULE_8__["Vue2Storage"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ResultPivot',
   components: {
     // eslint-disable-next-line vue/no-unused-components
-    VuePivottable: vue_pivottable__WEBPACK_IMPORTED_MODULE_8__["VuePivottable"],
-    VuePivottableUi: vue_pivottable__WEBPACK_IMPORTED_MODULE_8__["VuePivottableUi"]
+    VuePivottable: vue_pivottable__WEBPACK_IMPORTED_MODULE_10__["VuePivottable"],
+    VuePivottableUi: vue_pivottable__WEBPACK_IMPORTED_MODULE_10__["VuePivottableUi"]
   },
   data: function data() {
     var dateFormat = function dateFormat(field, format) {
       return function (record) {
-        return vue__WEBPACK_IMPORTED_MODULE_5__["default"].moment(record[field]).format(format);
+        return vue__WEBPACK_IMPORTED_MODULE_7__["default"].moment(record[field]).format(format);
       };
     };
 
@@ -139,8 +152,9 @@ vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
       similarityDialogTableVisible: false,
       similarityEnabled: true,
       similarityValue: 0.6,
+      campaigns: [],
       defaultNotes: [],
-      dateRange: [new Date(Date.now() - 3600 * 1000 * 24 * 7), new Date(Date.now() + 3600 * 1000 * 24)],
+      dateRange: [new Date(Date.now() - 3600 * 1000 * 24 * 7), new Date(Date.now())],
       pickerOptions: {
         firstDayOfWeek: 1,
         shortcuts: [{
@@ -173,7 +187,8 @@ vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
         }]
       },
       loading: true,
-      limit: 1000,
+      count: 0,
+      limit: 0,
       aggregatorName: 'Count',
       pivotData: [],
       rendererName: 'Table Heatmap',
@@ -198,26 +213,56 @@ vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
   mounted: function mounted() {
     this.similarNotes = this.$storage.get('similarNotes', this.defaultNotes);
   },
-  created: function created() {
-    // The configuration of the plugin can be changed at any time.
-    // Just call the setOptions method and pass the object with the settings to it.
-    this.$storage.setOptions({
-      prefix: 'result_pivot_',
-      driver: 'local'
-    });
-    var config = {
-      aggregatorName: this.aggregatorName,
-      rendererName: this.rendererName,
-      rows: this.rows,
-      cols: this.cols
-    };
-    config = this.$storage.get('currentView', config);
+  created: function () {
+    var _created = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var config;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              // The configuration of the plugin can be changed at any time.
+              // Just call the setOptions method and pass the object with the settings to it.
+              this.$storage.setOptions({
+                prefix: 'result_pivot_',
+                driver: 'local'
+              });
+              config = {
+                aggregatorName: this.aggregatorName,
+                rendererName: this.rendererName,
+                rows: this.rows,
+                cols: this.cols,
+                filter: this.filter
+              };
+              config = this.$storage.get('currentView', config);
 
-    this._.merge(this, this._.pick(config, Object.keys(config)));
+              this._.assign(this, this._.pick(config, Object.keys(config)));
 
-    this.similarityValue = this.$storage.get('similarityValue', 0.6);
-    this.refreshData();
-  },
+              this.similarityValue = this.$storage.get('similarityValue', 0.6);
+              _context.next = 7;
+              return this.refreshCount();
+
+            case 7:
+              _context.next = 9;
+              return this.refreshCampaigns();
+
+            case 9:
+              _context.next = 11;
+              return this.refreshData();
+
+            case 11:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function created() {
+      return _created.apply(this, arguments);
+    }
+
+    return created;
+  }(),
   methods: {
     bin: function bin(value, binWidth) {
       return value - value % binWidth;
@@ -284,6 +329,7 @@ vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
     saveSimilarityConfig: function saveSimilarityConfig() {
       this.$storage.set('similarNotes', this.similarNotes);
       this.$storage.set('similarityValue', this.similarityValue);
+      this.similarityDialogTableVisible = false;
     },
     getSimilarityTable: function getSimilarityTable() {
       return this._.map(this.similarNotes, 'value');
@@ -309,40 +355,150 @@ vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
         aggregatorName: this.aggregatorName,
         rendererName: this.rendererName,
         rows: this.rows,
-        cols: this.cols
+        cols: this.cols,
+        filter: {
+          campaign: this._.get(this.filter, 'campaign', null)
+        }
       };
       this.$storage.set('currentView', config);
     },
-    refreshData: function refreshData() {
-      var _this3 = this;
+    daterangeChange: function () {
+      var _daterangeChange = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return this.refreshCampaigns();
 
+              case 2:
+                _context2.next = 4;
+                return this.refreshCount();
+
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function daterangeChange() {
+        return _daterangeChange.apply(this, arguments);
+      }
+
+      return daterangeChange;
+    }(),
+    refreshCount: function () {
+      var _refreshCount = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var _this3 = this;
+
+        var query;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                query = this.getQuery({
+                  t: 'count'
+                });
+                _context3.next = 3;
+                return Object(_api_results__WEBPACK_IMPORTED_MODULE_9__["resultsList"])(query).then(function (_ref) {
+                  var data = _ref.data;
+                  var count = data.count;
+                  _this3.count = count;
+                });
+
+              case 3:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function refreshCount() {
+        return _refreshCount.apply(this, arguments);
+      }
+
+      return refreshCount;
+    }(),
+    refreshCampaigns: function () {
+      var _refreshCampaigns = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+        var _this4 = this;
+
+        var query;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                query = this.getQuery({
+                  t: 'distinct',
+                  f: 'campaign'
+                });
+                delete query.q.campaign;
+                _context4.next = 4;
+                return Object(_api_results__WEBPACK_IMPORTED_MODULE_9__["resultsList"])(query).then(function (_ref2) {
+                  var data = _ref2.data;
+                  _this4.campaigns = data;
+                });
+
+              case 4:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function refreshCampaigns() {
+        return _refreshCampaigns.apply(this, arguments);
+      }
+
+      return refreshCampaigns;
+    }(),
+    getQuery: function getQuery() {
+      var additionals = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var query = {
         fl: true,
-        'cre.time': {
-          $gt: this.dateRange[0].toISOString(),
-          $lt: this.dateRange[1].toISOString()
+        q: {
+          'cre.time': {
+            $gt: this.dateRange[0].toISOString(),
+            $lt: new Date(this.dateRange[1].getTime() + 3600 * 1000 * 24).toISOString()
+          }
         },
         s: {
           'cre.time': -1
         },
-        l: this.limit,
         f: '-__v -_id -exec.duts.0.__v -exec.duts._id'
       };
 
-      this._.merge(query, this._.omitBy(this.filter, this._.isEmpty));
-
-      if (query['exec.verdict']) {
-        console.log(query['exec.verdict']);
-        query['exec.verdict'] = "{in}".concat(query['exec.verdict'].join(','));
+      if (this.count > 5000) {
+        query.l = this.limit;
       }
 
-      this.loading = true;
-      Object(_api_results__WEBPACK_IMPORTED_MODULE_7__["resultsList"])(query).then(function (_ref) {
-        var data = _ref.data;
+      this._.merge(query.q, this._.omitBy(this.filter, this._.isEmpty));
 
-        var results = _this3._.map(data, function (r) {
+      if (query.q['exec.verdict']) {
+        query.q['exec.verdict'] = {
+          $in: query.q['exec.verdict']
+        };
+      }
+
+      this._.merge(query, additionals);
+
+      return query;
+    },
+    refreshData: function refreshData() {
+      var _this5 = this;
+
+      var query = this.getQuery();
+      this.loading = true;
+      Object(_api_results__WEBPACK_IMPORTED_MODULE_9__["resultsList"])(query).then(function (_ref3) {
+        var data = _ref3.data;
+
+        var results = _this5._.map(data, function (r) {
           // round duration by 10s
-          r.duration = _this3.bin(parseFloat(r['exec.duration']), 10);
+          r.duration = _this5.bin(parseFloat(r['exec.duration']), 10);
           delete r['exec.duration'];
           var components = [];
           var features = [];
@@ -368,14 +524,14 @@ vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
           delete r['exec.sut.fut'];
           r.component = components.sort().join(',');
           r.feature = features.sort().join(',');
-          r.noteSimilar = _this3.findSimilarity(r['exec.note']);
+          r.noteSimilar = _this5.findSimilarity(r['exec.note']);
           r.passrate = r['exec.verdict'] === 'pass' ? 100.0 : 0;
           r.inconcRate = r['exec.verdict'] === 'inconclusive' ? 100.0 : 0;
           return r;
         });
 
-        _this3.pivotData = results;
-        _this3.loading = false;
+        _this5.pivotData = results;
+        _this5.loading = false;
       });
     }
   }
@@ -520,6 +676,7 @@ var render = function() {
               "picker-options": _vm.pickerOptions,
               format: "yyyy-MM-dd"
             },
+            on: { change: _vm.daterangeChange },
             model: {
               value: _vm.dateRange,
               callback: function($$v) {
@@ -530,7 +687,13 @@ var render = function() {
           }),
           _vm._v(" "),
           _c("el-input-number", {
-            attrs: { size: "small", step: "1000", min: "100" },
+            attrs: {
+              size: "small",
+              disabled: _vm.count < 5000,
+              step: "1000",
+              max: _vm.count,
+              min: "1000"
+            },
             model: {
               value: _vm.limit,
               callback: function($$v) {
@@ -540,21 +703,26 @@ var render = function() {
             }
           }),
           _vm._v(" "),
-          _c("el-input", {
-            staticStyle: { width: "150px" },
-            attrs: { size: "small", placeholder: "Campaign" },
-            model: {
-              value: _vm.filter.campaign,
-              callback: function($$v) {
-                _vm.$set(
-                  _vm.filter,
-                  "campaign",
-                  typeof $$v === "string" ? $$v.trim() : $$v
-                )
-              },
-              expression: "filter.campaign"
-            }
-          }),
+          _c(
+            "el-select",
+            {
+              attrs: { size: "small", placeholder: "Campaign" },
+              model: {
+                value: _vm.filter.campaign,
+                callback: function($$v) {
+                  _vm.$set(_vm.filter, "campaign", $$v)
+                },
+                expression: "filter.campaign"
+              }
+            },
+            _vm._l(_vm.campaigns, function(item) {
+              return _c("el-option", {
+                key: item,
+                attrs: { label: item, value: item }
+              })
+            }),
+            1
+          ),
           _vm._v(" "),
           _c(
             "el-select",
@@ -593,7 +761,11 @@ var render = function() {
           _c(
             "el-button",
             {
-              attrs: { type: "primary", size: "small", icon: "el-icon-save" },
+              attrs: {
+                type: "primary",
+                size: "small",
+                icon: "el-icon-collection-tag"
+              },
               on: { click: _vm.storeView }
             },
             [_vm._v("\n      Store view\n    ")]

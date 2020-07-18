@@ -85,7 +85,7 @@
     "vue2-storage": "^5.0.0",
     "vuedraggable": "2.23.2",
     "vuex": "3.3.0",
-    "xlsx": "0.15.6",
+    "xlsx": "0.16.0",
     "snyk": "^1.316.1"
   },
   "devDependencies": {

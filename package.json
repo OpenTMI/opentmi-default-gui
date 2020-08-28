@@ -59,7 +59,7 @@
     "js-cookie": "2.2.1",
     "jsonlint": "1.6.3",
     "jszip": "3.4.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.17",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "opentmi-addon": "^0.2.0",

@@ -13,9 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _api_user__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/api/user */ "./src/api/user.js");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js");
-/* harmony import */ var vue_authenticate__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-authenticate */ "./node_modules/vue-authenticate/dist/vue-authenticate.es2015.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js");
 //
 //
 //
@@ -31,39 +29,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 
-vue__WEBPACK_IMPORTED_MODULE_3__["default"].use(vue_axios__WEBPACK_IMPORTED_MODULE_0___default.a, axios__WEBPACK_IMPORTED_MODULE_1___default.a);
-
-
+vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vue_axios__WEBPACK_IMPORTED_MODULE_0___default.a, axios__WEBPACK_IMPORTED_MODULE_1___default.a);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'SocialSignin',
   data: function data() {
     return {};
   },
-  created: function created() {
-    this.loadAuthInfo();
-  },
   methods: {
-    loadAuthInfo: function loadAuthInfo() {
-      Object(_api_user__WEBPACK_IMPORTED_MODULE_2__["githubId"])().then(function (_ref) {
-        var data = _ref.data;
-        var authOption = {
-          baseUrl: window.location.origin,
-          // Your API domain
-          providers: {
-            github: {
-              clientId: data.clientID,
-              scope: ['user:email', 'read:user', 'read:org'],
-              redirectUri: "".concat(window.location.origin, "/auth/github") // Your client app URL
-
-            }
-          }
-        };
-        vue__WEBPACK_IMPORTED_MODULE_3__["default"].use(vue_authenticate__WEBPACK_IMPORTED_MODULE_4__["default"], authOption);
-      }).catch(function (error) {
-        console.error(error);
-      });
-    },
     authenticate: function authenticate(provider) {
       this.$auth.authenticate(provider).then(function (data) {
         // Execute application logic after successful social authentication
@@ -656,6 +629,19 @@ exports.push([module.i, ".login-container[data-v-37dfd6fc]{min-height:100%;width
 
 // exports
 
+
+/***/ }),
+
+/***/ "./node_modules/vue-axios/dist/vue-axios.min.js":
+/*!******************************************************!*\
+  !*** ./node_modules/vue-axios/dist/vue-axios.min.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(o){return typeof o}:function(o){return o&&"function"==typeof Symbol&&o.constructor===Symbol&&o!==Symbol.prototype?"symbol":typeof o};!function(){function o(e,t){if(!o.installed){if(o.installed=!0,!t)return void console.error("You have to install axios");e.axios=t,Object.defineProperties(e.prototype,{axios:{get:function(){return t}},$http:{get:function(){return t}}})}}"object"==( false?undefined:_typeof(exports))?module.exports=o: true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function(){return o}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):undefined}();
 
 /***/ }),
 

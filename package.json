@@ -70,7 +70,7 @@
     "showdown": "1.9.1",
     "snyk": "^1.744.0",
     "socket.io-client": "^2.3.0",
-    "sortablejs": "1.10.2",
+    "sortablejs": "^1.14.0",
     "string-similarity": "^4.0.1",
     "tui-editor": "1.4.10",
     "vue": "^2.6.14",

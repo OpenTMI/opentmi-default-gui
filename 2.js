@@ -58,7 +58,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var echarts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! echarts */ "./node_modules/echarts/index.js");
-/* harmony import */ var echarts__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(echarts__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _mixins_resize__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mixins/resize */ "./src/views/dashboard/admin/components/mixins/resize.js");
 //
 //
@@ -121,7 +120,7 @@ var animationDuration = 6000;
   },
   methods: {
     initChart: function initChart() {
-      this.chart = echarts__WEBPACK_IMPORTED_MODULE_0___default.a.init(this.$el, 'macarons');
+      this.chart = echarts__WEBPACK_IMPORTED_MODULE_0__["default"].init(this.$el, 'macarons');
       this.setOptions(this.chartData);
     },
     setOptions: function setOptions(data) {
@@ -179,7 +178,6 @@ var animationDuration = 6000;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var echarts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! echarts */ "./node_modules/echarts/index.js");
-/* harmony import */ var echarts__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(echarts__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _mixins_resize__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mixins/resize */ "./src/views/dashboard/admin/components/mixins/resize.js");
 //
 //
@@ -245,7 +243,7 @@ __webpack_require__(/*! echarts/theme/macarons */ "./node_modules/echarts/theme/
   },
   methods: {
     initChart: function initChart() {
-      this.chart = echarts__WEBPACK_IMPORTED_MODULE_0___default.a.init(this.$el, 'macarons');
+      this.chart = echarts__WEBPACK_IMPORTED_MODULE_0__["default"].init(this.$el, 'macarons');
       this.setOptions(this.chartData);
     },
     setOptions: function setOptions() {
@@ -455,7 +453,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.function.name */ "./node_modules/core-js/modules/es6.function.name.js");
 /* harmony import */ var core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var echarts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! echarts */ "./node_modules/echarts/index.js");
-/* harmony import */ var echarts__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(echarts__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _mixins_resize__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./mixins/resize */ "./src/views/dashboard/admin/components/mixins/resize.js");
 
 //
@@ -518,7 +515,7 @@ __webpack_require__(/*! echarts/theme/macarons */ "./node_modules/echarts/theme/
   },
   methods: {
     initChart: function initChart() {
-      this.chart = echarts__WEBPACK_IMPORTED_MODULE_1___default.a.init(this.$el, 'macarons');
+      this.chart = echarts__WEBPACK_IMPORTED_MODULE_1__["default"].init(this.$el, 'macarons');
       this.setOptions(this.chartData);
     },
     setOptions: function setOptions(data) {
@@ -563,7 +560,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.function.name */ "./node_modules/core-js/modules/es6.function.name.js");
 /* harmony import */ var core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var echarts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! echarts */ "./node_modules/echarts/index.js");
-/* harmony import */ var echarts__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(echarts__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _mixins_resize__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./mixins/resize */ "./src/views/dashboard/admin/components/mixins/resize.js");
 
 //
@@ -627,7 +623,7 @@ var animationDuration = 3000;
   },
   methods: {
     initChart: function initChart() {
-      this.chart = echarts__WEBPACK_IMPORTED_MODULE_1___default.a.init(this.$el, 'macarons');
+      this.chart = echarts__WEBPACK_IMPORTED_MODULE_1__["default"].init(this.$el, 'macarons');
       this.setOptions(this.chartData);
     },
     setOptions: function setOptions(data) {

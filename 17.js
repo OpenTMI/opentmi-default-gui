@@ -124,6 +124,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -188,7 +197,7 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
       },
       loading: true,
       count: 0,
-      limit: 0,
+      limit: 1000,
       aggregatorName: 'Count',
       pivotData: [],
       rendererName: 'Table Heatmap',
@@ -458,18 +467,22 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
     }(),
     getQuery: function getQuery() {
       var additionals = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var startTime = this.dateRange[0].toISOString();
+      var toTime = this.dateRange[1].toISOString();
       var query = {
         fl: true,
         q: {
           'cre.time': {
-            $gt: this.dateRange[0].toISOString(),
-            $lt: new Date(this.dateRange[1].getTime() + 3600 * 1000 * 24).toISOString()
+            $gt: startTime,
+            $lt: toTime
           }
         },
+        to: 5000,
+        // timeout
         s: {
           'cre.time': -1
         },
-        f: '-__v -_id -exec.duts.0.__v -exec.duts._id'
+        f: '-__v -_id -exec.duts.0.__v -exec.duts._id -tcRef'
       };
 
       if (this.count > 5000) {
@@ -674,7 +687,7 @@ var render = function() {
               "start-placeholder": "Start date",
               "end-placeholder": "End date",
               "picker-options": _vm.pickerOptions,
-              format: "yyyy-MM-dd"
+              format: "yyyy-MM-dd HH:mm"
             },
             on: { change: _vm.daterangeChange },
             model: {
@@ -686,22 +699,42 @@ var render = function() {
             }
           }),
           _vm._v(" "),
-          _c("el-input-number", {
-            attrs: {
-              size: "small",
-              disabled: _vm.count < 5000,
-              step: "1000",
-              max: _vm.count,
-              min: "1000"
+          _c(
+            "el-select",
+            {
+              staticStyle: { width: "90px" },
+              attrs: { size: "small", title: "How many results to be fetch" },
+              model: {
+                value: _vm.limit,
+                callback: function($$v) {
+                  _vm.limit = $$v
+                },
+                expression: "limit"
+              }
             },
-            model: {
-              value: _vm.limit,
-              callback: function($$v) {
-                _vm.limit = $$v
-              },
-              expression: "limit"
-            }
-          }),
+            [
+              _vm._l([1000, 5000, 10000, 20000], function(item) {
+                return _c("el-option", {
+                  key: item,
+                  attrs: {
+                    label: item,
+                    value: item,
+                    disabled: _vm.count < item
+                  }
+                })
+              }),
+              _vm._v(" "),
+              _c("el-option", {
+                attrs: {
+                  label: _vm.count,
+                  value: _vm.count,
+                  disabled: _vm.count > 20000,
+                  tooltip: "Count with current filters"
+                }
+              })
+            ],
+            2
+          ),
           _vm._v(" "),
           _c(
             "el-select",

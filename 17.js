@@ -484,10 +484,7 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
         },
         f: '-__v -_id -exec.duts.0.__v -exec.duts._id -tcRef'
       };
-
-      if (this.count > 5000) {
-        query.l = this.limit;
-      }
+      query.l = this.limit;
 
       this._.merge(query.q, this._.omitBy(this.filter, this._.isEmpty));
 
@@ -545,6 +542,20 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
 
         _this5.pivotData = results;
         _this5.loading = false;
+        return results.length;
+      }).then(function (len) {
+        var message = "Got ".concat(len, " results (").concat(_this5.count, " totally in DB with given filters)");
+
+        if (len === _this5.count) {
+          message = "Got all ".concat(len, " results");
+        }
+
+        _this5.$notify({
+          title: 'Results received',
+          message: message,
+          type: 'success',
+          duration: 5000
+        });
       });
     }
   }

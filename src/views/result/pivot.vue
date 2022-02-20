@@ -361,6 +361,19 @@ export default {
           })
           this.pivotData = results
           this.loading = false
+          return results.length
+        })
+        .then((len) => {
+          let message = `Got ${len} results (${this.count} totally in DB with given filters)`
+          if (len === this.count) {
+            message = `Got all ${len} results`
+          }
+          this.$notify({
+            title: 'Results received',
+            message,
+            type: 'success',
+            duration: 5000
+          })
         })
     }
   }

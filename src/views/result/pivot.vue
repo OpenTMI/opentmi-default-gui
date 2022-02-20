@@ -39,10 +39,19 @@
         start-placeholder="Start date"
         end-placeholder="End date"
         :picker-options="pickerOptions"
-        format="yyyy-MM-dd"
+        format="yyyy-MM-dd HH:mm"
         @change="daterangeChange"
       />
-      <el-input-number v-model="limit" size="small" :disabled="count<5000" step="1000" :max="count" min="1000" />
+      <el-select v-model="limit" size="small" style="width:90px;" title="How many results to be fetch">
+        <el-option
+          v-for="item in [1000, 5000, 10000, 20000]"
+          :key="item"
+          :label="item"
+          :value="item"
+          :disabled="count < item"
+        />
+        <el-option :label="count" :value="count" :disabled="count > 20000" tooltip="Count with current filters" />
+      </el-select>
       <el-select v-model="filter.campaign" size="small" placeholder="Campaign">
         <el-option
           v-for="item in campaigns"
@@ -148,7 +157,7 @@ export default {
       },
       loading: true,
       count: 0,
-      limit: 0,
+      limit: 1000,
       aggregatorName: 'Count',
       pivotData: [],
       rendererName: 'Table Heatmap',
@@ -294,16 +303,19 @@ export default {
         })
     },
     getQuery(additionals = {}) {
+      const startTime = this.dateRange[0].toISOString()
+      const toTime = this.dateRange[1].toISOString()
       const query = {
         fl: true,
         q: {
           'cre.time': {
-            $gt: this.dateRange[0].toISOString(),
-            $lt: new Date(this.dateRange[1].getTime() + 3600 * 1000 * 24).toISOString()
+            $gt: startTime,
+            $lt: toTime
           }
         },
+        to: 5000, // timeout
         s: { 'cre.time': -1 },
-        f: '-__v -_id -exec.duts.0.__v -exec.duts._id'
+        f: '-__v -_id -exec.duts.0.__v -exec.duts._id -tcRef'
       }
       if (this.count > 5000) {
         query.l = this.limit

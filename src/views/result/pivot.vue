@@ -317,9 +317,7 @@ export default {
         s: { 'cre.time': -1 },
         f: '-__v -_id -exec.duts.0.__v -exec.duts._id -tcRef'
       }
-      if (this.count > 5000) {
-        query.l = this.limit
-      }
+      query.l = this.limit
       this._.merge(query.q, this._.omitBy(this.filter, this._.isEmpty))
       if (query.q['exec.verdict']) {
         query.q['exec.verdict'] = { $in: query.q['exec.verdict'] }
@@ -363,6 +361,19 @@ export default {
           })
           this.pivotData = results
           this.loading = false
+          return results.length
+        })
+        .then((len) => {
+          let message = `Got ${len} results (${this.count} totally in DB with given filters)`
+          if (len === this.count) {
+            message = `Got all ${len} results`
+          }
+          this.$notify({
+            title: 'Results received',
+            message,
+            type: 'success',
+            duration: 5000
+          })
         })
     }
   }

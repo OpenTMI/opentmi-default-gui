@@ -133,6 +133,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -161,6 +183,8 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
       similarityDialogTableVisible: false,
       similarityEnabled: true,
       similarityValue: 0.6,
+      colGroupFirstWidth: 300,
+      queryString: {},
       campaigns: [],
       defaultNotes: [],
       dateRange: [new Date(Date.now() - 3600 * 1000 * 24 * 7), new Date(Date.now())],
@@ -196,7 +220,10 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
         }]
       },
       loading: true,
+      dataLen: 0,
+      // actual received data length
       count: 0,
+      // total count based on filtering
       limit: 1000,
       aggregatorName: 'Count',
       pivotData: [],
@@ -503,6 +530,7 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
 
       var query = this.getQuery();
       this.loading = true;
+      this.queryString = JSON.stringify(query, null, 2);
       Object(_api_results__WEBPACK_IMPORTED_MODULE_9__["resultsList"])(query).then(function (_ref3) {
         var data = _ref3.data;
 
@@ -534,7 +562,11 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
           delete r['exec.sut.fut'];
           r.component = components.sort().join(',');
           r.feature = features.sort().join(',');
-          r.noteSimilar = _this5.findSimilarity(r['exec.note']);
+
+          if (_this5.similarityEnabled) {
+            r.noteSimilar = _this5.findSimilarity(r['exec.note']);
+          }
+
           r.passrate = r['exec.verdict'] === 'pass' ? 100.0 : 0;
           r.inconcRate = r['exec.verdict'] === 'inconclusive' ? 100.0 : 0;
           return r;
@@ -544,6 +576,7 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue2_storage__WEBPACK_IMPORTED_M
         _this5.loading = false;
         return results.length;
       }).then(function (len) {
+        _this5.dataLen = len;
         var message = "Got ".concat(len, " results (").concat(_this5.count, " totally in DB with given filters)");
 
         if (len === _this5.count) {
@@ -684,178 +717,254 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("h3", [_vm._v("Results Pivottable")]),
+      _c(
+        "el-badge",
+        { staticClass: "item", attrs: { value: _vm.dataLen, type: "primary" } },
+        [_c("h3", [_vm._v("Results Pivottable")])]
+      ),
       _vm._v(" "),
       _c(
-        "div",
-        { staticClass: "filter-container" },
+        "el-tabs",
+        { attrs: { type: "border-card" } },
         [
-          _c("el-date-picker", {
-            attrs: {
-              type: "daterange",
-              size: "small",
-              "range-separator": "To",
-              "start-placeholder": "Start date",
-              "end-placeholder": "End date",
-              "picker-options": _vm.pickerOptions,
-              format: "yyyy-MM-dd HH:mm"
-            },
-            on: { change: _vm.daterangeChange },
-            model: {
-              value: _vm.dateRange,
-              callback: function($$v) {
-                _vm.dateRange = $$v
-              },
-              expression: "dateRange"
-            }
-          }),
-          _vm._v(" "),
           _c(
-            "el-select",
-            {
-              staticStyle: { width: "90px" },
-              attrs: { size: "small", title: "How many results to be fetch" },
-              model: {
-                value: _vm.limit,
-                callback: function($$v) {
-                  _vm.limit = $$v
-                },
-                expression: "limit"
-              }
-            },
+            "el-tab-pane",
+            { attrs: { label: "Filtering" } },
             [
-              _vm._l([1000, 5000, 10000, 20000], function(item) {
-                return _c("el-option", {
-                  key: item,
-                  attrs: {
-                    label: item,
-                    value: item,
-                    disabled: _vm.count < item
-                  }
-                })
+              _c("el-date-picker", {
+                attrs: {
+                  type: "daterange",
+                  size: "small",
+                  "range-separator": "To",
+                  "start-placeholder": "Start date",
+                  "end-placeholder": "End date",
+                  "picker-options": _vm.pickerOptions,
+                  format: "yyyy-MM-dd HH:mm"
+                },
+                on: { change: _vm.daterangeChange },
+                model: {
+                  value: _vm.dateRange,
+                  callback: function($$v) {
+                    _vm.dateRange = $$v
+                  },
+                  expression: "dateRange"
+                }
               }),
               _vm._v(" "),
-              _c("el-option", {
-                attrs: {
-                  label: _vm.count,
-                  value: _vm.count,
-                  disabled: _vm.count > 20000,
-                  tooltip: "Count with current filters"
-                }
-              })
+              _c(
+                "el-select",
+                {
+                  staticStyle: { width: "90px" },
+                  attrs: {
+                    size: "small",
+                    title: "How many results to be fetch"
+                  },
+                  model: {
+                    value: _vm.limit,
+                    callback: function($$v) {
+                      _vm.limit = $$v
+                    },
+                    expression: "limit"
+                  }
+                },
+                [
+                  _vm._l([1000, 5000, 10000, 20000], function(item) {
+                    return _c("el-option", {
+                      key: item,
+                      attrs: {
+                        label: item,
+                        value: item,
+                        disabled: _vm.count < item
+                      }
+                    })
+                  }),
+                  _vm._v(" "),
+                  _c("el-option", {
+                    attrs: {
+                      label: _vm.count,
+                      value: _vm.count,
+                      disabled: _vm.count > 20000,
+                      tooltip: "Count with current filters"
+                    }
+                  })
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c(
+                "el-select",
+                {
+                  attrs: { size: "small", placeholder: "Campaign" },
+                  model: {
+                    value: _vm.filter.campaign,
+                    callback: function($$v) {
+                      _vm.$set(_vm.filter, "campaign", $$v)
+                    },
+                    expression: "filter.campaign"
+                  }
+                },
+                _vm._l(_vm.campaigns, function(item) {
+                  return _c("el-option", {
+                    key: item,
+                    attrs: { label: item, value: item }
+                  })
+                }),
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "el-select",
+                {
+                  attrs: {
+                    size: "small",
+                    multiple: "",
+                    placeholder: "Verdict"
+                  },
+                  model: {
+                    value: _vm.filter["exec.verdict"],
+                    callback: function($$v) {
+                      _vm.$set(_vm.filter, "exec.verdict", $$v)
+                    },
+                    expression: "filter['exec.verdict']"
+                  }
+                },
+                _vm._l(["pass", "inconclusive", "fail", "skip"], function(
+                  item
+                ) {
+                  return _c("el-option", {
+                    key: item,
+                    attrs: { label: item, value: item }
+                  })
+                }),
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "el-button",
+                {
+                  attrs: {
+                    type: "primary",
+                    size: "small",
+                    icon: "el-icon-refresh"
+                  },
+                  on: { click: _vm.refreshData }
+                },
+                [_vm._v("\n        Refresh\n      ")]
+              )
             ],
-            2
-          ),
-          _vm._v(" "),
-          _c(
-            "el-select",
-            {
-              attrs: { size: "small", placeholder: "Campaign" },
-              model: {
-                value: _vm.filter.campaign,
-                callback: function($$v) {
-                  _vm.$set(_vm.filter, "campaign", $$v)
-                },
-                expression: "filter.campaign"
-              }
-            },
-            _vm._l(_vm.campaigns, function(item) {
-              return _c("el-option", {
-                key: item,
-                attrs: { label: item, value: item }
-              })
-            }),
             1
           ),
           _vm._v(" "),
           _c(
-            "el-select",
-            {
-              attrs: { size: "small", multiple: "", placeholder: "Verdict" },
-              model: {
-                value: _vm.filter["exec.verdict"],
-                callback: function($$v) {
-                  _vm.$set(_vm.filter, "exec.verdict", $$v)
+            "el-tab-pane",
+            { attrs: { label: "Similarity" } },
+            [
+              _c(
+                "el-checkbox",
+                {
+                  model: {
+                    value: _vm.similarityEnabled,
+                    callback: function($$v) {
+                      _vm.similarityEnabled = $$v
+                    },
+                    expression: "similarityEnabled"
+                  }
                 },
-                expression: "filter['exec.verdict']"
-              }
-            },
-            _vm._l(["pass", "inconclusive", "fail", "skip"], function(item) {
-              return _c("el-option", {
-                key: item,
-                attrs: { label: item, value: item }
-              })
-            }),
+                [_vm._v("Enable")]
+              ),
+              _vm._v(" "),
+              _c(
+                "el-tooltip",
+                {
+                  attrs: {
+                    content:
+                      "These rules allows to categorize exec.notes. Normally there is notes when test fails.",
+                    placement: "bottom"
+                  }
+                },
+                [
+                  _c(
+                    "el-button",
+                    {
+                      attrs: {
+                        disabled: !_vm.similarityEnabled,
+                        type: "primary",
+                        size: "small",
+                        icon: "el-icon-edit"
+                      },
+                      on: {
+                        click: function($event) {
+                          _vm.similarityDialogTableVisible = true
+                        }
+                      }
+                    },
+                    [_vm._v("\n          noteSimilar rules\n        ")]
+                  )
+                ],
+                1
+              )
+            ],
             1
           ),
           _vm._v(" "),
           _c(
-            "el-button",
-            {
-              attrs: {
-                type: "primary",
-                size: "small",
-                icon: "el-icon-refresh"
-              },
-              on: { click: _vm.refreshData }
-            },
-            [_vm._v("\n      Refresh\n    ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "el-button",
-            {
-              attrs: {
-                type: "primary",
-                size: "small",
-                icon: "el-icon-collection-tag"
-              },
-              on: { click: _vm.storeView }
-            },
-            [_vm._v("\n      Store view\n    ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "el-checkbox",
-            {
-              model: {
-                value: _vm.similarityEnabled,
-                callback: function($$v) {
-                  _vm.similarityEnabled = $$v
-                },
-                expression: "similarityEnabled"
-              }
-            },
-            [_vm._v("Enable")]
-          ),
-          _vm._v(" "),
-          _c(
-            "el-tooltip",
-            {
-              attrs: {
-                content:
-                  "These rules allows to categorize exec.notes. Normally there is notes when test fails.",
-                placement: "bottom"
-              }
-            },
+            "el-tab-pane",
+            { attrs: { label: "View" } },
             [
               _c(
                 "el-button",
                 {
                   attrs: {
-                    disabled: !_vm.similarityEnabled,
-                    type: "primary",
+                    type: "success",
                     size: "small",
-                    icon: "el-icon-edit"
+                    icon: "el-icon-collection-tag"
                   },
-                  on: {
-                    click: function($event) {
-                      _vm.similarityDialogTableVisible = true
-                    }
+                  on: { click: _vm.storeView }
+                },
+                [_vm._v("\n        Store\n      ")]
+              ),
+              _vm._v(" "),
+              _c(
+                "el-radio-group",
+                {
+                  attrs: { size: "small" },
+                  model: {
+                    value: _vm.colGroupFirstWidth,
+                    callback: function($$v) {
+                      _vm.colGroupFirstWidth = $$v
+                    },
+                    expression: "colGroupFirstWidth"
                   }
                 },
-                [_vm._v("\n        noteSimilar rules\n      ")]
+                [
+                  _c("el-radio-button", { attrs: { label: "0" } }, [
+                    _vm._v("hide first column")
+                  ]),
+                  _vm._v(" "),
+                  _c("el-radio-button", { attrs: { label: "300" } }, [
+                    _vm._v("Show first column")
+                  ])
+                ],
+                1
               )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "el-tab-pane",
+            { attrs: { label: "raw query" } },
+            [
+              _c("el-input", {
+                attrs: { type: "textarea", autosize: "", disabled: true },
+                model: {
+                  value: _vm.queryString,
+                  callback: function($$v) {
+                    _vm.queryString = $$v
+                  },
+                  expression: "queryString"
+                }
+              })
             ],
             1
           )
@@ -881,7 +990,34 @@ var render = function() {
           "aggregator-name": _vm.aggregatorName,
           "renderer-name": _vm.rendererName,
           "derived-attributes": _vm.derivedAttributes
-        }
+        },
+        scopedSlots: _vm._u([
+          {
+            key: "rendererCell",
+            fn: function() {
+              return undefined
+            },
+            proxy: true
+          },
+          {
+            key: "aggregatorCell",
+            fn: function() {
+              return undefined
+            },
+            proxy: true
+          },
+          {
+            key: "colGroup",
+            fn: function() {
+              return [
+                _c("colGroup", { attrs: { width: _vm.colGroupFirstWidth } }),
+                _vm._v(" "),
+                _c("colGroup")
+              ]
+            },
+            proxy: true
+          }
+        ])
       })
     ],
     1

@@ -94,7 +94,7 @@ export const constantRoutes = [
         meta: { title: 'Documentation', icon: 'documentation', affix: true }
       }
     ]
-  },*/
+  },
   {
     path: '/guide',
     component: Layout,
@@ -107,7 +107,7 @@ export const constantRoutes = [
         meta: { title: 'Guide', icon: 'guide', noCache: true }
       }
     ]
-  },
+  },*/
   {
     path: '/profile',
     component: Layout,
@@ -129,7 +129,7 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  {
+  /* {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
@@ -169,7 +169,7 @@ export const asyncRoutes = [
         }
       }
     ]
-  },
+  },*/
 
   {
     path: '/result',
@@ -433,8 +433,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
-*/
   {
     path: '/theme',
     component: Layout,
@@ -447,7 +445,7 @@ export const asyncRoutes = [
       }
     ]
   },
-
+*/
   {
     path: 'external-link',
     component: Layout,

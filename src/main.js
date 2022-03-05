@@ -72,12 +72,18 @@ async function initApp() {
   Vue.config.productionTip = false
 
   // setup github auth
-  const { data } = await githubId()
+  let clientId = ''
+  try {
+    const { data } = await githubId()
+    clientId = data.clientID
+  } catch (error) {
+    console.error(`cannot fetch github clientID: ${error}`)
+  }
   const authOption = {
     baseUrl: window.location.origin, // Your API domain
     providers: {
       github: {
-        clientId: data.clientID,
+        clientId,
         scope: ['user:email', 'read:user', 'read:org'],
         redirectUri: `${window.location.origin}/auth/github` // Your client app URL
       }

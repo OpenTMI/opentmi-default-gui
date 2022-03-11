@@ -75,7 +75,7 @@
           Refresh
         </el-button>
       </el-tab-pane>
-      <el-tab-pane label="Similarity">
+      <el-tab-pane label="Machine Learning">
         <el-checkbox v-model="similarityEnabled">Enable</el-checkbox>
         <el-tooltip content="These rules allows to categorize exec.notes. Normally there is notes when test fails." placement="bottom">
           <el-button :disabled="!similarityEnabled" type="primary" size="small" icon="el-icon-edit" @click="similarityDialogTableVisible = true">

@@ -857,7 +857,7 @@ var render = function() {
           _vm._v(" "),
           _c(
             "el-tab-pane",
-            { attrs: { label: "Similarity" } },
+            { attrs: { label: "Machine Learning" } },
             [
               _c(
                 "el-checkbox",

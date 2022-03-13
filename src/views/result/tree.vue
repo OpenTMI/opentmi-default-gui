@@ -1,20 +1,33 @@
 <template>
   <div class="app-container">
-    <v-jstree :data="treeData" :async="loadData" @item-click="itemClick" />
+    <el-row>
+      <el-col :span="12">
+        <v-jstree :data="treeData" :async="loadData" @item-click="itemClick" />
+      </el-col>
+      <el-col :span="12">
+        <pre>{{ row | pretty }}</pre>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 import VJstree from 'vue-jstree'
-import { resultsList } from '@/api/results'
+import { resultsList, searchResult } from '@/api/results'
 
 export default {
   name: 'ResultTree',
   components: {
     VJstree
   },
+  filters: {
+    pretty(value) {
+      return JSON.stringify(value, null, 2)
+    }
+  },
   data() {
     return {
+      row: {},
       treeData: [],
       loadData: this._.debounce(this._loadData, 250)
     }
@@ -23,30 +36,42 @@ export default {
     _loadData(node, resolve) {
       const id = node.data.id ? node.data.id : 0
       const { level, type, filters = {}} = node.data
+      const options = { level: level + 1, field: NaN, type, filters }
       if (id === 0) {
-        this.getRoot().then(resolve)
-      } else if (type === 'tests') {
+        return this.getRoot().then(resolve)
+      }
+      if (type === 'tests') {
         if (level === 0) {
-          const options = { level: 1, field: 'tcid', type, filters }
-          this.getDistinct(options).then(resolve)
+          options.field = 'tcid'
         } else if (level === 1) {
-          const options = { level: 2, field: 'exec.duts.0.model', type, filters }
-          this.getDistinct(options).then(resolve)
-        } else if (level === 1) {
-          const options = { level: 2, field: 'exec.verdict', type, filters }
-          return this.getDistinct(options).then(resolve)
+          options.field = 'exec.duts.0.model'
         } else if (level === 2) {
-          const options = { level: 3, field: 'exec.verdict', type, filters }
-          return this.getDistinct(options).then(resolve)
+          options.field = 'exec.verdict'
         } else if (level === 3) {
-          const icon = 'fa fa-check icon-state-success'
-          const isLeaf = true
-          const options = { level: 3, field: 'job.id', type, filters, isLeaf, icon }
-          return this.getDistinct(options).then(resolve)
+          options.field = 'job.id'
+        } else if (level === 4) {
+          options.icon = 'el-icon-tickets'
+          options.isLeaf = true
+          options.field = '_id'
+        }
+      } else if (type === 'campaigns') {
+        if (level === 0) {
+          options.field = 'campaign'
+        } else if (level === 1) {
+          options.field = 'job.id'
+        } else if (level === 2) {
+          options.field = 'tcid'
+        } else if (level === 3) {
+          options.field = 'exec.verdict'
+        } else if (level === 4) {
+          options.isLeaf = true
+          options.field = '_id'
+          options.icon = 'el-icon-tickets'
         }
       } else {
-        resolve([])
+        console.log('unknown type')
       }
+      return this.getDistinct(options).then(resolve)
     },
     distinct(filters, field) {
       const query = {
@@ -55,33 +80,37 @@ export default {
         s: { 'cre.time': 1 },
         'cre.time': {
           $gt: this.lastWeekDate().toISOString()
-        }
+        },
+        to: 5000
       }
       return this._.merge(query, filters)
     },
     getRoot() {
       return Promise.resolve([
-        { text: 'tests', level: 0, type: 'tests', isLeaf: false }
-        // {text: 'campaigns', level: 0, type: 'campaign', isLeaf: false},
-        // {text: 'dut models', level: 0, type: 'dutModel', isLeaf: false},
+        { text: 'by tests', level: 0, type: 'tests', isLeaf: false },
+        { text: 'by campaigns', level: 0, type: 'campaigns', isLeaf: false }
+        // { text: 'dut models', level: 0, type: 'dutModel', isLeaf: false },
       ])
     },
     getDistinct({ level, field, filters = {}, type, isLeaf = false, icon }) {
       const query = this.distinct(filters, field)
       return resultsList(query)
         .then(({ data }) => {
+          console.log('results: ', { query, data })
           const mapper = text => {
-            const filters = this._.merge(filters, { [field]: text })
+            const _filters = this._.clone(filters)
+            this._.merge(_filters, { [field]: text })
             return {
               text,
               level,
               isLeaf,
               icon,
               type,
-              filters
+              filters: _filters
             }
           }
           const treeData = this._.map(data, mapper)
+          console.log({ treeData })
           return treeData
         })
     },
@@ -93,8 +122,19 @@ export default {
       return ourDate
     },
     itemClick(node, item, e) {
-      // eslint-disable-next-line no-console
-      console.log(node.model.text + ' clicked !', item, e)
+      const filters = this._.cloneDeep(node.model.filters)
+
+      if (node.model.isLeaf) {
+        const _id = node.model.filters._id
+        console.log('Get result: ', _id)
+        searchResult(_id).then(({ data }) => {
+          // eslint-disable-next-line no-console
+          console.log(`searchResult(${_id}): ${data}`)
+          this.row = data
+        })
+      } else {
+        this.row = filters
+      }
     }
   }
 

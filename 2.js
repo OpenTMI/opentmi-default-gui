@@ -120,7 +120,7 @@ var animationDuration = 6000;
   },
   methods: {
     initChart: function initChart() {
-      this.chart = echarts__WEBPACK_IMPORTED_MODULE_0__["default"].init(this.$el, 'macarons');
+      this.chart = echarts__WEBPACK_IMPORTED_MODULE_0__["init"](this.$el, 'macarons');
       this.setOptions(this.chartData);
     },
     setOptions: function setOptions(data) {
@@ -243,7 +243,7 @@ __webpack_require__(/*! echarts/theme/macarons */ "./node_modules/echarts/theme/
   },
   methods: {
     initChart: function initChart() {
-      this.chart = echarts__WEBPACK_IMPORTED_MODULE_0__["default"].init(this.$el, 'macarons');
+      this.chart = echarts__WEBPACK_IMPORTED_MODULE_0__["init"](this.$el, 'macarons');
       this.setOptions(this.chartData);
     },
     setOptions: function setOptions() {
@@ -515,7 +515,7 @@ __webpack_require__(/*! echarts/theme/macarons */ "./node_modules/echarts/theme/
   },
   methods: {
     initChart: function initChart() {
-      this.chart = echarts__WEBPACK_IMPORTED_MODULE_1__["default"].init(this.$el, 'macarons');
+      this.chart = echarts__WEBPACK_IMPORTED_MODULE_1__["init"](this.$el, 'macarons');
       this.setOptions(this.chartData);
     },
     setOptions: function setOptions(data) {
@@ -623,7 +623,7 @@ var animationDuration = 3000;
   },
   methods: {
     initChart: function initChart() {
-      this.chart = echarts__WEBPACK_IMPORTED_MODULE_1__["default"].init(this.$el, 'macarons');
+      this.chart = echarts__WEBPACK_IMPORTED_MODULE_1__["init"](this.$el, 'macarons');
       this.setOptions(this.chartData);
     },
     setOptions: function setOptions(data) {

@@ -33,7 +33,8 @@ export default {
   filters: {
     commitId(row, _) {
       const commitId = _.get(row, 'exec.sut.commitId', '')
-      return commitId
+      if (!commitId) return ''
+      return `SUT commit: ${commitId}`
     },
     commitUrl(row, _) {
       console.log('commitUrl: ', row, _)

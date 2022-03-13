@@ -10,9 +10,19 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty */ "./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty.js");
-/* harmony import */ var vue_jstree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-jstree */ "./node_modules/vue-jstree/dist/vue-jstree.js");
-/* harmony import */ var vue_jstree__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_jstree__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
+/* harmony import */ var core_js_modules_es6_string_starts_with__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es6.string.starts-with */ "./node_modules/core-js/modules/es6.string.starts-with.js");
+/* harmony import */ var core_js_modules_es6_string_starts_with__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_string_starts_with__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es6_regexp_match__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es6.regexp.match */ "./node_modules/core-js/modules/es6.regexp.match.js");
+/* harmony import */ var core_js_modules_es6_regexp_match__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_regexp_match__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var vue_jstree__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-jstree */ "./node_modules/vue-jstree/dist/vue-jstree.js");
+/* harmony import */ var vue_jstree__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vue_jstree__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-json-pretty */ "./node_modules/vue-json-pretty/lib/vue-json-pretty.js");
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-json-pretty/lib/styles.css */ "./node_modules/vue-json-pretty/lib/styles.css");
+/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
+
+
 
 //
 //
@@ -20,20 +30,72 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ResultTree',
   components: {
-    VJstree: vue_jstree__WEBPACK_IMPORTED_MODULE_1___default.a
+    VJstree: vue_jstree__WEBPACK_IMPORTED_MODULE_3___default.a,
+    VueJsonPretty: vue_json_pretty__WEBPACK_IMPORTED_MODULE_4___default.a
+  },
+  filters: {
+    commitId: function commitId(row, _) {
+      var commitId = _.get(row, 'exec.sut.commitId', '');
+
+      if (!commitId) return '';
+      return "SUT commit: ".concat(commitId);
+    },
+    commitUrl: function commitUrl(row, _) {
+      console.log('commitUrl: ', row, _);
+
+      var commitId = _.get(row, 'exec.sut.commitId', '');
+
+      var url = _.get(row, 'exec.sut.gitUrl', '');
+
+      var match = url.match(/((git|ssh|http(s)?)|(git@[\w.]+))(:(\/\/)?)([\w.@:/\-~]+)(\.git)(\/)?/);
+
+      if (match) {
+        var group7 = match[7];
+
+        if (group7.startsWith('github.com')) {
+          url = "https://".concat(group7, "/commit/").concat(commitId);
+        }
+      }
+
+      return url;
+    }
   },
   data: function data() {
     return {
+      row: {},
       treeData: [],
       loadData: this._.debounce(this._loadData, 250)
     };
   },
   methods: {
+    customLinkFormatter: function customLinkFormatter(data, key, path, defaultFormatted) {
+      if (typeof data === 'string' && data.startsWith('https://')) {
+        return "<a style=\"color:red;\" href=\"".concat(data, "\" target=\"_blank\">\"").concat(data, "\"</a>");
+      }
+
+      return defaultFormatted;
+    },
     _loadData: function _loadData(node, resolve) {
       var id = node.data.id ? node.data.id : 0;
       var _node$data = node.data,
@@ -41,81 +103,99 @@ __webpack_require__.r(__webpack_exports__);
           type = _node$data.type,
           _node$data$filters = _node$data.filters,
           filters = _node$data$filters === void 0 ? {} : _node$data$filters;
+      var options = {
+        level: level + 1,
+        field: NaN,
+        type: type,
+        filters: filters
+      };
 
       if (id === 0) {
-        this.getRoot().then(resolve);
-      } else if (type === 'tests') {
+        return this.getRoot().then(resolve);
+      }
+
+      if (type === 'tests') {
         if (level === 0) {
-          var options = {
-            level: 1,
-            field: 'tcid',
-            type: type,
-            filters: filters
-          };
-          this.getDistinct(options).then(resolve);
+          options.field = 'tcid';
         } else if (level === 1) {
-          var _options = {
-            level: 2,
-            field: 'exec.duts.0.model',
-            type: type,
-            filters: filters
-          };
-          this.getDistinct(_options).then(resolve);
-        } else if (level === 1) {
-          var _options2 = {
-            level: 2,
-            field: 'exec.verdict',
-            type: type,
-            filters: filters
-          };
-          return this.getDistinct(_options2).then(resolve);
+          options.field = 'campaign';
         } else if (level === 2) {
-          var _options3 = {
-            level: 3,
-            field: 'exec.verdict',
-            type: type,
-            filters: filters
-          };
-          return this.getDistinct(_options3).then(resolve);
+          options.field = 'job.id';
         } else if (level === 3) {
-          var icon = 'fa fa-check icon-state-success';
-          var isLeaf = true;
-          var _options4 = {
-            level: 3,
-            field: 'job.id',
-            type: type,
-            filters: filters,
-            isLeaf: isLeaf,
-            icon: icon
-          };
-          return this.getDistinct(_options4).then(resolve);
+          options.field = 'exec.duts.0.model';
+        } else if (level === 4) {
+          options.field = 'exec.verdict';
+        } else if (level === 5) {
+          options.icon = 'el-icon-tickets';
+          options.isLeaf = true;
+          options.field = '_id';
+        }
+      } else if (type === 'campaigns') {
+        if (level === 0) {
+          options.field = 'campaign';
+        } else if (level === 1) {
+          options.field = 'job.id';
+        } else if (level === 2) {
+          options.field = 'tcid';
+        } else if (level === 3) {
+          options.field = 'exec.verdict';
+        } else if (level === 4) {
+          options.isLeaf = true;
+          options.field = '_id';
+          options.icon = 'el-icon-tickets';
+        }
+      } else if (type === 'dutModels') {
+        if (level === 0) {
+          options.field = 'exec.duts.0.model';
+        } else if (level === 1) {
+          options.field = 'campaign';
+        } else if (level === 2) {
+          options.field = 'job.id';
+        } else if (level === 3) {
+          options.field = 'tcid';
+        } else if (level === 4) {
+          options.field = 'exec.verdict';
+        } else if (level === 5) {
+          options.isLeaf = true;
+          options.field = '_id';
+          options.icon = 'el-icon-tickets';
         }
       } else {
-        resolve([]);
+        console.log('unknown type');
       }
+
+      return this.getDistinct(options).then(resolve);
     },
     distinct: function distinct(filters, field) {
       var query = {
         t: 'distinct',
         f: field,
+        l: 1000,
         s: {
           'cre.time': 1
         },
-        'cre.time': {
-          $gt: this.lastWeekDate().toISOString()
-        }
+        'cre.time': "{gt}".concat(this.lastMonthDate().toISOString()),
+        to: 5000
       };
       return this._.merge(query, filters);
     },
     getRoot: function getRoot() {
       return Promise.resolve([{
-        text: 'tests',
+        text: 'by tests',
         level: 0,
         type: 'tests',
         isLeaf: false
-      } // {text: 'campaigns', level: 0, type: 'campaign', isLeaf: false},
-      // {text: 'dut models', level: 0, type: 'dutModel', isLeaf: false},
-      ]);
+      }, {
+        text: 'by campaigns',
+        level: 0,
+        type: 'campaigns',
+        isLeaf: false
+      }, {
+        text: 'by dut models',
+        level: 0,
+        type: 'dutModels',
+        isLeaf: false
+      }]);
     },
     getDistinct: function getDistinct(_ref) {
       var _this = this;
@@ -129,11 +209,17 @@ __webpack_require__.r(__webpack_exports__);
           isLeaf = _ref$isLeaf === void 0 ? false : _ref$isLeaf,
           icon = _ref.icon;
       var query = this.distinct(filters, field);
-      return Object(_api_results__WEBPACK_IMPORTED_MODULE_2__["resultsList"])(query).then(function (_ref2) {
+      return Object(_api_results__WEBPACK_IMPORTED_MODULE_6__["resultsList"])(query).then(function (_ref2) {
         var data = _ref2.data;
+        console.log('results: ', {
+          query: query,
+          data: data
+        });
 
         var mapper = function mapper(text) {
-          var filters = _this._.merge(filters, Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])({}, field, text));
+          var _filters = _this._.clone(filters);
+
+          _this._.merge(_filters, Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])({}, field, text));
 
           return {
             text: text,
@@ -141,25 +227,42 @@ __webpack_require__.r(__webpack_exports__);
             isLeaf: isLeaf,
             icon: icon,
             type: type,
-            filters: filters
+            filters: _filters
           };
         };
 
         var treeData = _this._.map(data, mapper);
 
+        console.log({
+          treeData: treeData
+        });
         return treeData;
       });
     },
-    lastWeekDate: function lastWeekDate() {
-      var ourDate = new Date(); // Change it so that it is 7 days in the past.
+    lastMonthDate: function lastMonthDate() {
+      var ourDate = new Date(); // Change it so that it is 30 days in the past.
 
-      var pastDate = ourDate.getDate() - 7;
+      var pastDate = ourDate.getDate() - 30;
       ourDate.setDate(pastDate);
       return ourDate;
     },
     itemClick: function itemClick(node, item, e) {
-      // eslint-disable-next-line no-console
-      console.log(node.model.text + ' clicked !', item, e);
+      var _this2 = this;
+
+      var filters = this._.cloneDeep(node.model.filters);
+
+      if (node.model.isLeaf) {
+        var _id = node.model.filters._id;
+        console.log('Get result: ', _id);
+        Object(_api_results__WEBPACK_IMPORTED_MODULE_6__["searchResult"])(_id).then(function (_ref3) {
+          var data = _ref3.data;
+          // eslint-disable-next-line no-console
+          console.log("searchResult(".concat(_id, "): ").concat(data));
+          _this2.row = data;
+        });
+      } else {
+        this.row = filters;
+      }
     }
   }
 });
@@ -185,10 +288,48 @@ var render = function() {
     "div",
     { staticClass: "app-container" },
     [
-      _c("v-jstree", {
-        attrs: { data: _vm.treeData, async: _vm.loadData },
-        on: { "item-click": _vm.itemClick }
-      })
+      _c(
+        "el-row",
+        [
+          _c(
+            "el-col",
+            { attrs: { span: 12 } },
+            [
+              _c("v-jstree", {
+                attrs: { data: _vm.treeData, async: _vm.loadData },
+                on: { "item-click": _vm.itemClick }
+              })
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "el-col",
+            { attrs: { span: 12 } },
+            [
+              _c(
+                "a",
+                { attrs: { href: _vm._f("commitUrl")(_vm.row, this._) } },
+                [_vm._v(_vm._s(_vm._f("commitId")(_vm.row, this._)))]
+              ),
+              _c("br"),
+              _vm._v(" "),
+              _c("vue-json-pretty", {
+                attrs: {
+                  data: _vm.row,
+                  deep: 1,
+                  "deep-collapse-children": true,
+                  "show-length": true,
+                  "show-double-quotes": false,
+                  "custom-value-formatter": _vm.customLinkFormatter
+                }
+              })
+            ],
+            1
+          )
+        ],
+        1
+      )
     ],
     1
   )

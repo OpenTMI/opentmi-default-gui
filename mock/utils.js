@@ -3,8 +3,10 @@ import { flatten } from 'flat'
 
 export default {
   getItem: function(list, config) {
-    const { _id } = config.params
-    return _.find(list, { _id })
+    const { url } = config
+    const _id = url.split('/').pop()
+    console.log('find results by ', _id)
+    return _.find(list, obj => obj._id === _id)
   },
   query: function(list, config) {
     console.log(`query([${list.length}] items`, config)

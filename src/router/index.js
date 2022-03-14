@@ -245,13 +245,13 @@ export const asyncRoutes = [
         component: () => import('@/views/testcase/list'),
         name: 'TestcaseList',
         meta: { title: 'Testcase List', icon: 'list' }
-      }/*,
+      },
       {
         path: 'Tree',
         component: () => import('@/views/testcase/tree'),
         name: 'TestcaseTree',
         meta: { title: 'Testcase Tree', icon: 'list' }
-      }*/
+      }
     ]
   },
   {

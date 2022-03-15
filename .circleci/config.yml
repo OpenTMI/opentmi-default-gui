@@ -22,7 +22,7 @@ workflows:
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:12.16.1
+    - image: cimg/node:12
   steps:
     - checkout
     - run: node --version > _tmp_file

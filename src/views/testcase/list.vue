@@ -2,7 +2,10 @@
   <div class="app-container">
     <b-table
       id="my-table"
-      striped
+      striped="true"
+      bordered="true"
+      head-variant="light"
+      small="true"
       hover
       :items="getList"
       :fields="fields"
@@ -14,6 +17,9 @@
       :sort-changed="listLoading"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
+      selectable
+      select-mode="single"
+      @row-clicked="rowClicked"
     >
       <!-- Optional default data cell scoped slot -->
       <template v-slot:cell(cre.time)="data">
@@ -33,8 +39,16 @@
         </b-button>
       </template>
       <!-- details view -->
+
+      <!-- details view -->
       <template v-slot:row-details="row">
-        <pre>{{ row.item | pretty }}</pre>
+        <vue-json-pretty
+          :data="row.item"
+          :deep="3"
+          :deep-collapse-children="true"
+          :show-length="true"
+          :show-double-quotes="false"
+        />
       </template>
     </b-table>
     <b-pagination
@@ -51,16 +65,17 @@
 
 <script>
 import { testList } from '@/api/testcases'
+import VueJsonPretty from 'vue-json-pretty'
+import 'vue-json-pretty/lib/styles.css'
 
 export default {
   name: 'TestcaseList',
-  filters: {
-    pretty: function(value) {
-      return JSON.stringify(value, null, 2)
-    }
+  components: {
+    VueJsonPretty
   },
   data() {
     return {
+      selectedColumns: [],
       fields: [
         {
           key: 'cre.time',
@@ -82,7 +97,9 @@ export default {
           label: 'Status'
         },
         {
-          key: 'show_details'
+          key: 'other_info.description',
+          sortable: false,
+          label: 'Description'
         }
       ],
       total: 0,
@@ -91,11 +108,14 @@ export default {
       listLoading: false,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 20
       }
     }
   },
   methods: {
+    rowClicked(row) {
+      this.$set(row, '_showDetails', !row._showDetails)
+    },
     updateList(page) {
       this.listQuery.page = page
       this.$root.$emit('bv::refresh::table', 'my-table')

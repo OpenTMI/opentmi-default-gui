@@ -33,6 +33,7 @@ defaults: &defaults
         command: |
           node --version
           npm --version
+          git config --global url."https://github.com/".insteadOf git://github.com/
     - run:
         name: npm-install
         command: npm ci

@@ -24,7 +24,8 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
+      # Workaround for https://github.blog/2021-09-01-improving-git-protocol-security-github/
+      - run: git config --global url."https://github.com/".insteadOf git://github.com/
       - run: npm ci
       - run: NODE_ENV=development npm run build:prod
 

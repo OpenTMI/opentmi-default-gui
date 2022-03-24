@@ -29,49 +29,73 @@
         </el-table-column>
       </el-table>
     </el-dialog>
-    <h3>Results Pivottable</h3>
-    <div class="filter-container">
-      <el-date-picker
-        v-model="dateRange"
-        type="daterange"
-        size="small"
-        range-separator="To"
-        start-placeholder="Start date"
-        end-placeholder="End date"
-        :picker-options="pickerOptions"
-        format="yyyy-MM-dd"
-        @change="daterangeChange"
-      />
-      <el-input-number v-model="limit" size="small" :disabled="count<5000" step="1000" :max="count" min="1000" />
-      <el-select v-model="filter.campaign" size="small" placeholder="Campaign">
-        <el-option
-          v-for="item in campaigns"
-          :key="item"
-          :label="item"
-          :value="item"
+    <el-badge :value="dataLen" class="item" type="primary">
+      <h3>Results Pivottable</h3>
+    </el-badge>
+    <el-tabs type="border-card">
+      <el-tab-pane label="Filtering">
+        <el-date-picker
+          v-model="dateRange"
+          type="daterange"
+          size="small"
+          range-separator="To"
+          start-placeholder="Start date"
+          end-placeholder="End date"
+          :picker-options="pickerOptions"
+          format="yyyy-MM-dd HH:mm"
+          @change="daterangeChange"
         />
-      </el-select>
-      <el-select v-model="filter['exec.verdict']" size="small" multiple placeholder="Verdict">
-        <el-option
-          v-for="item in ['pass', 'inconclusive', 'fail', 'skip']"
-          :key="item"
-          :label="item"
-          :value="item"
-        />
-      </el-select>
-      <el-button type="primary" size="small" icon="el-icon-refresh" @click="refreshData">
-        Refresh
-      </el-button>
-      <el-button type="primary" size="small" icon="el-icon-collection-tag" @click="storeView">
-        Store view
-      </el-button>
-      <el-checkbox v-model="similarityEnabled">Enable</el-checkbox>
-      <el-tooltip content="These rules allows to categorize exec.notes. Normally there is notes when test fails." placement="bottom">
-        <el-button :disabled="!similarityEnabled" type="primary" size="small" icon="el-icon-edit" @click="similarityDialogTableVisible = true">
-          noteSimilar rules
+        <el-select v-model="limit" size="small" style="width:90px;" title="How many results to be fetch">
+          <el-option
+            v-for="item in [1000, 5000, 10000, 20000]"
+            :key="item"
+            :label="item"
+            :value="item"
+            :disabled="count < item"
+          />
+          <el-option :label="count" :value="count" :disabled="count > 20000" tooltip="Count with current filters" />
+        </el-select>
+        <el-select v-model="filter.campaign" size="small" placeholder="Campaign">
+          <el-option
+            v-for="item in campaigns"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+        <el-select v-model="filter['exec.verdict']" size="small" multiple placeholder="Verdict">
+          <el-option
+            v-for="item in ['pass', 'inconclusive', 'fail', 'skip']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+        <el-button type="primary" size="small" icon="el-icon-refresh" @click="refreshData">
+          Refresh
         </el-button>
-      </el-tooltip>
-    </div>
+      </el-tab-pane>
+      <el-tab-pane label="Machine Learning">
+        <el-checkbox v-model="similarityEnabled">Enable</el-checkbox>
+        <el-tooltip content="These rules allows to categorize exec.notes. Normally there is notes when test fails." placement="bottom">
+          <el-button :disabled="!similarityEnabled" type="primary" size="small" icon="el-icon-edit" @click="similarityDialogTableVisible = true">
+            noteSimilar rules
+          </el-button>
+        </el-tooltip>
+      </el-tab-pane>
+      <el-tab-pane label="View">
+        <el-button type="success" size="small" icon="el-icon-collection-tag" @click="storeView">
+          Store
+        </el-button>
+        <el-radio-group v-model="colGroupFirstWidth" size="small">
+          <el-radio-button label="0">hide first column</el-radio-button>
+          <el-radio-button label="300">Show first column</el-radio-button>
+        </el-radio-group>
+      </el-tab-pane>
+      <el-tab-pane label="raw query">
+        <el-input v-model="queryString" type="textarea" autosize :disabled="true" />
+      </el-tab-pane>
+    </el-tabs>
     <vue-pivottable-ui
       id="pivot"
       v-loading="loading"
@@ -82,7 +106,14 @@
       :aggregator-name="aggregatorName"
       :renderer-name="rendererName"
       :derived-attributes="derivedAttributes"
-    />
+    >
+      <template v-slot:rendererCell />
+      <template v-slot:aggregatorCell />
+      <template v-slot:colGroup>
+        <colGroup :width="colGroupFirstWidth" />
+        <colGroup />
+      </template>
+    </vue-pivottable-ui>
   </div>
 </template>
 
@@ -110,6 +141,8 @@ export default {
       similarityDialogTableVisible: false,
       similarityEnabled: true,
       similarityValue: 0.6,
+      colGroupFirstWidth: 300,
+      queryString: {},
       campaigns: [],
       defaultNotes: [],
       dateRange: [
@@ -147,8 +180,9 @@ export default {
         }]
       },
       loading: true,
-      count: 0,
-      limit: 0,
+      dataLen: 0, // actual received data length
+      count: 0, // total count based on filtering
+      limit: 1000,
       aggregatorName: 'Count',
       pivotData: [],
       rendererName: 'Table Heatmap',
@@ -294,20 +328,21 @@ export default {
         })
     },
     getQuery(additionals = {}) {
+      const startTime = this.dateRange[0].toISOString()
+      const toTime = this.dateRange[1].toISOString()
       const query = {
         fl: true,
         q: {
           'cre.time': {
-            $gt: this.dateRange[0].toISOString(),
-            $lt: new Date(this.dateRange[1].getTime() + 3600 * 1000 * 24).toISOString()
+            $gt: startTime,
+            $lt: toTime
           }
         },
+        to: 5000, // timeout
         s: { 'cre.time': -1 },
-        f: '-__v -_id -exec.duts.0.__v -exec.duts._id'
+        f: '-__v -_id -exec.duts.0.__v -exec.duts._id -tcRef'
       }
-      if (this.count > 5000) {
-        query.l = this.limit
-      }
+      query.l = this.limit
       this._.merge(query.q, this._.omitBy(this.filter, this._.isEmpty))
       if (query.q['exec.verdict']) {
         query.q['exec.verdict'] = { $in: query.q['exec.verdict'] }
@@ -318,6 +353,7 @@ export default {
     refreshData() {
       const query = this.getQuery()
       this.loading = true
+      this.queryString = JSON.stringify(query, null, 2)
       resultsList(query)
         .then(({ data }) => {
           const results = this._.map(data, (r) => {
@@ -344,13 +380,29 @@ export default {
             delete r['exec.sut.fut']
             r.component = components.sort().join(',')
             r.feature = features.sort().join(',')
-            r.noteSimilar = this.findSimilarity(r['exec.note'])
+            if (this.similarityEnabled) {
+              r.noteSimilar = this.findSimilarity(r['exec.note'])
+            }
             r.passrate = r['exec.verdict'] === 'pass' ? 100.0 : 0
             r.inconcRate = r['exec.verdict'] === 'inconclusive' ? 100.0 : 0
             return r
           })
           this.pivotData = results
           this.loading = false
+          return results.length
+        })
+        .then((len) => {
+          this.dataLen = len
+          let message = `Got ${len} results (${this.count} totally in DB with given filters)`
+          if (len === this.count) {
+            message = `Got all ${len} results`
+          }
+          this.$notify({
+            title: 'Results received',
+            message,
+            type: 'success',
+            duration: 5000
+          })
         })
     }
   }

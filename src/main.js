@@ -9,6 +9,7 @@ import SchemaJsonVue from 'schema-json-vue'
 import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import { githubId } from '@/api/user'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 import locale from 'element-ui/lib/locale'
@@ -31,7 +32,8 @@ import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
 
-import * as filters from './filters' // global filters
+import * as filters from './filters'
+import VueAuthenticate from 'vue-authenticate' // global filters
 
 /**
  * If you don't want to use mock-server
@@ -46,31 +48,54 @@ if (process.env.NODE_ENV === 'development') {
   mockXHR()
 }
 
-Vue.use(Element, {
-  size: Cookies.get('size') || 'medium' // set element-ui default size
-})
-Vue.use(VueLodash, { lodash })
-Vue.use(VuePivottable)
-Vue.use(VueMoment, { moment })
-Vue.use(SchemaJsonVue)
-Vue.use(VueSocketIOExt, io(process.env.VUE_APP_BASE_API, { autoConnect: false }))
-// Install BootstrapVue
-Vue.use(BootstrapVue)
-// Optionally install the BootstrapVue icon components plugin
-Vue.use(IconsPlugin)
-// configure language
-locale.use(lang)
+async function initApp() {
+  Vue.use(Element, {
+    size: Cookies.get('size') || 'medium' // set element-ui default size
+  })
+  Vue.use(VueLodash, { lodash })
+  Vue.use(VuePivottable)
+  Vue.use(VueMoment, { moment })
+  Vue.use(SchemaJsonVue)
+  Vue.use(VueSocketIOExt, io(process.env.VUE_APP_BASE_API, { autoConnect: false }))
+  // Install BootstrapVue
+  Vue.use(BootstrapVue)
+  // Optionally install the BootstrapVue icon components plugin
+  Vue.use(IconsPlugin)
+  // configure language
+  locale.use(lang)
 
-// register global utility filters
-Object.keys(filters).forEach(key => {
-  Vue.filter(key, filters[key])
-})
+  // register global utility filters
+  Object.keys(filters).forEach(key => {
+    Vue.filter(key, filters[key])
+  })
 
-Vue.config.productionTip = false
+  Vue.config.productionTip = false
 
-new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
-})
+  // setup github auth
+  let clientId = ''
+  try {
+    const { data } = await githubId()
+    clientId = data.clientID
+  } catch (error) {
+    console.error(`cannot fetch github clientID: ${error}`)
+  }
+  const authOption = {
+    baseUrl: window.location.origin, // Your API domain
+    providers: {
+      github: {
+        clientId,
+        scope: ['user:email', 'read:user', 'read:org'],
+        redirectUri: `${window.location.origin}/auth/github` // Your client app URL
+      }
+    }
+  }
+  Vue.use(VueAuthenticate, authOption)
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    render: h => h(App)
+  })
+}
+
+initApp()

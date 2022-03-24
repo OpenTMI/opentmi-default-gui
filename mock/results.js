@@ -9,16 +9,20 @@ const count = 100
 for (let i = 0; i < count; i++) {
   List.push(
     Mock.mock({
-      _id: '@increment',
+      _id: Mock.Random.uuid(),
       tcid: '@first',
       cre: {
-        time: +Mock.Random.date('T'),
+        time: Mock.Random.date('T'),
         user: '@first'
       },
-      campaign: +Mock.Random.pick(['camp-1', 'camp-2', 'camp-3']),
+      job: {
+        id: Mock.Random.uuid()
+      },
+      campaign: Mock.Random.pick(['camp-1', 'camp-2', 'camp-3']),
       exec: {
         verdict: Mock.Random.pick(['pass', 'fail', 'pass', 'inconclusive', 'blocked', 'pass', 'error', 'skip']),
         note: Mock.Random.pick(['', 'something happens', '', '']),
+        duration: Mock.Random.float(0, 100.0),
         sut: {
           gitUrl: Mock.Random.pick('github.com/...'),
           branch: Mock.Random.pick(['master', 'dev']),
@@ -37,17 +41,15 @@ for (let i = 0; i < count; i++) {
 
 export default [
   {
+    url: '/api/v0/results/(.*)',
+    type: 'get',
+    response: config => getItem(List, config)
+  },
+  {
     url: '/api/v0/results',
     type: 'get',
     response: config => query(List, config)
   },
-
-  {
-    url: '/api/v0/results/:_id',
-    type: 'get',
-    response: config => getItem(List, config)
-  },
-
   {
     url: '/api/v0/results/create',
     type: 'post',

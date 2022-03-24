@@ -268,35 +268,10 @@ export const asyncRoutes = [
   },
   /*
   // when your routing map is too long, you can split it into small modules
-
   chartsRouter,
   nestedRouter,
   tableRouter,
   */
-  {
-    path: '/error',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: 'ErrorPages',
-    meta: {
-      title: 'Error Pages',
-      icon: '404'
-    },
-    children: [
-      {
-        path: '401',
-        component: () => import('@/views/error-page/401'),
-        name: 'Page401',
-        meta: { title: '401', noCache: true }
-      },
-      {
-        path: '404',
-        component: () => import('@/views/error-page/404'),
-        name: 'Page404',
-        meta: { title: '404', noCache: true }
-      }
-    ]
-  },
   {
     path: '/log',
     component: Layout,
@@ -311,7 +286,6 @@ export const asyncRoutes = [
     ]
   },
   /*
-
   {
     path: '/excel',
     component: Layout,
@@ -347,20 +321,7 @@ export const asyncRoutes = [
         meta: { title: 'Upload Excel' }
       }
     ]
-  },
-  {
-    path: '/theme',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/theme/index'),
-        name: 'Theme',
-        meta: { title: 'Theme', icon: 'theme' }
-      }
-    ]
-  },
-*/
+  },*/
   {
     path: 'external-link',
     component: Layout,

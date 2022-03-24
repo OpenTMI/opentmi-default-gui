@@ -10,7 +10,11 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty */ "./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty.js");
-/* harmony import */ var _api_resources__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/api/resources */ "./src/api/resources.js");
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-json-pretty */ "./node_modules/vue-json-pretty/lib/vue-json-pretty.js");
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-json-pretty/lib/styles.css */ "./node_modules/vue-json-pretty/lib/styles.css");
+/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _api_resources__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/api/resources */ "./src/api/resources.js");
 
 //
 //
@@ -83,13 +87,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ResourceList',
-  filters: {
-    pretty: function pretty(value) {
-      return JSON.stringify(value, null, 2);
-    }
+  components: {
+    VueJsonPretty: vue_json_pretty__WEBPACK_IMPORTED_MODULE_1___default.a
   },
   data: function data() {
     return {
@@ -115,7 +128,7 @@ __webpack_require__.r(__webpack_exports__);
       listLoading: false,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 20
       }
     };
   },
@@ -170,10 +183,10 @@ __webpack_require__.r(__webpack_exports__);
         t: 'count'
       }, this._.omit(query, ['s', 'l', 'sk']));
 
-      return Object(_api_resources__WEBPACK_IMPORTED_MODULE_1__["resourceList"])(countQuery).then(function (_ref) {
+      return Object(_api_resources__WEBPACK_IMPORTED_MODULE_3__["resourceList"])(countQuery).then(function (_ref) {
         var data = _ref.data;
         _this.total = data.count;
-        return Object(_api_resources__WEBPACK_IMPORTED_MODULE_1__["resourceList"])(query);
+        return Object(_api_resources__WEBPACK_IMPORTED_MODULE_3__["resourceList"])(query);
       }).then(function (_ref2) {
         var data = _ref2.data;
         return data;
@@ -213,7 +226,10 @@ var render = function() {
         staticClass: "mt-3",
         attrs: {
           id: "my-table",
-          striped: "",
+          striped: "true",
+          bordered: "true",
+          "head-variant": "light",
+          small: "true",
           hover: "",
           items: _vm._getList,
           fields: _vm.fields,
@@ -400,7 +416,17 @@ var render = function() {
           {
             key: "row-details",
             fn: function(row) {
-              return [_c("pre", [_vm._v(_vm._s(_vm._f("pretty")(row.item)))])]
+              return [
+                _c("vue-json-pretty", {
+                  attrs: {
+                    data: row.item,
+                    deep: 3,
+                    "deep-collapse-children": true,
+                    "show-length": true,
+                    "show-double-quotes": false
+                  }
+                })
+              ]
             }
           }
         ])

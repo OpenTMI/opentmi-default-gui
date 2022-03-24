@@ -46,7 +46,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Page401',
@@ -98,7 +97,7 @@ var render = function() {
           attrs: { icon: "el-icon-arrow-left" },
           on: { click: _vm.back }
         },
-        [_vm._v("\n    返回\n  ")]
+        [_vm._v("\n    Back\n  ")]
       ),
       _vm._v(" "),
       _c(
@@ -108,34 +107,30 @@ var render = function() {
             _c("h1", { staticClass: "text-jumbo text-ginormous" }, [
               _vm._v("\n        Oops!\n      ")
             ]),
-            _vm._v("\n      gif来源"),
-            _c(
-              "a",
-              { attrs: { href: "https://zh.airbnb.com/", target: "_blank" } },
-              [_vm._v("airbnb")]
-            ),
-            _vm._v(" 页面\n      "),
-            _c("h2", [_vm._v("你没有权限去该页面")]),
             _vm._v(" "),
-            _c("h6", [_vm._v("如有不满请联系你领导")]),
+            _c("h2", [_vm._v("You have no permission to go to this page.")]),
+            _vm._v(" "),
+            _c("h6", [
+              _vm._v("If you are dissatisfied, please contact your leader.")
+            ]),
             _vm._v(" "),
             _c("ul", { staticClass: "list-unstyled" }, [
-              _c("li", [_vm._v("或者你可以去:")]),
+              _c("li", [_vm._v("Or you can go::")]),
               _vm._v(" "),
               _c(
                 "li",
                 { staticClass: "link-type" },
                 [
                   _c("router-link", { attrs: { to: "/dashboard" } }, [
-                    _vm._v("\n            回首页\n          ")
+                    _vm._v("\n            Dashboard\n          ")
                   ])
                 ],
                 1
               ),
               _vm._v(" "),
               _c("li", { staticClass: "link-type" }, [
-                _c("a", { attrs: { href: "https://www.taobao.com/" } }, [
-                  _vm._v("随便看看")
+                _c("a", { attrs: { href: "https://github.com/opentmi" } }, [
+                  _vm._v("Opentmi project page")
                 ])
               ]),
               _vm._v(" "),
@@ -151,7 +146,7 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("点我看图")]
+                  [_vm._v("Front page")]
                 )
               ])
             ])

@@ -120,9 +120,9 @@ var staticRenderFns = [
         "a",
         {
           staticStyle: { color: "#20a0ff" },
-          attrs: { href: "https://wallstreetcn.com", target: "_blank" }
+          attrs: { href: "https://github.com/jupe", target: "_blank" }
         },
-        [_vm._v("wallstreetcn")]
+        [_vm._v("jupe")]
       )
     ])
   }

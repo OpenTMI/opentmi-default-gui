@@ -21,10 +21,11 @@ export function getSchema(_) {
     method: 'get'
   }).then(({ data }) => {
     const { schema } = data
-    const fill = (key, { title, def = '' }) => {
+    const fill = (key, { title, def = '', type }) => {
       key = key.split('.').join('.properties.')
       _.set(schema, `properties.${key}.title`, title)
-      _.set(schema, `properties.${key}.default`, def)
+      if (def) _.set(schema, `properties.${key}.default`, def)
+      if (type) _.set(schema, `properties.${key}.type`, type)
     }
     const drop = (key) => {
       key = key.split('.').join('.properties.')
@@ -39,6 +40,13 @@ export function getSchema(_) {
     fill('status.value', { title: 'Status' })
     fill('status.note', { title: 'Note' })
     fill('status.availability', { title: 'Availability' })
+
+    fill('hw.firmware.name', { title: 'Name' })
+    fill('hw.firmware.version', { title: 'Version' })
+    fill('hw.sn', { title: 'Serial Number' })
+    fill('hw.imei', { title: 'Imei' })
+    fill('hw.hwid', { title: 'HW ID' })
+
     fill('ownership.corporation', { title: 'Owner corporation' })
     fill('ownership.unit', { title: 'unit' })
     fill('ownership.division', { title: 'division' })
@@ -52,6 +60,7 @@ export function getSchema(_) {
     fill('user_info.unit', { title: 'unit' })
     fill('user_info.division', { title: 'division' })
     fill('user_info.department', { title: 'department' })
+    fill('user_info.author', { title: 'author' })
     fill('user_info.cost_center', { title: 'cost_center' })
 
     fill('usage.type', { title: 'Type' })
@@ -60,6 +69,10 @@ export function getSchema(_) {
 
     fill('network.hostname', { title: 'Hostname' })
     fill('network.domain', { title: 'domain' })
+    fill('network.remote_connection.protocol', { title: 'Protocol' })
+    fill('network.remote_connection.url', { title: 'Url' })
+    fill('network.remote_connection.authentication.username', { title: 'Username' })
+    fill('network.remote_connection.authentication.password', { title: 'Password' })
 
     fill('location.site', { title: 'Site' })
     fill('location.country', { title: 'country' })
@@ -69,6 +82,17 @@ export function getSchema(_) {
     fill('location.room', { title: 'room' })
     fill('location.subRoom', { title: 'subRoom' })
     fill('location.geo', { title: 'geo' })
+    fill('location.rack', { title: 'Rack' })
+    fill('location.bed', { title: 'Test Bed' })
+    fill('location.slot', { title: 'Slot' })
+
+    fill('shield.rf', { title: 'RF shielded', type: 'boolean' })
+
+    fill('childs', { title: 'childs' })
+    fill('parent', { title: 'parent', type: 'boolean' })
+
+    fill('installed.os.name', { title: 'OS' })
+    fill('installed.os.build', { title: 'Build _id' })
 
     dropKeys([
       '_id',

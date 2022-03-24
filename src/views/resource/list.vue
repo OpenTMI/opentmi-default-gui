@@ -106,6 +106,10 @@ export default {
           sortable: true
         },
         {
+          key: 'item.model',
+          sortable: true
+        },
+        {
           key: 'status.value',
           sortable: true,
           label: 'Status'

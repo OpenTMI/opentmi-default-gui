@@ -2,7 +2,10 @@
   <div class="app-container">
     <b-table
       id="my-table"
-      striped
+      striped="true"
+      bordered="true"
+      head-variant="light"
+      small="true"
       hover
       :items="_getList"
       :fields="fields"
@@ -55,7 +58,13 @@
 
       <!-- details view -->
       <template v-slot:row-details="row">
-        <pre>{{ row.item | pretty }}</pre>
+        <vue-json-pretty
+          :data="row.item"
+          :deep="3"
+          :deep-collapse-children="true"
+          :show-length="true"
+          :show-double-quotes="false"
+        />
       </template>
     </b-table>
     <b-pagination
@@ -70,14 +79,15 @@
 </template>
 
 <script>
+import VueJsonPretty from 'vue-json-pretty'
+import 'vue-json-pretty/lib/styles.css'
+
 import { resourceList } from '@/api/resources'
 
 export default {
   name: 'ResourceList',
-  filters: {
-    pretty(value) {
-      return JSON.stringify(value, null, 2)
-    }
+  components: {
+    VueJsonPretty
   },
   data() {
     return {
@@ -96,6 +106,10 @@ export default {
           sortable: true
         },
         {
+          key: 'item.model',
+          sortable: true
+        },
+        {
           key: 'status.value',
           sortable: true,
           label: 'Status'
@@ -108,7 +122,7 @@ export default {
       listLoading: false,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 20
       }
     }
   },

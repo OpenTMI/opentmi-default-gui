@@ -1,16 +1,21 @@
 import _ from 'lodash'
+import { flatten } from 'flat'
 
 export default {
   getItem: function(list, config) {
-    const { _id } = config.params
-    return _.find(list, { _id })
+    const { url } = config
+    const _id = url.split('/').pop()
+    console.log('find results by ', _id)
+    return _.find(list, obj => obj._id === _id)
   },
   query: function(list, config) {
     console.log(`query([${list.length}] items`, config)
     const { sk = 0, l = 20, s, t, f } = config.query
     const limit = parseInt(l)
     const skip = parseInt(sk)
-    const fields = f ? f.split(' ') : []
+    let fields = f ? f.split(' ') : []
+    fields = _.filter(fields, field => !field.startsWith('-'))
+    console.log('fields: ', fields)
 
     let mockList = list
     if (!_.isEmpty(s)) {
@@ -23,9 +28,15 @@ export default {
         mockList = mockList.reverse()
       }
     }
-    const filter = _.omit(config.query, ['s', 'sk', 'l', 't', 'f'])
-    console.log({ filter })
-    mockList = _.filter(mockList, filter)
+    const filter = _.omit(config.query, ['s', 'sk', 'l', 't', 'f', 'fl', 'to'])
+    let query = {}
+    if (filter.q) {
+      query = JSON.parse(filter.q)
+      if (query['cre.time']) delete query['cre.time']
+    }
+    console.log('query: ', { query })
+    mockList = _.filter(mockList, query)
+    console.log('filtered:', mockList)
 
     if (t === 'count') {
       return { count: mockList.length }
@@ -36,9 +47,14 @@ export default {
       return _.uniq(items)
     }
     let data = _.slice(mockList, skip, skip + limit)
-    if (fields) {
+    if (fields.length) {
+      console.log('use fields..')
       data = _.map(data, obj => _.pick(obj, fields))
     }
+    if (config.query.fl) {
+      data = _.map(data, flatten)
+    }
+    console.log('data: ', data)
     return data
   }
 }

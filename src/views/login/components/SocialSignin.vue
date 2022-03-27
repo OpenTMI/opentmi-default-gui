@@ -16,9 +16,7 @@
 import VueAxios from 'vue-axios'
 import axios from 'axios'
 Vue.use(VueAxios, axios)
-import { githubId } from '@/api/user'
 import Vue from 'vue'
-import VueAuthenticate from 'vue-authenticate'
 
 export default {
   name: 'SocialSignin',
@@ -26,29 +24,7 @@ export default {
     return {
     }
   },
-  created() {
-    this.loadAuthInfo()
-  },
   methods: {
-    loadAuthInfo() {
-      githubId()
-        .then(({ data }) => {
-          const authOption = {
-            baseUrl: window.location.origin, // Your API domain
-            providers: {
-              github: {
-                clientId: data.clientID,
-                scope: ['user:email', 'read:user', 'read:org'],
-                redirectUri: `${window.location.origin}/auth/github` // Your client app URL
-              }
-            }
-          }
-          Vue.use(VueAuthenticate, authOption)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    },
     authenticate(provider) {
       this.$auth.authenticate(provider)
         .then((data) => {

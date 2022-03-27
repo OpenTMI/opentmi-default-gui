@@ -99,11 +99,13 @@
 
       <!-- details view -->
       <template v-slot:row-details="row">
-        <el-collapse style="margin-left: 50px; margin-right: 50px">
-          <el-collapse-item title="View Raw data" accordion="true">
-            <pre>{{ row.item | pretty }}</pre>
-          </el-collapse-item>
-        </el-collapse>
+        <vue-json-pretty
+          :data="row.item"
+          :deep="3"
+          :deep-collapse-children="true"
+          :show-length="true"
+          :show-double-quotes="false"
+        />
       </template>
     </b-table>
     <b-pagination
@@ -120,13 +122,13 @@
 
 <script>
 import { resultsList } from '@/api/results'
+import VueJsonPretty from 'vue-json-pretty'
+import 'vue-json-pretty/lib/styles.css'
 
 export default {
   name: 'ResultList',
-  filters: {
-    pretty(value) {
-      return JSON.stringify(value, null, 2)
-    }
+  components: {
+    VueJsonPretty
   },
   data() {
     return {

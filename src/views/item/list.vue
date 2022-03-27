@@ -60,6 +60,31 @@
                     >
                   </div>
                   <div>
+                    Total amount:
+
+                    <button
+                      type="button"
+                      class="countpicker-dec"
+                      :disabled="!isEditing || selectedRow.in_stock === 0 || selectedRow.in_stock <= selectedRow.available"
+                      @click="selectedRow.in_stock--"
+                    >-</button>
+                    <input
+                      ref="in_stock"
+                      type="number"
+                      class="countpicker-num"
+                      :value="selectedRow.in_stock"
+                      :disabled="!isEditing"
+                      :class="{view: !isEditing}"
+                    >
+                    <button
+                      type="button"
+                      class="countpicker-inc"
+                      :disabled="!isEditing"
+                      @click="selectedRow.in_stock++"
+                    >+</button>
+
+                  </div>
+                  <div>
                     Category:
                     <select
                       ref="category"
@@ -152,7 +177,7 @@
                           <div v-for="user in filteredUsers" :key="user" class="card">
                             <b-button
                               variant="outline-primary"
-                              @click="loanResource(resource, user._id)"
+                              @click="loanResourceFromModel(resource, user._id)"
                             >
                               {{ user.name }}
                             </b-button>
@@ -165,7 +190,7 @@
                 </b-tab>
                 <b-tab title="Loans"><p>
                   <b-button
-                    v-if="selectedRow.available < selectedRow.in_stock"
+                    v-if="selectedRow.available > 0"
                     variant="outline-primary"
                     @click="loanItem(selectedRow, me)"
                   >Loan</b-button>
@@ -175,7 +200,7 @@
                       :key="loan"
                       class="d-flex justify-content-between align-items-center"
                     >
-                      Loaned at {{ loan.loan_date }} by {{ loan.loaner.name }}
+                      Loaned {{ loan.items.filter(obj => obj.item === selectedRow._id).length }} items  at {{ loan.loan_date }} by {{ loan.loaner.name }}
                       <b-button variant="outline-primary" @click="unloanItem(selectedRow, loan)">Return</b-button>
 
                     </b-list-group-item>
@@ -208,7 +233,7 @@ export default {
         { key: 'category', sortable: true, label: 'category' },
         { key: 'manufacturer.name', sortable: true, label: 'Manufacturer' },
         { key: 'in_stock', sortable: true, label: 'Total amount' },
-        { key: 'available', sortable: true, label: 'Loans' }
+        { key: 'available', sortable: true, label: 'Available' }
       ],
       total: 0,
       selectedRow: { name: '' },
@@ -286,15 +311,19 @@ export default {
       row.unique_resources = results[0].unique_resources || []
       for (const resource of row.unique_resources) {
         console.log(`Check if resource ${resource._id} is loaned`)
-        const loan = await this.findLoanByResource(resource)
-        const isLoaned = !!loan
-        console.log(`isLoaned: ${isLoaned}`)
-        if (isLoaned) {
-          loan.user = await this.getUserName(loan.loaner)
-          console.log(`getUserName(${loan.loaner}) -> ${loan.user}`)
-          resource._loaner = loan.user
+        try {
+          const loan = await this.findLoanByResource(resource)
+          const isLoaned = !!loan
+          console.log(`isLoaned: ${isLoaned}`)
+          if (isLoaned) {
+            loan.user = await this.getUserName(loan.loaner)
+            console.log(`getUserName(${loan.loaner}) -> ${loan.user}`)
+            resource._loaner = loan.user
+          }
+          resource._isLoaned = isLoaned
+        } catch (error) {
+          console.error(error)
         }
-        resource._isLoaned = isLoaned
       }
 
       row._loans = await this.findActiveLoansByItem(row)
@@ -345,6 +374,10 @@ export default {
 
     async loanResourceForOther(resource) {
       this.$root.$emit('bv::show::modal', `modal-loan-${resource._id}-other`, '#btnShow')
+    },
+    async loanResourceFromModel(resource, loaner) {
+      await this.loanResource(resource, loaner)
+      this.$root.$emit('bv::hide::modal', `modal-loan-${resource._id}-other`, '#btnShow')
     },
     async loanResource(resource, loaner) {
       if (!resource) {
@@ -466,20 +499,26 @@ export default {
       const loaned = await loanItem(loan)
       loaned.loaner = loaner
       this.selectedRow._loans.push(loaned)
-      this.selectedRow.available++
+      this.selectedRow.available--
     },
     async unloanItem(item, loan) {
       console.log('unloan item: ', item.name, loan.loaner.name)
-      if (loan.items.length !== 1) {
-        console.error('cannot return multiple items here...')
+      const req = { _id: loan._id, items: [] }
+      req.items = loan.items.filter(obj => obj.item === item._id)
+      req.items.forEach(item => {
+        item.return_date = new Date()
+      })
+      if (!req.items.length) {
+        console.error('cannot find item!')
         return
       }
-      if (item._id !== loan.items[0].item) {
-        console.error('item does not match to loaned item')
-        return
-      }
-      loan.items[0].return_date = new Date()
-      await returnLoan(loan)
+      await this.apiHandle(returnLoan(req), {
+        successTitle: 'loan returner',
+        successMsg: `Loan ${item.name} returned successfully`,
+        failTitle: 'return failed',
+        failMsg: `Cannot return item ${item.name}`
+      })
+      this.selectedRow.available++
       const pos = this.selectedRow._loans.findIndex(el => el.items.find(o => o.item === item._id))
       if (pos >= 0 && this.selectedRow._loans[pos].items.length === 1) {
         this.selectedRow._loans.splice(pos, 1)

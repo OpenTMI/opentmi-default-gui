@@ -28,3 +28,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function getUser({ _id }, query) {
+  return request({
+    url: `/api/v0/users/${_id}`,
+    method: 'get',
+    params: query
+  }).then(({ data }) => data)
+}

@@ -266,6 +266,26 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/items',
+    id: 'items-menu',
+    component: Layout,
+    redirect: '/items/list',
+    name: 'Items',
+    meta: {
+      title: 'Items',
+      icon: 'component'
+    },
+    children: [
+      {
+        path: 'item',
+        component: () => import('@/views/item/list'),
+        name: 'ItemList',
+        meta: { title: 'Items List', icon: 'list' }
+      }
+    ]
+  },
+
   /*
   // when your routing map is too long, you can split it into small modules
   chartsRouter,

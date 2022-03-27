@@ -281,7 +281,7 @@ export const asyncRoutes = [
         path: 'item',
         component: () => import('@/views/item/list'),
         name: 'ItemList',
-        meta: { title: 'Items List', icon: 'list' }
+        meta: { title: 'Items', icon: 'list' }
       }
     ]
   },

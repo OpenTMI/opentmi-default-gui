@@ -132,23 +132,36 @@
                       </b-dropdown>
                       <b-button v-if="resource._isLoaned" variant="outline-primary" @click="unloanResource(resource)">Return</b-button>
                       <b-badge v-if="resource._isLoaned" variant="primary" pill>loaned by {{ resource._loaner }}</b-badge>
+
+                      <!-- loan for others modal -->
+                      <b-modal
+                        :id="'modal-loan-' + resource._id + '-other'"
+                        scrollable
+                        hide-backdrop
+                        content-class="shadow"
+                        ok-only
+                      >
+                        <template #modal-title>
+                          Loan {{ resource.name }} for selected user:
+                        </template>
+                        <div class="search-wrapper">
+                          <input v-model="searchUser" type="text" placeholder="Search title..">
+                          <label>Search users:</label>
+                        </div>
+                        <div class="wrapper">
+                          <div v-for="user in filteredUsers" :key="user" class="card">
+                            <b-button
+                              variant="outline-primary"
+                              @click="loanResource(resource, user._id)"
+                            >
+                              {{ user.name }}
+                            </b-button>
+                          </div>
+                        </div>
+                      </b-modal>
+
                     </b-list-group-item>
                   </b-list-group>
-
-                  <!-- loan for others modal -->
-                  <b-modal
-                    id="modal-loan-other"
-                    scrollable
-                    hide-backdrop
-                    content-class="shadow"
-                    title="Loan {{resource.name}}"
-                  >
-                    <p class="my-2">
-                      We've added the utility class <code>'shadow'</code>
-                      to the modal content for added effect.
-                    </p>
-                  </b-modal>
-
                 </b-tab>
                 <b-tab title="Loans"><p>
                   <b-button
@@ -181,7 +194,7 @@
 <script>
 import { updateItem, newItem, findItems, itemImageUrl } from '@/api/items'
 import { findLoans, loanItem, returnLoan } from '@/api/loans'
-import { getInfo, getUser } from '@/api/user'
+import { findUsers, getInfo, getUser } from '@/api/user'
 
 export default {
   name: 'ItemList',
@@ -200,7 +213,23 @@ export default {
       total: 0,
       selectedRow: { name: '' },
       isEditing: false,
-      me: null
+      me: null,
+      filteredUsers: [],
+      searchUser: ''
+    }
+  },
+  watch: {
+    searchUser: {
+      async handler(val) {
+        if (val.length === 0) return
+        const query = {
+          q: { name: { $regex: val, $options: 'i' }},
+          f: 'name'
+        }
+        const users = await findUsers(query)
+        console.log('users', users)
+        this.filteredUsers = users
+      }
     }
   },
   async mounted() {
@@ -270,6 +299,7 @@ export default {
 
       row._loans = await this.findActiveLoansByItem(row)
       this.selectedRow = row
+
       this.$set(row, '_showDetails', !row._showDetails)
     },
     async addRowHandler() {
@@ -314,7 +344,7 @@ export default {
     },
 
     async loanResourceForOther(resource) {
-      this.$root.$emit('bv::show::modal', 'modal-loan-other', '#btnShow')
+      this.$root.$emit('bv::show::modal', `modal-loan-${resource._id}-other`, '#btnShow')
     },
     async loanResource(resource, loaner) {
       if (!resource) {
@@ -459,10 +489,60 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
 .view {
   border-color: transparent;
   background-color: initial;
   color: initial
 }
+
+.search-wrapper {
+  position: relative;
+  label {
+    position: absolute;
+    font-size: 12px;
+    color: rgba(0,0,0,.50);
+    top: 8px;
+    left: 12px;
+    z-index: -1;
+    transition: .15s all ease-in-out;
+  }
+  input {
+    padding: 4px 12px;
+    color: rgba(0,0,0,.70);
+    border: 1px solid rgba(0,0,0,.12);
+    transition: .15s all ease-in-out;
+    background: white;
+  &:focus {
+     outline: none;
+     transform: scale(1.05);
+  & + label  {
+      font-size: 10px;
+      transform: translateY(-24px) translateX(-12px);
+    }
+  }
+  &::-webkit-input-placeholder {
+     font-size: 12px;
+     color: rgba(0,0,0,.50);
+     font-weight: 100;
+   }
+  }
+}
+.wrapper {
+  display: flex;
+  max-width: 444px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+}
+
+.card {
+  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;
+  max-width: 124px;
+  margin: 12px;
+  transition: .15s all ease-in-out;
+  :hover {
+     transform: scale(1.1);
+  }
+}
+
 </style>

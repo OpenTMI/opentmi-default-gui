@@ -8,6 +8,14 @@ export function login(data) {
   })
 }
 
+export function findUsers(query) {
+  return request({
+    url: '/api/v0/users',
+    method: 'get',
+    params: query
+  }).then(({ data }) => data)
+}
+
 export function githubId() {
   return request({
     url: '/auth/github/id',

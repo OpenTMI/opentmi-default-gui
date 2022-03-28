@@ -8,6 +8,14 @@ export function login(data) {
   })
 }
 
+export function findUsers(query) {
+  return request({
+    url: '/api/v0/users',
+    method: 'get',
+    params: query
+  }).then(({ data }) => data)
+}
+
 export function githubId() {
   return request({
     url: '/auth/github/id',
@@ -27,4 +35,12 @@ export function logout() {
     url: '/auth/logout',
     method: 'post'
   })
+}
+
+export function getUser({ _id }, query) {
+  return request({
+    url: `/api/v0/users/${_id}`,
+    method: 'get',
+    params: query
+  }).then(({ data }) => data)
 }

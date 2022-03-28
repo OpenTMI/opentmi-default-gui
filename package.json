@@ -49,7 +49,7 @@
     "axios": "0.21.2",
     "bootstrap-vue": "^2.13.0",
     "clipboard": "2.0.6",
-    "codemirror": "5.58.2",
+    "codemirror": "5.65.2",
     "driver.js": "0.9.8",
     "dropzone": "5.7.0",
     "echarts": "5.2.1",

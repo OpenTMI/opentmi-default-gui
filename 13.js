@@ -15,20 +15,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es6.function.name */ "./node_modules/core-js/modules/es6.function.name.js");
 /* harmony import */ var core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es7_symbol_async_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es7.symbol.async-iterator */ "./node_modules/core-js/modules/es7.symbol.async-iterator.js");
-/* harmony import */ var core_js_modules_es7_symbol_async_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es7_symbol_async_iterator__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es6_symbol__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es6.symbol */ "./node_modules/core-js/modules/es6.symbol.js");
-/* harmony import */ var core_js_modules_es6_symbol__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_symbol__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom.iterable */ "./node_modules/core-js/modules/web.dom.iterable.js");
-/* harmony import */ var core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator.js");
-/* harmony import */ var _api_items__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/api/items */ "./src/api/items.js");
-/* harmony import */ var _api_loans__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @/api/loans */ "./src/api/loans.js");
-/* harmony import */ var _api_user__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @/api/user */ "./src/api/user.js");
-
-
+/* harmony import */ var core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom.iterable */ "./node_modules/core-js/modules/web.dom.iterable.js");
+/* harmony import */ var core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var _api_items__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/api/items */ "./src/api/items.js");
+/* harmony import */ var _api_loans__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/api/loans */ "./src/api/loans.js");
+/* harmony import */ var _api_user__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/api/user */ "./src/api/user.js");
 
 
 
@@ -297,7 +291,7 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     searchUser: {
       handler: function () {
-        var _handler = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee(val) {
+        var _handler = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee(val) {
           var query, users;
           return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
@@ -321,7 +315,7 @@ __webpack_require__.r(__webpack_exports__);
                     f: 'name'
                   };
                   _context.next = 5;
-                  return Object(_api_user__WEBPACK_IMPORTED_MODULE_10__["findUsers"])(query);
+                  return Object(_api_user__WEBPACK_IMPORTED_MODULE_8__["findUsers"])(query);
 
                 case 5:
                   users = _context.sent;
@@ -345,13 +339,13 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function () {
-    var _mounted = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    var _mounted = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
               _context2.next = 2;
-              return Object(_api_user__WEBPACK_IMPORTED_MODULE_10__["getInfo"])().then(function (_ref) {
+              return Object(_api_user__WEBPACK_IMPORTED_MODULE_8__["getInfo"])().then(function (_ref) {
                 var data = _ref.data;
                 return data;
               });
@@ -381,11 +375,11 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.listLoading = true;
-      return Object(_api_items__WEBPACK_IMPORTED_MODULE_8__["findItems"])({
+      return Object(_api_items__WEBPACK_IMPORTED_MODULE_6__["findItems"])({
         t: 'count'
       }).then(function (data) {
         _this.total = data.count;
-        return Object(_api_items__WEBPACK_IMPORTED_MODULE_8__["findItems"])({});
+        return Object(_api_items__WEBPACK_IMPORTED_MODULE_6__["findItems"])({});
       }).then(function (data) {
         data.forEach(function (row) {
           _this._.defaults(row, {
@@ -414,12 +408,13 @@ __webpack_require__.r(__webpack_exports__);
      * @return {Promise<void>}
      */
     rowClicked: function () {
-      var _rowClicked = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(row, index) {
-        var query, results, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, resource, loan, isLoaned;
+      var _rowClicked = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(row, index) {
+        var _this2 = this;
 
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        var query, results;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 if (row._id !== this.selectedRow._id) {
                   // hide previous row
@@ -427,13 +422,13 @@ __webpack_require__.r(__webpack_exports__);
                 }
 
                 if (!this.selectedRow._showDetails) {
-                  _context3.next = 5;
+                  _context4.next = 5;
                   break;
                 }
 
                 this.$set(row, '_showDetails', !row._showDetails);
                 this.selectedRow = {};
-                return _context3.abrupt("return");
+                return _context4.abrupt("return");
 
               case 5:
                 query = {
@@ -441,112 +436,80 @@ __webpack_require__.r(__webpack_exports__);
                   p: 'unique_resources',
                   f: 'unique_resources'
                 };
-                _context3.next = 8;
-                return Object(_api_items__WEBPACK_IMPORTED_MODULE_8__["findItems"])(query);
+                _context4.next = 8;
+                return Object(_api_items__WEBPACK_IMPORTED_MODULE_6__["findItems"])(query);
 
               case 8:
-                results = _context3.sent;
+                results = _context4.sent;
                 row.unique_resources = results[0].unique_resources || [];
-                _iteratorNormalCompletion = true;
-                _didIteratorError = false;
-                _iteratorError = undefined;
-                _context3.prev = 13;
-                _iterator = row.unique_resources[Symbol.iterator]();
+                this.selectedRow = row;
+                this.$set(row, '_showDetails', !row._showDetails); // these are used for resource tab
 
-              case 15:
-                if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                  _context3.next = 39;
-                  break;
-                }
+                row.unique_resources.forEach( /*#__PURE__*/function () {
+                  var _ref2 = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(resource) {
+                    var loan, isLoaned;
+                    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                      while (1) {
+                        switch (_context3.prev = _context3.next) {
+                          case 0:
+                            console.log("Check if resource ".concat(resource._id, " is loaned"));
+                            _context3.prev = 1;
+                            _context3.next = 4;
+                            return _this2.findLoanByResource(resource);
 
-                resource = _step.value;
-                console.log("Check if resource ".concat(resource._id, " is loaned"));
-                _context3.prev = 18;
-                _context3.next = 21;
-                return this.findLoanByResource(resource);
+                          case 4:
+                            loan = _context3.sent;
+                            isLoaned = !!loan;
+                            console.log("isLoaned: ".concat(isLoaned));
 
-              case 21:
-                loan = _context3.sent;
-                isLoaned = !!loan;
-                console.log("isLoaned: ".concat(isLoaned));
+                            if (!isLoaned) {
+                              _context3.next = 13;
+                              break;
+                            }
 
-                if (!isLoaned) {
-                  _context3.next = 30;
-                  break;
-                }
+                            _context3.next = 10;
+                            return _this2.getUserName(loan.loaner);
 
-                _context3.next = 27;
-                return this.getUserName(loan.loaner);
+                          case 10:
+                            loan.user = _context3.sent;
+                            console.log("getUserName(".concat(loan.loaner, ") -> ").concat(loan.user));
+                            resource._loaner = loan.user;
 
-              case 27:
-                loan.user = _context3.sent;
-                console.log("getUserName(".concat(loan.loaner, ") -> ").concat(loan.user));
-                resource._loaner = loan.user;
+                          case 13:
+                            resource._isLoaned = isLoaned;
+                            _context3.next = 19;
+                            break;
 
-              case 30:
-                resource._isLoaned = isLoaned;
-                _context3.next = 36;
-                break;
+                          case 16:
+                            _context3.prev = 16;
+                            _context3.t0 = _context3["catch"](1);
+                            console.error(_context3.t0);
 
-              case 33:
-                _context3.prev = 33;
-                _context3.t0 = _context3["catch"](18);
-                console.error(_context3.t0);
+                          case 19:
+                          case "end":
+                            return _context3.stop();
+                        }
+                      }
+                    }, _callee3, null, [[1, 16]]);
+                  }));
 
-              case 36:
-                _iteratorNormalCompletion = true;
-                _context3.next = 15;
-                break;
+                  return function (_x4) {
+                    return _ref2.apply(this, arguments);
+                  };
+                }()); // these are used for items tab
 
-              case 39:
-                _context3.next = 45;
-                break;
-
-              case 41:
-                _context3.prev = 41;
-                _context3.t1 = _context3["catch"](13);
-                _didIteratorError = true;
-                _iteratorError = _context3.t1;
-
-              case 45:
-                _context3.prev = 45;
-                _context3.prev = 46;
-
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                  _iterator.return();
-                }
-
-              case 48:
-                _context3.prev = 48;
-
-                if (!_didIteratorError) {
-                  _context3.next = 51;
-                  break;
-                }
-
-                throw _iteratorError;
-
-              case 51:
-                return _context3.finish(48);
-
-              case 52:
-                return _context3.finish(45);
-
-              case 53:
-                _context3.next = 55;
+                _context4.next = 15;
                 return this.findActiveLoansByItem(row);
 
-              case 55:
-                row._loans = _context3.sent;
-                this.selectedRow = row;
-                this.$set(row, '_showDetails', !row._showDetails);
+              case 15:
+                row._loans = _context4.sent;
 
-              case 58:
+              case 16:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this, [[13, 41, 45, 53], [18, 33], [46,, 48, 52]]);
+        }, _callee4, this);
       }));
 
       function rowClicked(_x2, _x3) {
@@ -556,11 +519,11 @@ __webpack_require__.r(__webpack_exports__);
       return rowClicked;
     }(),
     addRowHandler: function () {
-      var _addRowHandler = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+      var _addRowHandler = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
         var obj;
-        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 obj = {
                   name: 'new item',
@@ -568,18 +531,18 @@ __webpack_require__.r(__webpack_exports__);
                     name: 'unknown'
                   }
                 };
-                _context4.next = 3;
-                return Object(_api_items__WEBPACK_IMPORTED_MODULE_8__["newItem"])(obj);
+                _context5.next = 3;
+                return Object(_api_items__WEBPACK_IMPORTED_MODULE_6__["newItem"])(obj);
 
               case 3:
                 this._reload();
 
               case 4:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee5, this);
       }));
 
       function addRowHandler() {
@@ -589,41 +552,41 @@ __webpack_require__.r(__webpack_exports__);
       return addRowHandler;
     }(),
     imageUrl: function imageUrl(row) {
-      return Object(_api_items__WEBPACK_IMPORTED_MODULE_8__["itemImageUrl"])(row);
+      return Object(_api_items__WEBPACK_IMPORTED_MODULE_6__["itemImageUrl"])(row);
     },
     save: function () {
-      var _save = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-        var _this2 = this;
+      var _save = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+        var _this3 = this;
 
         var updates;
-        return regeneratorRuntime.wrap(function _callee5$(_context5) {
+        return regeneratorRuntime.wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
                 updates = {
                   _id: this.selectedRow._id
                 };
 
                 this._.keys(this.$refs).map(function (key) {
-                  var value = _this2.$refs[key].value;
+                  var value = _this3.$refs[key].value;
 
-                  _this2._.set(updates, key, value);
+                  _this3._.set(updates, key, value);
                 });
 
                 this._.merge(this.selectedRow, updates);
 
-                _context5.next = 5;
-                return Object(_api_items__WEBPACK_IMPORTED_MODULE_8__["updateItem"])(updates);
+                _context6.next = 5;
+                return Object(_api_items__WEBPACK_IMPORTED_MODULE_6__["updateItem"])(updates);
 
               case 5:
                 this.isEditing = !this.isEditing;
 
               case 6:
               case "end":
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee5, this);
+        }, _callee6, this);
       }));
 
       function save() {
@@ -633,88 +596,62 @@ __webpack_require__.r(__webpack_exports__);
       return save;
     }(),
     apiHandle: function () {
-      var _apiHandle = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(promise, _ref2) {
+      var _apiHandle = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(promise, _ref3) {
         var successTitle, successMsg, failTitle, failMsg, ret, errorMsg;
-        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+        return regeneratorRuntime.wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
-                successTitle = _ref2.successTitle, successMsg = _ref2.successMsg, failTitle = _ref2.failTitle, failMsg = _ref2.failMsg;
-                _context6.prev = 1;
-                _context6.next = 4;
+                successTitle = _ref3.successTitle, successMsg = _ref3.successMsg, failTitle = _ref3.failTitle, failMsg = _ref3.failMsg;
+                _context7.prev = 1;
+                _context7.next = 4;
                 return promise;
 
               case 4:
-                ret = _context6.sent;
+                ret = _context7.sent;
                 this.$notify({
                   title: successTitle,
                   message: successMsg,
                   type: 'success',
                   duration: 2000
                 });
-                return _context6.abrupt("return", ret);
+                return _context7.abrupt("return", ret);
 
               case 9:
-                _context6.prev = 9;
-                _context6.t0 = _context6["catch"](1);
-                errorMsg = this._.get(_context6.t0, 'response.data.error', '');
+                _context7.prev = 9;
+                _context7.t0 = _context7["catch"](1);
+                errorMsg = this._.get(_context7.t0, 'response.data.error', '');
                 this.$notify({
                   title: failTitle,
                   message: "".concat(failMsg, ": \n").concat(errorMsg),
                   type: 'warning',
                   duration: 2000
                 });
-                throw _context6.t0;
+                throw _context7.t0;
 
               case 14:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee6, this, [[1, 9]]);
+        }, _callee7, this, [[1, 9]]);
       }));
 
-      function apiHandle(_x4, _x5) {
+      function apiHandle(_x5, _x6) {
         return _apiHandle.apply(this, arguments);
       }
 
       return apiHandle;
     }(),
     loanResourceForOther: function () {
-      var _loanResourceForOther = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(resource) {
-        return regeneratorRuntime.wrap(function _callee7$(_context7) {
-          while (1) {
-            switch (_context7.prev = _context7.next) {
-              case 0:
-                this.$root.$emit('bv::show::modal', "modal-loan-".concat(resource._id, "-other"), '#btnShow');
-
-              case 1:
-              case "end":
-                return _context7.stop();
-            }
-          }
-        }, _callee7, this);
-      }));
-
-      function loanResourceForOther(_x6) {
-        return _loanResourceForOther.apply(this, arguments);
-      }
-
-      return loanResourceForOther;
-    }(),
-    loanResourceFromModel: function () {
-      var _loanResourceFromModel = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(resource, loaner) {
+      var _loanResourceForOther = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(resource) {
         return regeneratorRuntime.wrap(function _callee8$(_context8) {
           while (1) {
             switch (_context8.prev = _context8.next) {
               case 0:
-                _context8.next = 2;
-                return this.loanResource(resource, loaner);
+                this.$root.$emit('bv::show::modal', "modal-loan-".concat(resource._id, "-other"), '#btnShow');
 
-              case 2:
-                this.$root.$emit('bv::hide::modal', "modal-loan-".concat(resource._id, "-other"), '#btnShow');
-
-              case 3:
+              case 1:
               case "end":
                 return _context8.stop();
             }
@@ -722,23 +659,49 @@ __webpack_require__.r(__webpack_exports__);
         }, _callee8, this);
       }));
 
-      function loanResourceFromModel(_x7, _x8) {
+      function loanResourceForOther(_x7) {
+        return _loanResourceForOther.apply(this, arguments);
+      }
+
+      return loanResourceForOther;
+    }(),
+    loanResourceFromModel: function () {
+      var _loanResourceFromModel = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(resource, loaner) {
+        return regeneratorRuntime.wrap(function _callee9$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                _context9.next = 2;
+                return this.loanResource(resource, loaner);
+
+              case 2:
+                this.$root.$emit('bv::hide::modal', "modal-loan-".concat(resource._id, "-other"), '#btnShow');
+
+              case 3:
+              case "end":
+                return _context9.stop();
+            }
+          }
+        }, _callee9, this);
+      }));
+
+      function loanResourceFromModel(_x8, _x9) {
         return _loanResourceFromModel.apply(this, arguments);
       }
 
       return loanResourceFromModel;
     }(),
     loanResource: function () {
-      var _loanResource = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(resource, loaner) {
-        var _this3 = this;
+      var _loanResource = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(resource, loaner) {
+        var _this4 = this;
 
         var loaningItem, name, loan;
-        return regeneratorRuntime.wrap(function _callee10$(_context10) {
+        return regeneratorRuntime.wrap(function _callee11$(_context11) {
           while (1) {
-            switch (_context10.prev = _context10.next) {
+            switch (_context11.prev = _context11.next) {
               case 0:
                 if (resource) {
-                  _context10.next = 2;
+                  _context11.next = 2;
                   break;
                 }
 
@@ -749,77 +712,77 @@ __webpack_require__.r(__webpack_exports__);
                   item: this.selectedRow._id,
                   resource: resource._id
                 };
-                _context10.next = 5;
+                _context11.next = 5;
                 return this.getUserName(loaner);
 
               case 5:
-                name = _context10.sent;
+                name = _context11.sent;
                 loan = {
                   items: [loaningItem],
                   loaner: loaner
                 };
                 console.log("loaning ".concat(resource.name, ", loan object:"), loan);
-                _context10.next = 10;
-                return this.apiHandle(Object(_api_loans__WEBPACK_IMPORTED_MODULE_9__["loanItem"])(loan), {
+                _context11.next = 10;
+                return this.apiHandle(Object(_api_loans__WEBPACK_IMPORTED_MODULE_7__["loanItem"])(loan), {
                   successTitle: 'loan success',
                   successMsg: "Item ".concat(resource.name, " loaned succesfully"),
                   failTitle: 'loan failed',
                   failMsg: "Cannot loan item ".concat(resource.name)
                 }).then( /*#__PURE__*/function () {
-                  var _ref3 = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(loan) {
-                    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+                  var _ref4 = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(loan) {
+                    return regeneratorRuntime.wrap(function _callee10$(_context10) {
                       while (1) {
-                        switch (_context9.prev = _context9.next) {
+                        switch (_context10.prev = _context10.next) {
                           case 0:
-                            _this3.selectedRow.available--;
+                            _this4.selectedRow.available--;
                             loan.loaner = {
                               name: name
                             };
                             resource._isLoaned = true;
                             resource._loaner = name;
 
-                            _this3.selectedRow._loans.push(loan);
+                            _this4.selectedRow._loans.push(loan);
 
                           case 5:
                           case "end":
-                            return _context9.stop();
+                            return _context10.stop();
                         }
                       }
-                    }, _callee9);
+                    }, _callee10);
                   }));
 
-                  return function (_x11) {
-                    return _ref3.apply(this, arguments);
+                  return function (_x12) {
+                    return _ref4.apply(this, arguments);
                   };
                 }()).catch(function () {});
 
               case 10:
               case "end":
-                return _context10.stop();
+                return _context11.stop();
             }
           }
-        }, _callee10, this);
+        }, _callee11, this);
       }));
 
-      function loanResource(_x9, _x10) {
+      function loanResource(_x10, _x11) {
         return _loanResource.apply(this, arguments);
       }
 
       return loanResource;
     }(),
     findActiveLoansByItem: function () {
-      var _findActiveLoansByItem = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(_ref4) {
-        var _this4 = this;
+      var _findActiveLoansByItem = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(_ref5) {
+        var _this5 = this;
 
         var _id, loans;
 
-        return regeneratorRuntime.wrap(function _callee11$(_context11) {
+        return regeneratorRuntime.wrap(function _callee12$(_context12) {
           while (1) {
-            switch (_context11.prev = _context11.next) {
+            switch (_context12.prev = _context12.next) {
               case 0:
-                _id = _ref4._id;
-                _context11.next = 3;
-                return Object(_api_loans__WEBPACK_IMPORTED_MODULE_9__["findLoans"])({
+                _id = _ref5._id;
+                _context12.next = 3;
+                return Object(_api_loans__WEBPACK_IMPORTED_MODULE_7__["findLoans"])({
                   q: {
                     items: {
                       $elemMatch: {
@@ -838,44 +801,44 @@ __webpack_require__.r(__webpack_exports__);
                 });
 
               case 3:
-                loans = _context11.sent;
+                loans = _context12.sent;
                 loans.forEach(function (loan) {
                   if (loan.loaner === null) {
                     delete loan.loaner;
                   }
 
-                  _this4._.defaults(loan, {
+                  _this5._.defaults(loan, {
                     loaner: {
                       name: ''
                     }
                   });
                 });
                 console.log(loans);
-                return _context11.abrupt("return", loans);
+                return _context12.abrupt("return", loans);
 
               case 7:
               case "end":
-                return _context11.stop();
+                return _context12.stop();
             }
           }
-        }, _callee11);
+        }, _callee12);
       }));
 
-      function findActiveLoansByItem(_x12) {
+      function findActiveLoansByItem(_x13) {
         return _findActiveLoansByItem.apply(this, arguments);
       }
 
       return findActiveLoansByItem;
     }(),
     findLoanByResource: function () {
-      var _findLoanByResource = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(resource) {
+      var _findLoanByResource = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(resource) {
         var loans;
-        return regeneratorRuntime.wrap(function _callee12$(_context12) {
+        return regeneratorRuntime.wrap(function _callee13$(_context13) {
           while (1) {
-            switch (_context12.prev = _context12.next) {
+            switch (_context13.prev = _context13.next) {
               case 0:
-                _context12.next = 2;
-                return Object(_api_loans__WEBPACK_IMPORTED_MODULE_9__["findLoans"])({
+                _context13.next = 2;
+                return Object(_api_loans__WEBPACK_IMPORTED_MODULE_7__["findLoans"])({
                   q: {
                     items: {
                       $elemMatch: {
@@ -889,47 +852,47 @@ __webpack_require__.r(__webpack_exports__);
                 });
 
               case 2:
-                loans = _context12.sent;
+                loans = _context13.sent;
 
                 if (!(loans.length === 0)) {
-                  _context12.next = 7;
+                  _context13.next = 7;
                   break;
                 }
 
-                return _context12.abrupt("return", undefined);
+                return _context13.abrupt("return", undefined);
 
               case 7:
                 if (!(loans.length > 1)) {
-                  _context12.next = 9;
+                  _context13.next = 9;
                   break;
                 }
 
                 throw new Error('there is multiple loans with same item ');
 
               case 9:
-                return _context12.abrupt("return", loans[0]);
+                return _context13.abrupt("return", loans[0]);
 
               case 10:
               case "end":
-                return _context12.stop();
+                return _context13.stop();
             }
           }
-        }, _callee12);
+        }, _callee13);
       }));
 
-      function findLoanByResource(_x13) {
+      function findLoanByResource(_x14) {
         return _findLoanByResource.apply(this, arguments);
       }
 
       return findLoanByResource;
     }(),
     getUserName: function () {
-      var _getUserName = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(_id) {
-        return regeneratorRuntime.wrap(function _callee13$(_context13) {
+      var _getUserName = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(_id) {
+        return regeneratorRuntime.wrap(function _callee14$(_context14) {
           while (1) {
-            switch (_context13.prev = _context13.next) {
+            switch (_context14.prev = _context14.next) {
               case 0:
-                return _context13.abrupt("return", Object(_api_user__WEBPACK_IMPORTED_MODULE_10__["getUser"])({
+                return _context14.abrupt("return", Object(_api_user__WEBPACK_IMPORTED_MODULE_8__["getUser"])({
                   _id: _id
                 }, {
                   f: 'name'
@@ -939,43 +902,43 @@ __webpack_require__.r(__webpack_exports__);
 
               case 1:
               case "end":
-                return _context13.stop();
+                return _context14.stop();
             }
           }
-        }, _callee13);
+        }, _callee14);
       }));
 
-      function getUserName(_x14) {
+      function getUserName(_x15) {
         return _getUserName.apply(this, arguments);
       }
 
       return getUserName;
     }(),
     unloanResource: function () {
-      var _unloanResource = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(resource) {
-        var _this5 = this;
+      var _unloanResource = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(resource) {
+        var _this6 = this;
 
         var loan, item;
-        return regeneratorRuntime.wrap(function _callee14$(_context14) {
+        return regeneratorRuntime.wrap(function _callee15$(_context15) {
           while (1) {
-            switch (_context14.prev = _context14.next) {
+            switch (_context15.prev = _context15.next) {
               case 0:
                 console.log('unloan resource: ', resource.name);
-                _context14.prev = 1;
-                _context14.next = 4;
+                _context15.prev = 1;
+                _context15.next = 4;
                 return this.findLoanByResource(resource);
 
               case 4:
-                loan = _context14.sent;
-                _context14.next = 12;
+                loan = _context15.sent;
+                _context15.next = 12;
                 break;
 
               case 7:
-                _context14.prev = 7;
-                _context14.t0 = _context14["catch"](1);
+                _context15.prev = 7;
+                _context15.t0 = _context15["catch"](1);
 
                 if (loan) {
-                  _context14.next = 12;
+                  _context15.next = 12;
                   break;
                 }
 
@@ -985,11 +948,11 @@ __webpack_require__.r(__webpack_exports__);
                   type: 'warning',
                   duration: 2000
                 });
-                return _context14.abrupt("return");
+                return _context15.abrupt("return");
 
               case 12:
                 if (loan) {
-                  _context14.next = 15;
+                  _context15.next = 15;
                   break;
                 }
 
@@ -999,7 +962,7 @@ __webpack_require__.r(__webpack_exports__);
                   type: 'warning',
                   duration: 2000
                 });
-                return _context14.abrupt("return");
+                return _context15.abrupt("return");
 
               case 15:
                 console.log('loan to be returned: ', loan);
@@ -1007,48 +970,48 @@ __webpack_require__.r(__webpack_exports__);
                   return item.resource === resource._id;
                 });
                 item.return_date = new Date();
-                _context14.next = 20;
-                return this.apiHandle(Object(_api_loans__WEBPACK_IMPORTED_MODULE_9__["returnLoan"])(loan), {
+                _context15.next = 20;
+                return this.apiHandle(Object(_api_loans__WEBPACK_IMPORTED_MODULE_7__["returnLoan"])(loan), {
                   successTitle: 'loan returner',
                   successMsg: "Loan ".concat(resource.name, " returned succesfully"),
                   failTitle: 'return failed',
                   failMsg: "Cannot return resource ".concat(resource.name)
                 }).then(function () {
-                  _this5.selectedRow.available++;
+                  _this6.selectedRow.available++;
                   resource._isLoaned = false;
                   resource._loan = null; // find loan that holds this resource
 
-                  var pos = _this5.selectedRow._loans.findIndex(function (el) {
+                  var pos = _this6.selectedRow._loans.findIndex(function (el) {
                     return el.items.find(function (o) {
                       return o.resource === resource._id;
                     });
                   });
 
-                  if (pos >= 0 && _this5.selectedRow._loans[pos].items.length === 1) {
-                    _this5.selectedRow._loans.splice(pos, 1);
+                  if (pos >= 0 && _this6.selectedRow._loans[pos].items.length === 1) {
+                    _this6.selectedRow._loans.splice(pos, 1);
                   }
                 }).catch(function () {});
 
               case 20:
               case "end":
-                return _context14.stop();
+                return _context15.stop();
             }
           }
-        }, _callee14, this, [[1, 7]]);
+        }, _callee15, this, [[1, 7]]);
       }));
 
-      function unloanResource(_x15) {
+      function unloanResource(_x16) {
         return _unloanResource.apply(this, arguments);
       }
 
       return unloanResource;
     }(),
     loanItem: function () {
-      var _loanItem2 = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(item, loaner) {
+      var _loanItem2 = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(item, loaner) {
         var loan, loaned;
-        return regeneratorRuntime.wrap(function _callee15$(_context15) {
+        return regeneratorRuntime.wrap(function _callee16$(_context16) {
           while (1) {
-            switch (_context15.prev = _context15.next) {
+            switch (_context16.prev = _context16.next) {
               case 0:
                 console.log('loan item: ', item.name);
                 loan = {
@@ -1057,11 +1020,11 @@ __webpack_require__.r(__webpack_exports__);
                   }],
                   loaner: loaner._id
                 };
-                _context15.next = 4;
-                return Object(_api_loans__WEBPACK_IMPORTED_MODULE_9__["loanItem"])(loan);
+                _context16.next = 4;
+                return Object(_api_loans__WEBPACK_IMPORTED_MODULE_7__["loanItem"])(loan);
 
               case 4:
-                loaned = _context15.sent;
+                loaned = _context16.sent;
                 loaned.loaner = loaner;
 
                 this.selectedRow._loans.push(loaned);
@@ -1070,24 +1033,24 @@ __webpack_require__.r(__webpack_exports__);
 
               case 8:
               case "end":
-                return _context15.stop();
+                return _context16.stop();
             }
           }
-        }, _callee15, this);
+        }, _callee16, this);
       }));
 
-      function loanItem(_x16, _x17) {
+      function loanItem(_x17, _x18) {
         return _loanItem2.apply(this, arguments);
       }
 
       return loanItem;
     }(),
     unloanItem: function () {
-      var _unloanItem = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_7__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(item, loan) {
+      var _unloanItem = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(item, loan) {
         var req, pos;
-        return regeneratorRuntime.wrap(function _callee16$(_context16) {
+        return regeneratorRuntime.wrap(function _callee17$(_context17) {
           while (1) {
-            switch (_context16.prev = _context16.next) {
+            switch (_context17.prev = _context17.next) {
               case 0:
                 console.log('unloan item: ', item.name, loan.loaner.name);
                 req = {
@@ -1102,16 +1065,16 @@ __webpack_require__.r(__webpack_exports__);
                 });
 
                 if (req.items.length) {
-                  _context16.next = 7;
+                  _context17.next = 7;
                   break;
                 }
 
                 console.error('cannot find item!');
-                return _context16.abrupt("return");
+                return _context17.abrupt("return");
 
               case 7:
-                _context16.next = 9;
-                return this.apiHandle(Object(_api_loans__WEBPACK_IMPORTED_MODULE_9__["returnLoan"])(req), {
+                _context17.next = 9;
+                return this.apiHandle(Object(_api_loans__WEBPACK_IMPORTED_MODULE_7__["returnLoan"])(req), {
                   successTitle: 'loan returner',
                   successMsg: "Loan ".concat(item.name, " returned successfully"),
                   failTitle: 'return failed',
@@ -1132,13 +1095,13 @@ __webpack_require__.r(__webpack_exports__);
 
               case 12:
               case "end":
-                return _context16.stop();
+                return _context17.stop();
             }
           }
-        }, _callee16, this);
+        }, _callee17, this);
       }));
 
-      function unloanItem(_x18, _x19) {
+      function unloanItem(_x19, _x20) {
         return _unloanItem.apply(this, arguments);
       }
 

@@ -159,6 +159,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 
@@ -176,7 +178,8 @@ __webpack_require__.r(__webpack_exports__);
       columns: [{
         key: 'cre.time',
         sortable: true,
-        label: 'Created at'
+        label: 'Created at',
+        tooltip: 'Search greater than day X: "{gt}2022.3.29"'
       }, {
         key: 'tcid',
         sortable: true,
@@ -192,18 +195,20 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         key: 'exec.note',
         sortable: false,
-        label: 'Note'
+        label: 'Note',
+        tooltip: 'search supports regex. E.g. /error/'
       }, {
         key: 'exec.duts.vendor',
         sortable: false,
-        label: 'Dut0 Vendor',
+        label: 'Dut Vendor',
         formatter: function formatter(value, key, item) {
           return _this._.get(item, 'exec.duts.0.vendor', '');
         }
       }, {
         key: 'exec.duts.model',
         sortable: false,
-        label: 'Dut0 Model',
+        label: 'Dut Model',
+        tooltip: 'Device Under Test model',
         formatter: function formatter(value, key, item) {
           return _this._.get(item, 'exec.duts.0.model', '');
         }
@@ -211,13 +216,15 @@ __webpack_require__.r(__webpack_exports__);
         key: 'exec.sut.branch',
         sortable: false,
         label: 'Sut Branch',
+        tooltip: 'Software Under Test, Branch',
         formatter: function formatter(value, key, item) {
           return _this._.get(item, 'exec.sut.branch', '');
         }
       }, {
-        key: 'exec.sut.branch',
+        key: 'exec.sut.commitId',
         sortable: false,
         label: 'Sut commitId',
+        tooltip: 'Software Under Test, commitId',
         formatter: function formatter(value, key, item) {
           return _this._.get(item, 'exec.sut.commitId', '').substr(0, 7);
         }
@@ -450,6 +457,21 @@ var render = function() {
                             }
                           ],
                           on: {
+                            keyup: function($event) {
+                              if (
+                                !$event.type.indexOf("key") &&
+                                _vm._k(
+                                  $event.keyCode,
+                                  "enter",
+                                  13,
+                                  $event.key,
+                                  "Enter"
+                                )
+                              ) {
+                                return null
+                              }
+                              return _vm._reload($event)
+                            },
                             change: function($event) {
                               var $$selectedVal = Array.prototype.filter
                                 .call($event.target.options, function(o) {
@@ -479,56 +501,6 @@ var render = function() {
                           _c("option", [_vm._v("inconclusive")])
                         ]
                       )
-                    : field.key == "exec.duts"
-                    ? _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.listQuery["exec.duts.model"],
-                            expression: "listQuery['exec.duts.model']"
-                          }
-                        ],
-                        attrs: { placeholder: "Dut Model" },
-                        domProps: { value: _vm.listQuery["exec.duts.model"] },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(
-                              _vm.listQuery,
-                              "exec.duts.model",
-                              $event.target.value
-                            )
-                          }
-                        }
-                      })
-                    : field.key == "exec.sut"
-                    ? _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.listQuery["exec.sut.branch"],
-                            expression: "listQuery['exec.sut.branch']"
-                          }
-                        ],
-                        attrs: { placeholder: "Branch" },
-                        domProps: { value: _vm.listQuery["exec.sut.branch"] },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(
-                              _vm.listQuery,
-                              "exec.sut.branch",
-                              $event.target.value
-                            )
-                          }
-                        }
-                      })
                     : _c("input", {
                         directives: [
                           {
@@ -536,9 +508,17 @@ var render = function() {
                             rawName: "v-model",
                             value: _vm.listQuery[field.key],
                             expression: "listQuery[field.key]"
+                          },
+                          {
+                            name: "b-tooltip",
+                            rawName: "v-b-tooltip.hover",
+                            modifiers: { hover: true }
                           }
                         ],
-                        attrs: { placeholder: field.label },
+                        attrs: {
+                          title: field.tooltip,
+                          placeholder: field.label
+                        },
                         domProps: { value: _vm.listQuery[field.key] },
                         on: {
                           keyup: function($event) {
@@ -606,7 +586,7 @@ var render = function() {
               var value = ref.value
               return [
                 _c("i", [
-                  _vm._v(_vm._s(_vm._f("moment")(value, "MM/DD/YYYY hh:mm")))
+                  _vm._v(_vm._s(_vm._f("moment")(value, "YYYY.MM.DD hh:mm")))
                 ])
               ]
             }

@@ -309,7 +309,12 @@ export default {
       const query = { _id: row._id, p: 'unique_resources', f: 'unique_resources' }
       const results = await findItems(query)
       row.unique_resources = results[0].unique_resources || []
-      for (const resource of row.unique_resources) {
+
+      this.selectedRow = row
+      this.$set(row, '_showDetails', !row._showDetails)
+
+      // these are used for resource tab
+      row.unique_resources.forEach(async resource => {
         console.log(`Check if resource ${resource._id} is loaned`)
         try {
           const loan = await this.findLoanByResource(resource)
@@ -324,12 +329,9 @@ export default {
         } catch (error) {
           console.error(error)
         }
-      }
-
+      })
+      // these are used for items tab
       row._loans = await this.findActiveLoansByItem(row)
-      this.selectedRow = row
-
-      this.$set(row, '_showDetails', !row._showDetails)
     },
     async addRowHandler() {
       const obj = { name: 'new item', manufacturer: { name: 'unknown' }}

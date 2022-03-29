@@ -41,7 +41,11 @@
       <!-- filter row -->
       <template slot="top-row" slot-scope="{ fields }">
         <td v-for="field in fields" :key="field.key">
-          <select v-if="field.key == 'exec.verdict'" v-model="listQuery[field.key]">
+          <select
+            v-if="field.key == 'exec.verdict'"
+            v-model="listQuery[field.key]"
+            @keyup.enter="_reload"
+          >
             <option />
             <option>pass</option>
             <option>fail</option>
@@ -57,17 +61,15 @@
             end-placeholder="End date"
             format="yyyy-MM-dd"
           /> -->
+
           <input
-            v-else-if="field.key == 'exec.duts'"
-            v-model="listQuery['exec.duts.model']"
-            placeholder="Dut Model"
+            v-else
+            v-model="listQuery[field.key]"
+            v-b-tooltip.hover
+            :title="field.tooltip"
+            :placeholder="field.label"
+            @keyup.enter="_reload"
           >
-          <input
-            v-else-if="field.key == 'exec.sut'"
-            v-model="listQuery['exec.sut.branch']"
-            placeholder="Branch"
-          >
-          <input v-else v-model="listQuery[field.key]" :placeholder="field.label" @keyup.enter="_reload">
         </td>
       </template>
 
@@ -78,7 +80,7 @@
         </div>
       </template>
       <template v-slot:cell(cre.time)="{ value }">
-        <i>{{ value | moment('MM/DD/YYYY hh:mm') }}</i>
+        <i>{{ value | moment('YYYY.MM.DD hh:mm') }}</i>
       </template>
       <template v-slot:cell(exec.verdict)="{value}">
         <span :style="`color: ${getVerdictColor(value)}`">
@@ -138,7 +140,8 @@ export default {
         {
           key: 'cre.time',
           sortable: true,
-          label: 'Created at'
+          label: 'Created at',
+          tooltip: 'Search greater than day X: "{gt}2022.3.29"'
         },
         {
           key: 'tcid',
@@ -158,30 +161,34 @@ export default {
         {
           key: 'exec.note',
           sortable: false,
-          label: 'Note'
+          label: 'Note',
+          tooltip: 'search supports regex. E.g. /error/'
         },
         {
           key: 'exec.duts.vendor',
           sortable: false,
-          label: 'Dut0 Vendor',
+          label: 'Dut Vendor',
           formatter: (value, key, item) => this._.get(item, 'exec.duts.0.vendor', '')
         },
         {
           key: 'exec.duts.model',
           sortable: false,
-          label: 'Dut0 Model',
+          label: 'Dut Model',
+          tooltip: 'Device Under Test model',
           formatter: (value, key, item) => this._.get(item, 'exec.duts.0.model', '')
         },
         {
           key: 'exec.sut.branch',
           sortable: false,
           label: 'Sut Branch',
+          tooltip: 'Software Under Test, Branch',
           formatter: (value, key, item) => this._.get(item, 'exec.sut.branch', '')
         },
         {
-          key: 'exec.sut.branch',
+          key: 'exec.sut.commitId',
           sortable: false,
           label: 'Sut commitId',
+          tooltip: 'Software Under Test, commitId',
           formatter: (value, key, item) => this._.get(item, 'exec.sut.commitId', '').substr(0, 7)
         }
       ],

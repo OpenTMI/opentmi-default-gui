@@ -12,7 +12,7 @@ for (let i = 0; i < count; i++) {
       _id: Mock.Random.uuid(),
       tcid: '@first',
       cre: {
-        time: Mock.Random.date('T'),
+        time: Mock.Random.date('yyyy-MM-dd HH:mm:ssZ').replace(' ', 'T'),
         user: '@first'
       },
       job: {

@@ -19,10 +19,8 @@ export default {
       schema: {}
     }
   },
-  created() {
-    getSchema(this._).then((schema) => {
-      this.schema = schema
-    })
+  async created() {
+    this.schema = await getSchema(this._)
   },
   methods: {
     handleChange(val) {

@@ -1,10 +1,31 @@
 import request from '@/utils/request'
+import omit from 'lodash'
 
 export function searchResource(id) {
   return request({
     url: `/api/v0/resources/${id}`,
     method: 'get'
   })
+}
+export function createResource(data) {
+  return request({
+    url: `/api/v0/resources`,
+    method: 'post',
+    data
+  }).then(({ data }) => data)
+}
+export function deleteResource(id) {
+  return request({
+    url: `/api/v0/resources/${id}`,
+    method: 'delete'
+  }).then(({ data }) => data)
+}
+export function updateResource(data) {
+  return request({
+    url: `/api/v0/resources/${data._id}`,
+    method: 'put',
+    data: omit(data, ['_id'])
+  }).then(({ data }) => data)
 }
 
 export function resourceList(query) {

@@ -2,10 +2,18 @@
   <div class="app-container">
     <el-row>
       <el-col :span="8">
-        <b-form-checkbox v-model="enableDraggable" name="check-button" switch>
+        <b-checkbox v-model="enableDraggable" switch>
           Allow to reorder parents by drag'n'drop
-        </b-form-checkbox>
-        <el-button @click="openCreateModal">Create</el-button>
+        </b-checkbox>
+        <b-button-toolbar aria-label="Toolbar with button groups and input groups">
+          <b-button-group size="sm" class="mr-1">
+            <b-button @click="openCreateModal">Create</b-button>
+          </b-button-group>
+          <b-input-group size="sm" prepend="search">
+            <b-form-input class="text-right" @input="onSearch" />
+          </b-input-group>
+        </b-button-toolbar>
+
         <b-modal
           id="modal-create-resource"
           hide-backdrop
@@ -28,9 +36,11 @@
           </select>
         </b-modal>
         <v-jstree
+          ref="tree"
           :data="treeData"
           :async="loadData"
           :draggable="enableDraggable"
+          :allow-batch="enableDraggable"
           @item-click="itemClick"
           @item-drop="itemDrop"
         />
@@ -61,9 +71,26 @@
                   required
                 />
               </b-form-group>
+              <b-form-group id="input-group-3" label="User group:" label-for="form-usage-group">
+                <b-form-input
+                  id="form-usage-group"
+                  v-model="form.usage.group"
+                  :readonly="!enableEdit"
+                  type="string"
+                  placeholder="usage group"
+                  required
+                />
+              </b-form-group>
 
               <b-button type="submit" :disabled="!enableEdit" variant="primary">Submit</b-button>
               <b-button type="reset" :disabled="!enableEdit" variant="danger">Reset</b-button>
+              <b-button
+                v-b-tooltip.hover
+                :disabled="!(enableEdit && row.childs.length === 0)"
+                variant="danger"
+                title="Removing allowed only when it does not contains childs"
+                @click="onRemove"
+              >Remove</b-button>
             </b-form>
           </b-tab>
           <b-tab title="raw">
@@ -84,7 +111,7 @@
 <script>
 import VJstree from 'vue-jstree'
 import VueJsonPretty from 'vue-json-pretty'
-import { resourceList, updateResource, searchResource, createResource, getSchema } from '@/api/resources'
+import { resourceList, updateResource, searchResource, createResource, getSchema, deleteResource } from '@/api/resources'
 
 export default {
   name: 'ResourceTree',
@@ -99,6 +126,8 @@ export default {
       show: false,
       enableEdit: false,
       newResource: { name: '', type: 'computer' },
+      editingItem: {},
+      editingNode: null,
       row: {},
       enableDraggable: false,
       treeData: [],
@@ -109,35 +138,46 @@ export default {
     this.schema = await getSchema(this._)
   },
   methods: {
-    async mapItems(list) {
-      const getIcon = (resource) => {
-        if (['maintenance', 'broken'].indexOf(this._.get(resource, 'status.value')) >= 0) {
-          return 'el-icon-warning'
-        }
+    mapItem(resource) {
+      let icon
+      if (['maintenance', 'broken'].indexOf(this._.get(resource, 'status.value')) >= 0) {
+        icon = 'el-icon-warning'
+      } else {
         switch (resource.type) {
           case ('system'):
-            return 'el-icon-diagram3'
+            icon = 'el-icon-diagram3'
+            break
           case ('instrument'):
-            return 'el-icon-compass'
+            icon = 'el-icon-compass'
+            break
           case ('room'):
-            return 'el-icon-s-home'
+            icon = 'el-icon-s-home'
+            break
           case ('computer'):
-            return 'el-icon-s-platform'
+            icon = 'el-icon-s-platform'
+            break
           case ('dut'):
-            return 'el-icon-mobile-phone'
+            icon = 'el-icon-mobile-phone'
+            break
           case ('accessories'):
-            return 'el-icon-cpu'
+            icon = 'el-icon-cpu'
+            break
           default:
             break
         }
       }
-      return list.map(obj => ({
-        text: obj.name,
-        id: obj._id,
-        icon: getIcon(obj),
-        isLeaf: this._.get(obj, 'childs', []).length === 0,
-        resource: obj
-      }))
+      this._.defaults(resource, { childs: [] })
+      const out = {
+        text: resource.name,
+        id: resource._id,
+        icon,
+        isLeaf: this._.get(resource, 'childs', []).length === 0,
+        resource
+      }
+      return out
+    },
+    async mapItems(list) {
+      return list.map(this.mapItem)
     },
     async _loadData(node, resolve) {
       const { id = 0, resource = {}} = node.data
@@ -161,20 +201,32 @@ export default {
       query.s = { name: 1 }
       return resourceList(query).then(({ data }) => data)
     },
+    async onSearch(input) {
+      console.log(`onTreeFilter(${input})`)
+      await this.highlightTree(input)
+    },
+    async highlightTree(text) {
+      console.log('highlightTree', this.$refs)
+      const patt = new RegExp(text)
+      this.$refs.tree.handleRecursionNodeChilds(this.$refs.tree, function(node) {
+        if (text !== '' && node.model !== undefined) {
+          const str = node.model.text
+          if (patt.test(str)) {
+            node.$el.querySelector('.tree-anchor').style.color = 'red'
+          } else {
+            node.$el.querySelector('.tree-anchor').style.color = '#000'
+          } // or other operations
+        } else {
+          node.$el.querySelector('.tree-anchor').style.color = '#000'
+        }
+      })
+    },
     async getRoot() {
       const query = { q: { $or: [{ parent: { $exists: false }}, { parent: null }] }}
       const resources = await this.findResources(query)
       return this.mapItems(resources)
     },
-    itemDragStart(node, item, e) {
-      console.log('itemDragStart')
-    },
-    itemDragEnd(node, item, e) {
-      console.log('itemDragEnd')
-    },
-    itemDropBefore(node, item, draggedItem, e) {
-      console.log('itemDropBefore')
-    },
+
     async itemDrop(node, item, draggedItem, e) {
       console.log('itemDrop', node, item, draggedItem)
       let newParent = node.model.resource
@@ -228,6 +280,9 @@ export default {
     },
     async itemClick(node, item, e) {
       const resource = this._.cloneDeep(node.model.resource)
+      this.enableEdit = false // by default cannot edit
+      this.editingNode = node
+      this.editingItem = node.model
 
       if (node.model.isLeaf) {
         const _id = resource._id
@@ -236,7 +291,6 @@ export default {
         // eslint-disable-next-line no-console
         console.log(`searchResult(${_id}): ${JSON.stringify(data)}`)
         this._.unset(data, '__v')
-        this._.unset(data, '_id')
         this.row = data
       } else {
         this.row = resource
@@ -253,25 +307,51 @@ export default {
       console.log('create new resource...', this.newResource)
       const resource = await createResource(this.newResource)
       console.log('resource: ', resource)
-      const items = await this.mapItems([resource], 0)
-      console.log('mapItem: ', items)
+      const item = this.mapItem(resource)
+      console.log('mapItem: ', item)
       console.log('treeData: ', this.treeData)
-      this.treeData.push(items[0])
+      this.treeData.push(item)
       this.newResource = {}
     },
     async onSubmit() {
       console.log('onSubmit', this.form)
+      if (this.form._id !== this.row._id) {
+        throw new Error('id mismatch')
+      }
       await updateResource(this.form)
+      this._.merge(this.row, this.form)
+      const item = this.mapItem(this.row)
+      this._.merge(this.editingItem, item)
     },
     onReset(event) {
       console.log('onReset', event)
-      this.form = this._.pick(this.row, ['_id', 'name', 'type'])
+      this.form = this._.pick(this.row, ['_id', 'name', 'type', 'usage.group'])
 
       // Trick to reset/clear native browser form validation state
       this.show = false
       this.$nextTick(() => {
         this.show = true
       })
+    },
+    async onRemove(event) {
+      console.log('onRemove', event)
+      this.$confirm('Confirm to remove the resource', 'Warning', {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      })
+        .then(() => deleteResource(this.form._id))
+        .then(() => this.$message({
+          type: 'success',
+          message: 'Delete succeed!'
+        }))
+        .then(() => {
+          if (this.editingItem.id !== undefined) {
+            const index = this.editingNode.parentItem.indexOf(this.editingItem)
+            this.editingNode.parentItem.splice(index, 1)
+          }
+          this.row = {}
+        })
     }
   }
 }

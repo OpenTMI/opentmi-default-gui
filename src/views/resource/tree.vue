@@ -30,7 +30,7 @@
           <select v-model="newResource.type">
             <option value="dut" default>DUT</option>
             <option value="computer">Computer</option>
-            <option value="accessorie">Accessorie</option>
+            <option value="accessories">Accessories</option>
             <option value="room">Room</option>
             <option value="other">Other</option>
           </select>

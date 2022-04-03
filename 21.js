@@ -9,13 +9,113 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty */ "./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty.js");
-/* harmony import */ var vue_jstree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-jstree */ "./node_modules/vue-jstree/dist/vue-jstree.js");
-/* harmony import */ var vue_jstree__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_jstree__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-json-pretty */ "./node_modules/vue-json-pretty/lib/vue-json-pretty.js");
-/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _api_resources__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/api/resources */ "./src/api/resources.js");
+/* harmony import */ var core_js_modules_es6_regexp_constructor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.regexp.constructor */ "./node_modules/core-js/modules/es6.regexp.constructor.js");
+/* harmony import */ var core_js_modules_es6_regexp_constructor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_regexp_constructor__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es6.function.name */ "./node_modules/core-js/modules/es6.function.name.js");
+/* harmony import */ var core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_function_name__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var vue_jstree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-jstree */ "./node_modules/vue-jstree/dist/vue-jstree.js");
+/* harmony import */ var vue_jstree__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_jstree__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-json-pretty */ "./node_modules/vue-json-pretty/lib/vue-json-pretty.js");
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _api_resources__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/api/resources */ "./src/api/resources.js");
 
+
+
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -39,160 +139,618 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'ResultTree',
+  name: 'ResourceTree',
   components: {
-    VJstree: vue_jstree__WEBPACK_IMPORTED_MODULE_1___default.a,
-    VueJsonPretty: vue_json_pretty__WEBPACK_IMPORTED_MODULE_2___default.a
+    VJstree: vue_jstree__WEBPACK_IMPORTED_MODULE_4___default.a,
+    VueJsonPretty: vue_json_pretty__WEBPACK_IMPORTED_MODULE_5___default.a
   },
   data: function data() {
     return {
+      schema: {},
+      form: {},
+      show: false,
+      enableEdit: false,
+      newResource: {
+        name: '',
+        type: 'computer'
+      },
+      editingItem: {},
+      editingNode: null,
       row: {},
+      enableDraggable: false,
       treeData: [],
       loadData: this._.debounce(this._loadData, 250)
     };
   },
-  methods: {
-    distinct: function distinct(filters, field) {
-      var query = {
-        t: 'distinct',
-        f: field,
-        l: 1000,
-        to: 5000
-      };
-      return this._.merge(query, filters);
-    },
-    _loadData: function _loadData(node, resolve) {
-      var id = node.data.id ? node.data.id : 0;
-      var _node$data = node.data,
-          level = _node$data.level,
-          type = _node$data.type,
-          _node$data$filters = _node$data.filters,
-          filters = _node$data$filters === void 0 ? {} : _node$data$filters;
-      var options = {
-        level: level + 1,
-        field: NaN,
-        type: type,
-        filters: filters
-      };
+  created: function () {
+    var _created = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["getSchema"])(this._);
 
-      if (id === 0) {
-        this.getRoot().then(resolve);
-      } else if (type === 'location') {
-        if (level === 0) {
-          options.field = 'location.site';
-        } else if (level === 1) {
-          options.field = 'location.room';
-        } else if (level === 2) {
-          options.field = 'location.rack';
-        } else if (level === 3) {
-          options.field = 'location.bed';
-        } else if (level === 4) {
-          options.field = 'location.slot';
-        } else {
-          options.icon = 'el-icon-tickets';
-          options.isLeaf = true;
-          options.field = '_id';
+            case 2:
+              this.schema = _context.sent;
+
+            case 3:
+            case "end":
+              return _context.stop();
+          }
         }
-      } else if (type === 'type') {
-        if (level === 0) {
-          options.field = 'type';
-        } else if (level === 1) {
-          options.field = 'item.model';
-        } else {
-          options.isLeaf = true;
-          options.icon = 'el-icon-tickets';
-          options.field = '_id';
-        }
-      } else if (type === 'model') {
-        if (level === 0) {
-          options.field = 'item.model';
-        } else {
-          options.isLeaf = true;
-          options.icon = 'el-icon-tickets';
-          options.field = '_id';
-        }
+      }, _callee, this);
+    }));
+
+    function created() {
+      return _created.apply(this, arguments);
+    }
+
+    return created;
+  }(),
+  methods: {
+    mapItem: function mapItem(resource) {
+      var icon;
+
+      if (['maintenance', 'broken'].indexOf(this._.get(resource, 'status.value')) >= 0) {
+        icon = 'el-icon-warning';
       } else {
-        return resolve([]);
+        switch (resource.type) {
+          case 'system':
+            icon = 'el-icon-diagram3';
+            break;
+
+          case 'instrument':
+            icon = 'el-icon-compass';
+            break;
+
+          case 'room':
+            icon = 'el-icon-s-home';
+            break;
+
+          case 'computer':
+            icon = 'el-icon-s-platform';
+            break;
+
+          case 'dut':
+            icon = 'el-icon-mobile-phone';
+            break;
+
+          case 'accessories':
+            icon = 'el-icon-cpu';
+            break;
+
+          default:
+            break;
+        }
       }
 
-      return this.getDistinct(options).then(resolve);
+      this._.defaults(resource, {
+        childs: []
+      });
+
+      var out = {
+        text: resource.name,
+        id: resource._id,
+        icon: icon,
+        isLeaf: this._.get(resource, 'childs', []).length === 0,
+        resource: resource
+      };
+      return out;
     },
-    getRoot: function getRoot() {
-      return Promise.resolve([{
-        text: 'by location',
-        level: 0,
-        type: 'location',
-        isLeaf: false
-      }, {
-        text: 'by type',
-        level: 0,
-        type: 'type',
-        isLeaf: false
-      }, {
-        text: 'by model',
-        level: 0,
-        type: 'model',
-        isLeaf: false
-      }]);
+    mapItems: function () {
+      var _mapItems = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(list) {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                return _context2.abrupt("return", list.map(this.mapItem));
+
+              case 1:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function mapItems(_x) {
+        return _mapItems.apply(this, arguments);
+      }
+
+      return mapItems;
+    }(),
+    _loadData: function () {
+      var _loadData2 = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(node, resolve) {
+        var _node$data, _node$data$id, id, _node$data$resource, resource, root, query, list;
+
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _node$data = node.data, _node$data$id = _node$data.id, id = _node$data$id === void 0 ? 0 : _node$data$id, _node$data$resource = _node$data.resource, resource = _node$data$resource === void 0 ? {} : _node$data$resource;
+                console.log('_loadData:', id, resource);
+
+                if (!(id === 0)) {
+                  _context3.next = 7;
+                  break;
+                }
+
+                root = {
+                  text: 'root',
+                  id: 1,
+                  isLeaf: false
+                };
+                resolve([root]);
+                _context3.next = 16;
+                break;
+
+              case 7:
+                if (!(id === 1)) {
+                  _context3.next = 11;
+                  break;
+                }
+
+                this.getRoot().then(resolve);
+                _context3.next = 16;
+                break;
+
+              case 11:
+                query = {
+                  parent: resource._id
+                };
+                _context3.next = 14;
+                return this.findResources(query);
+
+              case 14:
+                list = _context3.sent;
+                this.mapItems(list).then(resolve);
+
+              case 16:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function _loadData(_x2, _x3) {
+        return _loadData2.apply(this, arguments);
+      }
+
+      return _loadData;
+    }(),
+    findResources: function () {
+      var _findResources = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(query) {
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                query.s = {
+                  name: 1
+                };
+                return _context4.abrupt("return", Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["resourceList"])(query).then(function (_ref) {
+                  var data = _ref.data;
+                  return data;
+                }));
+
+              case 2:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }));
+
+      function findResources(_x4) {
+        return _findResources.apply(this, arguments);
+      }
+
+      return findResources;
+    }(),
+    onSearch: function () {
+      var _onSearch = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(input) {
+        return regeneratorRuntime.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                console.log("onTreeFilter(".concat(input, ")"));
+                _context5.next = 3;
+                return this.highlightTree(input);
+
+              case 3:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+
+      function onSearch(_x5) {
+        return _onSearch.apply(this, arguments);
+      }
+
+      return onSearch;
+    }(),
+    highlightTree: function () {
+      var _highlightTree = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(text) {
+        var patt;
+        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                console.log('highlightTree', this.$refs);
+                patt = new RegExp(text);
+                this.$refs.tree.handleRecursionNodeChilds(this.$refs.tree, function (node) {
+                  if (text !== '' && node.model !== undefined) {
+                    var str = node.model.text;
+
+                    if (patt.test(str)) {
+                      node.$el.querySelector('.tree-anchor').style.color = 'red';
+                    } else {
+                      node.$el.querySelector('.tree-anchor').style.color = '#000';
+                    } // or other operations
+
+                  } else {
+                    node.$el.querySelector('.tree-anchor').style.color = '#000';
+                  }
+                });
+
+              case 3:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this);
+      }));
+
+      function highlightTree(_x6) {
+        return _highlightTree.apply(this, arguments);
+      }
+
+      return highlightTree;
+    }(),
+    getRoot: function () {
+      var _getRoot = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+        var query, resources;
+        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                query = {
+                  q: {
+                    $or: [{
+                      parent: {
+                        $exists: false
+                      }
+                    }, {
+                      parent: null
+                    }]
+                  }
+                };
+                _context7.next = 3;
+                return this.findResources(query);
+
+              case 3:
+                resources = _context7.sent;
+                return _context7.abrupt("return", this.mapItems(resources));
+
+              case 5:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7, this);
+      }));
+
+      function getRoot() {
+        return _getRoot.apply(this, arguments);
+      }
+
+      return getRoot;
+    }(),
+    itemDrop: function () {
+      var _itemDrop = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(node, item, draggedItem, e) {
+        var newParent, child, oldParent;
+        return regeneratorRuntime.wrap(function _callee8$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                console.log('itemDrop', node, item, draggedItem);
+                newParent = node.model.resource;
+                child = draggedItem.resource;
+
+                if (!child.parent) {
+                  _context8.next = 7;
+                  break;
+                }
+
+                _context8.next = 6;
+                return Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["searchResource"])(child.parent).then(function (_ref2) {
+                  var data = _ref2.data;
+                  return data;
+                });
+
+              case 6:
+                oldParent = _context8.sent;
+
+              case 7:
+                _context8.prev = 7;
+                console.log("dragged: ".concat(child.name, " new parent: ").concat(newParent ? newParent.name : 'root', ", old parent: ").concat(oldParent ? oldParent.name : ''));
+
+                if (!(newParent && newParent.type === 'dut')) {
+                  _context8.next = 11;
+                  break;
+                }
+
+                throw new Error('cannot set to dut parent');
+
+              case 11:
+                if (!oldParent) {
+                  _context8.next = 18;
+                  break;
+                }
+
+                // update only when there was old parent...
+                oldParent = this._.pick(oldParent, ['_id', 'childs']);
+
+                this._.remove(oldParent.childs, function (item) {
+                  return item === child._id;
+                });
+
+                oldParent.childs = this._.uniq(oldParent.childs);
+                console.log('oldParent:after', oldParent);
+                _context8.next = 18;
+                return Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["updateResource"])(oldParent);
+
+              case 18:
+                if (!newParent) {
+                  _context8.next = 25;
+                  break;
+                }
+
+                // if new parent was root level
+                newParent = this._.pick(newParent, ['_id', 'childs']);
+                newParent.childs.push(child._id);
+                newParent.childs = this._.uniq(newParent.childs);
+                console.log('newParent:after', newParent);
+                _context8.next = 25;
+                return Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["updateResource"])(newParent);
+
+              case 25:
+                child = this._.pick(child, ['_id', 'parent']);
+                child.parent = newParent ? newParent._id : undefined;
+                console.log('child:after', child);
+                _context8.next = 30;
+                return Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["updateResource"])(child);
+
+              case 30:
+                this.$notify({
+                  title: "resource saved",
+                  message: "resource ".concat(child.name, " moved under new parent ").concat(newParent ? newParent.name : 'root'),
+                  type: 'success',
+                  duration: 2000
+                });
+                _context8.next = 36;
+                break;
+
+              case 33:
+                _context8.prev = 33;
+                _context8.t0 = _context8["catch"](7);
+                this.$notify({
+                  title: "dragndrop failed",
+                  message: "cannot dragndrop resource ".concat(child.name, ": \n").concat(_context8.t0),
+                  type: 'warning',
+                  duration: 2000
+                });
+
+              case 36:
+              case "end":
+                return _context8.stop();
+            }
+          }
+        }, _callee8, this, [[7, 33]]);
+      }));
+
+      function itemDrop(_x7, _x8, _x9, _x10) {
+        return _itemDrop.apply(this, arguments);
+      }
+
+      return itemDrop;
+    }(),
+    itemClick: function () {
+      var _itemClick = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(node, item, e) {
+        var resource, _id, _ref3, data;
+
+        return regeneratorRuntime.wrap(function _callee9$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                resource = this._.cloneDeep(node.model.resource);
+                this.enableEdit = false; // by default cannot edit
+
+                this.editingNode = node;
+                this.editingItem = node.model;
+
+                if (!node.model.isLeaf) {
+                  _context9.next = 16;
+                  break;
+                }
+
+                _id = resource._id;
+                console.log('Get result: ', _id);
+                _context9.next = 9;
+                return Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["searchResource"])(_id);
+
+              case 9:
+                _ref3 = _context9.sent;
+                data = _ref3.data;
+                // eslint-disable-next-line no-console
+                console.log("searchResult(".concat(_id, "): ").concat(JSON.stringify(data)));
+
+                this._.unset(data, '__v');
+
+                this.row = data;
+                _context9.next = 17;
+                break;
+
+              case 16:
+                this.row = resource;
+
+              case 17:
+                this.show = this._.has(resource, '_id');
+
+                if (this.show) {
+                  this.onReset();
+                }
+
+              case 19:
+              case "end":
+                return _context9.stop();
+            }
+          }
+        }, _callee9, this);
+      }));
+
+      function itemClick(_x11, _x12, _x13) {
+        return _itemClick.apply(this, arguments);
+      }
+
+      return itemClick;
+    }(),
+    openCreateModal: function openCreateModal() {
+      this.$root.$emit('bv::show::modal', "modal-create-resource", '#btnShow');
     },
-    getDistinct: function getDistinct(_ref) {
+    onCreate: function () {
+      var _onCreate = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee10() {
+        var resource, item;
+        return regeneratorRuntime.wrap(function _callee10$(_context10) {
+          while (1) {
+            switch (_context10.prev = _context10.next) {
+              case 0:
+                console.log('create new resource...', this.newResource);
+                _context10.next = 3;
+                return Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["createResource"])(this.newResource);
+
+              case 3:
+                resource = _context10.sent;
+                console.log('resource: ', resource);
+                item = this.mapItem(resource);
+                console.log('mapItem: ', item);
+                console.log('treeData: ', this.treeData);
+                this.treeData.push(item);
+                this.newResource = {};
+
+              case 10:
+              case "end":
+                return _context10.stop();
+            }
+          }
+        }, _callee10, this);
+      }));
+
+      function onCreate() {
+        return _onCreate.apply(this, arguments);
+      }
+
+      return onCreate;
+    }(),
+    onSubmit: function () {
+      var _onSubmit = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
+        var item;
+        return regeneratorRuntime.wrap(function _callee11$(_context11) {
+          while (1) {
+            switch (_context11.prev = _context11.next) {
+              case 0:
+                console.log('onSubmit', this.form);
+
+                if (!(this.form._id !== this.row._id)) {
+                  _context11.next = 3;
+                  break;
+                }
+
+                throw new Error('id mismatch');
+
+              case 3:
+                _context11.next = 5;
+                return Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["updateResource"])(this.form);
+
+              case 5:
+                this._.merge(this.row, this.form);
+
+                item = this.mapItem(this.row);
+
+                this._.merge(this.editingItem, item);
+
+              case 8:
+              case "end":
+                return _context11.stop();
+            }
+          }
+        }, _callee11, this);
+      }));
+
+      function onSubmit() {
+        return _onSubmit.apply(this, arguments);
+      }
+
+      return onSubmit;
+    }(),
+    onReset: function onReset(event) {
       var _this = this;
 
-      var level = _ref.level,
-          field = _ref.field,
-          _ref$filters = _ref.filters,
-          filters = _ref$filters === void 0 ? {} : _ref$filters,
-          type = _ref.type,
-          _ref$isLeaf = _ref.isLeaf,
-          isLeaf = _ref$isLeaf === void 0 ? false : _ref$isLeaf,
-          icon = _ref.icon;
-      var query = this.distinct(filters, field);
-      return Object(_api_resources__WEBPACK_IMPORTED_MODULE_3__["resourceList"])(query).then(function (_ref2) {
-        var data = _ref2.data;
+      console.log('onReset', event);
+      this.form = this._.pick(this.row, ['_id', 'name', 'type', 'usage.group']); // Trick to reset/clear native browser form validation state
 
-        var mapper = function mapper(text) {
-          var _filters = _this._.clone(filters);
-
-          _this._.merge(_filters, Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])({}, field, text));
-
-          return {
-            text: text,
-            level: level,
-            isLeaf: isLeaf,
-            icon: icon,
-            type: type,
-            filters: _filters
-          };
-        };
-
-        var treeData = _this._.map(data, mapper);
-
-        return treeData;
+      this.show = false;
+      this.$nextTick(function () {
+        _this.show = true;
       });
     },
-    itemClick: function itemClick(node, item, e) {
-      var _this2 = this;
+    onRemove: function () {
+      var _onRemove = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(event) {
+        var _this2 = this;
 
-      var filters = this._.cloneDeep(node.model.filters);
+        return regeneratorRuntime.wrap(function _callee12$(_context12) {
+          while (1) {
+            switch (_context12.prev = _context12.next) {
+              case 0:
+                console.log('onRemove', event);
+                this.$confirm('Confirm to remove the resource', 'Warning', {
+                  confirmButtonText: 'Confirm',
+                  cancelButtonText: 'Cancel',
+                  type: 'warning'
+                }).then(function () {
+                  return Object(_api_resources__WEBPACK_IMPORTED_MODULE_6__["deleteResource"])(_this2.form._id);
+                }).then(function () {
+                  return _this2.$message({
+                    type: 'success',
+                    message: 'Delete succeed!'
+                  });
+                }).then(function () {
+                  if (_this2.editingItem.id !== undefined) {
+                    var index = _this2.editingNode.parentItem.indexOf(_this2.editingItem);
 
-      if (node.model.isLeaf) {
-        var _id = node.model.filters._id;
-        console.log('Get result: ', _id);
-        Object(_api_resources__WEBPACK_IMPORTED_MODULE_3__["searchResource"])(_id).then(function (_ref3) {
-          var data = _ref3.data;
-          // eslint-disable-next-line no-console
-          console.log("searchResult(".concat(_id, "): ").concat(JSON.stringify(data)));
+                    _this2.editingNode.parentItem.splice(index, 1);
+                  }
 
-          _this2._.unset(data, '__v');
+                  _this2.row = {};
+                });
 
-          _this2._.unset(data, '_id');
+              case 2:
+              case "end":
+                return _context12.stop();
+            }
+          }
+        }, _callee12, this);
+      }));
 
-          _this2.row = data;
-        });
-      } else {
-        this.row = filters;
+      function onRemove(_x14) {
+        return _onRemove.apply(this, arguments);
       }
-    }
+
+      return onRemove;
+    }()
   }
 });
 
@@ -222,11 +780,159 @@ var render = function() {
         [
           _c(
             "el-col",
-            { attrs: { span: 12 } },
+            { attrs: { span: 8 } },
             [
+              _c(
+                "b-checkbox",
+                {
+                  attrs: { switch: "" },
+                  model: {
+                    value: _vm.enableDraggable,
+                    callback: function($$v) {
+                      _vm.enableDraggable = $$v
+                    },
+                    expression: "enableDraggable"
+                  }
+                },
+                [
+                  _vm._v(
+                    "\n        Allow to reorder parents by drag'n'drop\n      "
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "b-button-toolbar",
+                {
+                  attrs: {
+                    "aria-label": "Toolbar with button groups and input groups"
+                  }
+                },
+                [
+                  _c(
+                    "b-button-group",
+                    { staticClass: "mr-1", attrs: { size: "sm" } },
+                    [
+                      _c("b-button", { on: { click: _vm.openCreateModal } }, [
+                        _vm._v("Create")
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-input-group",
+                    { attrs: { size: "sm", prepend: "search" } },
+                    [
+                      _c("b-form-input", {
+                        staticClass: "text-right",
+                        on: { input: _vm.onSearch }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-modal",
+                {
+                  attrs: {
+                    id: "modal-create-resource",
+                    "hide-backdrop": "",
+                    "content-class": "shadow"
+                  },
+                  on: { ok: _vm.onCreate }
+                },
+                [
+                  _vm._v("\n        Name:\n        "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.newResource.name,
+                        expression: "newResource.name"
+                      }
+                    ],
+                    attrs: { type: "text", title: "Name" },
+                    domProps: { value: _vm.newResource.name },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.newResource, "name", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v("\n        Type:\n        "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.newResource.type,
+                          expression: "newResource.type"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.newResource,
+                            "type",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    [
+                      _c("option", { attrs: { value: "dut", default: "" } }, [
+                        _vm._v("DUT")
+                      ]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "computer" } }, [
+                        _vm._v("Computer")
+                      ]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "accessories" } }, [
+                        _vm._v("Accessories")
+                      ]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "room" } }, [
+                        _vm._v("Room")
+                      ]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "other" } }, [
+                        _vm._v("Other")
+                      ])
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
               _c("v-jstree", {
-                attrs: { data: _vm.treeData, async: _vm.loadData },
-                on: { "item-click": _vm.itemClick }
+                ref: "tree",
+                attrs: {
+                  data: _vm.treeData,
+                  async: _vm.loadData,
+                  draggable: _vm.enableDraggable,
+                  "allow-batch": _vm.enableDraggable
+                },
+                on: { "item-click": _vm.itemClick, "item-drop": _vm.itemDrop }
               })
             ],
             1
@@ -234,17 +940,201 @@ var render = function() {
           _vm._v(" "),
           _c(
             "el-col",
-            { attrs: { span: 12 } },
+            { attrs: { span: 16 } },
             [
-              _c("vue-json-pretty", {
-                attrs: {
-                  data: _vm.row,
-                  deep: 1,
-                  "deep-collapse-children": true,
-                  "show-length": true,
-                  "show-double-quotes": false
-                }
-              })
+              _c(
+                "b-tabs",
+                { attrs: { "content-class": "mt-3" } },
+                [
+                  _c(
+                    "b-tab",
+                    { attrs: { title: "Details", active: "" } },
+                    [
+                      _c(
+                        "b-form-checkbox",
+                        {
+                          attrs: { name: "check-button", switch: "" },
+                          model: {
+                            value: _vm.enableEdit,
+                            callback: function($$v) {
+                              _vm.enableEdit = $$v
+                            },
+                            expression: "enableEdit"
+                          }
+                        },
+                        [_vm._v("\n            Allow editing\n          ")]
+                      ),
+                      _vm._v(" "),
+                      _vm.show
+                        ? _c(
+                            "b-form",
+                            {
+                              on: { submit: _vm.onSubmit, reset: _vm.onReset }
+                            },
+                            [
+                              _c(
+                                "b-form-group",
+                                {
+                                  attrs: {
+                                    id: "input-group-1",
+                                    label: "Name:",
+                                    "label-for": "form-name"
+                                  }
+                                },
+                                [
+                                  _c("b-form-input", {
+                                    attrs: {
+                                      id: "form-name",
+                                      readonly: !_vm.enableEdit,
+                                      type: "string",
+                                      placeholder: "Enter Name",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.form.name,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.form, "name", $$v)
+                                      },
+                                      expression: "form.name"
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "b-form-group",
+                                {
+                                  attrs: {
+                                    id: "input-group-2",
+                                    label: "Type:",
+                                    "label-for": "input-type"
+                                  }
+                                },
+                                [
+                                  _c("b-form-select", {
+                                    attrs: {
+                                      id: "input-type",
+                                      disabled: !_vm.enableEdit,
+                                      options: _vm.schema.properties.type.enum,
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.form.type,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.form, "type", $$v)
+                                      },
+                                      expression: "form.type"
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "b-form-group",
+                                {
+                                  attrs: {
+                                    id: "input-group-3",
+                                    label: "User group:",
+                                    "label-for": "form-usage-group"
+                                  }
+                                },
+                                [
+                                  _c("b-form-input", {
+                                    attrs: {
+                                      id: "form-usage-group",
+                                      readonly: !_vm.enableEdit,
+                                      type: "string",
+                                      placeholder: "usage group",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.form.usage.group,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.form.usage, "group", $$v)
+                                      },
+                                      expression: "form.usage.group"
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "b-button",
+                                {
+                                  attrs: {
+                                    type: "submit",
+                                    disabled: !_vm.enableEdit,
+                                    variant: "primary"
+                                  }
+                                },
+                                [_vm._v("Submit")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "b-button",
+                                {
+                                  attrs: {
+                                    type: "reset",
+                                    disabled: !_vm.enableEdit,
+                                    variant: "danger"
+                                  }
+                                },
+                                [_vm._v("Reset")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "b-button",
+                                {
+                                  directives: [
+                                    {
+                                      name: "b-tooltip",
+                                      rawName: "v-b-tooltip.hover",
+                                      modifiers: { hover: true }
+                                    }
+                                  ],
+                                  attrs: {
+                                    disabled: !(
+                                      _vm.enableEdit &&
+                                      _vm.row.childs.length === 0
+                                    ),
+                                    variant: "danger",
+                                    title:
+                                      "Removing allowed only when it does not contains childs"
+                                  },
+                                  on: { click: _vm.onRemove }
+                                },
+                                [_vm._v("Remove")]
+                              )
+                            ],
+                            1
+                          )
+                        : _vm._e()
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-tab",
+                    { attrs: { title: "raw" } },
+                    [
+                      _c("vue-json-pretty", {
+                        attrs: {
+                          data: _vm.row,
+                          deep: 1,
+                          "deep-collapse-children": true,
+                          "show-length": true,
+                          "show-double-quotes": false
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
             ],
             1
           )
@@ -266,12 +1156,15 @@ render._withStripped = true
 /*!******************************!*\
   !*** ./src/api/resources.js ***!
   \******************************/
-/*! exports provided: searchResource, resourceList, getSchema */
+/*! exports provided: searchResource, createResource, deleteResource, updateResource, resourceList, getSchema */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "searchResource", function() { return searchResource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createResource", function() { return createResource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteResource", function() { return deleteResource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateResource", function() { return updateResource; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resourceList", function() { return resourceList; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSchema", function() { return getSchema; });
 /* harmony import */ var core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom.iterable */ "./node_modules/core-js/modules/web.dom.iterable.js");
@@ -279,6 +1172,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es6_regexp_split__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es6.regexp.split */ "./node_modules/core-js/modules/es6.regexp.split.js");
 /* harmony import */ var core_js_modules_es6_regexp_split__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_regexp_split__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _utils_request__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/utils/request */ "./src/utils/request.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -286,6 +1182,35 @@ function searchResource(id) {
   return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
     url: "/api/v0/resources/".concat(id),
     method: 'get'
+  });
+}
+function createResource(data) {
+  return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    url: "/api/v0/resources",
+    method: 'post',
+    data: data
+  }).then(function (_ref) {
+    var data = _ref.data;
+    return data;
+  });
+}
+function deleteResource(id) {
+  return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    url: "/api/v0/resources/".concat(id),
+    method: 'delete'
+  }).then(function (_ref2) {
+    var data = _ref2.data;
+    return data;
+  });
+}
+function updateResource(data) {
+  return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    url: "/api/v0/resources/".concat(data._id),
+    method: 'put',
+    data: lodash__WEBPACK_IMPORTED_MODULE_3___default()(data, ['_id'])
+  }).then(function (_ref3) {
+    var data = _ref3.data;
+    return data;
   });
 }
 function resourceList(query) {
@@ -299,15 +1224,15 @@ function getSchema(_) {
   return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
     url: "/api/v0/schemas/Resource.json",
     method: 'get'
-  }).then(function (_ref) {
-    var data = _ref.data;
+  }).then(function (_ref4) {
+    var data = _ref4.data;
     var schema = data.schema;
 
-    var fill = function fill(key, _ref2) {
-      var title = _ref2.title,
-          _ref2$def = _ref2.def,
-          def = _ref2$def === void 0 ? '' : _ref2$def,
-          type = _ref2.type;
+    var fill = function fill(key, _ref5) {
+      var title = _ref5.title,
+          _ref5$def = _ref5.def,
+          def = _ref5$def === void 0 ? '' : _ref5$def,
+          type = _ref5.type;
       key = key.split('.').join('.properties.');
 
       _.set(schema, "properties.".concat(key, ".title"), title);

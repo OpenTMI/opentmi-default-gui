@@ -9,7 +9,12 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _api_resources__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/api/resources */ "./src/api/resources.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var _api_resources__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/api/resources */ "./src/api/resources.js");
+
+
 //
 //
 //
@@ -29,13 +34,32 @@ __webpack_require__.r(__webpack_exports__);
       schema: {}
     };
   },
-  created: function created() {
-    var _this = this;
+  created: function () {
+    var _created = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return Object(_api_resources__WEBPACK_IMPORTED_MODULE_2__["getSchema"])(this._);
 
-    Object(_api_resources__WEBPACK_IMPORTED_MODULE_0__["getSchema"])(this._).then(function (schema) {
-      _this.schema = schema;
-    });
-  },
+            case 2:
+              this.schema = _context.sent;
+
+            case 3:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function created() {
+      return _created.apply(this, arguments);
+    }
+
+    return created;
+  }(),
   methods: {
     handleChange: function handleChange(val) {}
   }
@@ -122,12 +146,15 @@ render._withStripped = true
 /*!******************************!*\
   !*** ./src/api/resources.js ***!
   \******************************/
-/*! exports provided: searchResource, resourceList, getSchema */
+/*! exports provided: searchResource, createResource, deleteResource, updateResource, resourceList, getSchema */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "searchResource", function() { return searchResource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createResource", function() { return createResource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteResource", function() { return deleteResource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateResource", function() { return updateResource; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resourceList", function() { return resourceList; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSchema", function() { return getSchema; });
 /* harmony import */ var core_js_modules_web_dom_iterable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom.iterable */ "./node_modules/core-js/modules/web.dom.iterable.js");
@@ -135,6 +162,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es6_regexp_split__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es6.regexp.split */ "./node_modules/core-js/modules/es6.regexp.split.js");
 /* harmony import */ var core_js_modules_es6_regexp_split__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_regexp_split__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _utils_request__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/utils/request */ "./src/utils/request.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -142,6 +172,35 @@ function searchResource(id) {
   return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
     url: "/api/v0/resources/".concat(id),
     method: 'get'
+  });
+}
+function createResource(data) {
+  return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    url: "/api/v0/resources",
+    method: 'post',
+    data: data
+  }).then(function (_ref) {
+    var data = _ref.data;
+    return data;
+  });
+}
+function deleteResource(id) {
+  return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    url: "/api/v0/resources/".concat(id),
+    method: 'delete'
+  }).then(function (_ref2) {
+    var data = _ref2.data;
+    return data;
+  });
+}
+function updateResource(data) {
+  return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    url: "/api/v0/resources/".concat(data._id),
+    method: 'put',
+    data: lodash__WEBPACK_IMPORTED_MODULE_3___default()(data, ['_id'])
+  }).then(function (_ref3) {
+    var data = _ref3.data;
+    return data;
   });
 }
 function resourceList(query) {
@@ -155,15 +214,15 @@ function getSchema(_) {
   return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
     url: "/api/v0/schemas/Resource.json",
     method: 'get'
-  }).then(function (_ref) {
-    var data = _ref.data;
+  }).then(function (_ref4) {
+    var data = _ref4.data;
     var schema = data.schema;
 
-    var fill = function fill(key, _ref2) {
-      var title = _ref2.title,
-          _ref2$def = _ref2.def,
-          def = _ref2$def === void 0 ? '' : _ref2$def,
-          type = _ref2.type;
+    var fill = function fill(key, _ref5) {
+      var title = _ref5.title,
+          _ref5$def = _ref5.def,
+          def = _ref5$def === void 0 ? '' : _ref5$def,
+          type = _ref5.type;
       key = key.split('.').join('.properties.');
 
       _.set(schema, "properties.".concat(key, ".title"), title);

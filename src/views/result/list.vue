@@ -74,9 +74,9 @@
       </template>
 
       <!-- Optional default data cell scoped slot -->
-      <template v-slot:cell(tcid)="{value}">
-        <div v-b-tooltip.hover placement="bottom" :title="value">
-          {{ lengthLimiter(value, 30) }}
+      <template v-slot:cell(tcid)="data">
+        <div v-b-tooltip.hover placement="bottom" :title="'View result: '+data.value">
+          <router-link :to="{ name: 'ViewResult', params: { id: data.item._id }}">{{ (lengthLimiter(data.value, 30)) }}</router-link>
         </div>
       </template>
       <template v-slot:cell(cre.time)="{ value }">

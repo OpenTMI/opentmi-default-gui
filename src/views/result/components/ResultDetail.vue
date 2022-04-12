@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { getSchema } from '@/api/results'
+import { getSchema, searchResult } from '@/api/results'
 
 export default {
   name: 'ResultDetail',
@@ -19,10 +19,9 @@ export default {
       schema: {}
     }
   },
-  created() {
-    getSchema(this._).then((schema) => {
-      this.schema = schema
-    })
+  async created() {
+    this.schema = await getSchema(this._)
+    this.json = await searchResult(this.$route.params.id)
   },
   methods: {
     handleChange(val) {

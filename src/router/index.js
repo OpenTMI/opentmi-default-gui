@@ -163,10 +163,17 @@ export const asyncRoutes = [
         meta: { title: 'Create Result', icon: 'edit' }
       },
       {
-        path: 'edit/:id(\\s+)',
+        path: 'edit/:id',
         component: () => import('@/views/result/edit'),
         name: 'EditResult',
         meta: { title: 'Edit Result', noCache: true, activeMenu: '/result/edit' },
+        hidden: true
+      },
+      {
+        path: 'view/:id',
+        component: () => import('@/views/result/view'),
+        name: 'ViewResult',
+        meta: { title: 'View Result', noCache: true, activeMenu: '/result/view' },
         hidden: true
       },
       {
@@ -244,6 +251,13 @@ export const asyncRoutes = [
         component: () => import('@/views/resource/create'),
         name: 'CreateResource',
         meta: { title: 'Create Resource', icon: 'edit' }
+      },
+      {
+        path: 'resource/:id',
+        component: () => import('@/views/resource/view'),
+        name: 'ViewResource',
+        meta: { title: 'View Result', noCache: true, activeMenu: '/resource/view' },
+        hidden: true
       },
       {
         path: 'edit/:id(\\s+)',

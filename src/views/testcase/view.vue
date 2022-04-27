@@ -1,11 +1,11 @@
 <template>
-  <div class="post">
+  <div class="app-container">
     <div v-if="loading" class="loading">Loading...</div>
 
     <div v-if="error" class="error">{{ error }}</div>
 
     <div v-if="result" class="content">
-      <h3>{{ result.tcid }}</h3>
+      <h3>Testcase ID: {{ result.tcid }}</h3>
       <b-tabs content-class="mt-3">
         <b-tab title="Details">
           <vue-json-pretty
@@ -16,15 +16,16 @@
             :show-double-quotes="false"
           />
         </b-tab>
-        <b-tab title="Test History" active>
+        <b-tab title="Results History" active>
           <b-table
             id="result-history-table"
+            ref="history-table"
             striped="true"
             bordered="true"
             head-variant="light"
             small="true"
             hover="true"
-            :items="getList"
+            :items="items"
             :fields="fields"
             :busy.sync="listLoading"
             class="mt-3"
@@ -122,10 +123,25 @@ export default {
           sortable: false,
           label: 'Dut SN'
         }
-      ]
+      ],
+      items: [],
+      currentPage: 0,
+      perPage: 10,
+      totalItems: 0
     }
   },
-  created() {
+  mounted() {
+    console.log(this.$refs)
+    const tableScrollBody = this.$refs['history-table'].$el
+    /* Consider debouncing the event call */
+    tableScrollBody.addEventListener('scroll', this.onScroll)
+  },
+  beforeDestroy() {
+    /* Clean up just to be sure */
+    const tableScrollBody = this.$refs['history-table'].$el
+    tableScrollBody.removeEventListener('scroll', this.onScroll)
+  },
+  async created() {
     // watch the params of the route to fetch the data again
     this.$watch(
       () => this.$route.params,
@@ -136,12 +152,21 @@ export default {
       // already being observed
       { immediate: true }
     )
+    await this.fetchData()
+    await this.refreshHistoryTotals()
+    await this.fetchHistory()
   },
   methods: {
     async fetchData() {
+      const id = this.$route.params.id
+      if (this._.get(this.result, '_id') === id) {
+        // already updated
+        return
+      }
+
       this.error = this.result = null
       this.loading = true
-      const id = this.$route.params.id
+
       try {
         const { data } = await searchResult(id)
         this.result = data
@@ -151,14 +176,23 @@ export default {
       this.loading = false
       this.$root.$emit('bv::refresh::table', 'result-history-table')
     },
-    async getList() {
+    async refreshHistoryTotals() {
+      const { data } = await resultsList({ tcid: this.result.tcid, t: 'count' })
+      this.totalItems = data
+    },
+    async fetchHistory() {
       const query = {
         tcid: this.result.tcid,
-        l: 100,
+        l: this.perPage,
+        sk: this.currentPage * this.perPage,
         s: { 'cre.time': -1 }
       }
+      /* No need to call if all items retrieved */
+      if (this.items.length === this.totalItems) return
       const { data } = await resultsList(query)
-      return data
+      const newItems = data
+      /* Add new items to existing ones */
+      this.items = this._.uniq(this.items.concat(newItems))
     },
     rowClicked(row) {
       this.$set(row, '_showDetails', !row._showDetails)
@@ -174,6 +208,16 @@ export default {
       }
       const color = colors[value]
       return color || '#000000'
+    },
+    onScroll(event) {
+      if (
+        event.target.scrollTop + event.target.clientHeight >=
+        event.target.scrollHeight
+      ) {
+        if (!this.isBusy) {
+          this.fetchHistory()
+        }
+      }
     }
   }
 }

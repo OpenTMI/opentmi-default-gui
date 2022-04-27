@@ -1,11 +1,11 @@
 <template>
-  <div class="post">
+  <div class="app-container">
     <div v-if="loading" class="loading">Loading...</div>
 
     <div v-if="error" class="error">{{ error }}</div>
 
     <div v-if="resource" class="content">
-      <h3>{{ resource.name }}</h3>
+      <h3>Resource: {{ resource.name }}</h3>
       <b-tabs content-class="mt-3">
         <b-tab title="Details">
           <vue-json-pretty

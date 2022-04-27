@@ -170,13 +170,6 @@ export const asyncRoutes = [
         hidden: true
       },
       {
-        path: 'view/:id',
-        component: () => import('@/views/result/view'),
-        name: 'ViewResult',
-        meta: { title: 'View Result', noCache: true, activeMenu: '/result/view' },
-        hidden: true
-      },
-      {
         path: 'list',
         component: () => import('@/views/result/list'),
         name: 'ResultList',
@@ -221,6 +214,13 @@ export const asyncRoutes = [
         meta: { title: 'Edit TestCase', noCache: true, activeMenu: '/testcase/edit' },
         hidden: true
       },*/
+      {
+        path: 'view/:id',
+        component: () => import('@/views/testcase/view'),
+        name: 'ViewResult',
+        meta: { title: 'View Result', noCache: true, activeMenu: '/testcase/view' },
+        hidden: true
+      },
       {
         path: 'list',
         component: () => import('@/views/testcase/list'),

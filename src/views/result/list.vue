@@ -126,6 +126,7 @@
 import { resultsList } from '@/api/results'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
+import Vue from 'vue'
 
 export default {
   name: 'ResultList',
@@ -157,6 +158,15 @@ export default {
           key: 'exec.verdict',
           sortable: true,
           label: 'Verdict'
+        },
+        {
+          key: 'exec.duration',
+          sortable: true,
+          label: 'Duration',
+          formatter: (value, key, item) =>
+            Vue.moment
+              .utc(Vue.moment.duration(value, 'seconds').asMilliseconds())
+              .format('H[h] m[min]  s.S[s]') // '0h 0min 0.1s'
         },
         {
           key: 'exec.note',

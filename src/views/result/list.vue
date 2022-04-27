@@ -106,7 +106,9 @@
       </template>
       <template v-slot:cell(exec.duts.sn)="data">
         <div v-b-tooltip.hover placement="bottom" :title="'View resource: '+data.value">
-          <router-link :to="{ name: 'ViewResources', params: { id: _.get(data.item, 'exec.duts.0.sn', '') }}">{{ data.value }}</router-link>
+          <router-link :to="{ name: 'ViewResource', params: { id: _.get(data.item, 'exec.duts.0.sn', '') }}">
+            {{ data.value }}
+          </router-link>
         </div>
       </template>
       <template v-slot:table-busy>
@@ -239,8 +241,8 @@ export default {
   mounted() {
     this.selectedColumns = [
       'cre.time', 'tcid', 'campaign',
-      'exec.verdict', 'exec.sut',
-      'exec.note', 'exec.duts.sn']
+      'exec.verdict', 'exec.sut', 'exec.note',
+      'exec.duts.model', 'exec.duts.sn']
     this.columnChange()
     this.updateCampaignList()
   },

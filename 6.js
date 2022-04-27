@@ -29,6 +29,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vue-json-pretty/lib/styles.css */ "./node_modules/vue-json-pretty/lib/styles.css");
 /* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js");
 
 
 
@@ -161,6 +162,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 
 
@@ -192,6 +194,14 @@ __webpack_require__.r(__webpack_exports__);
         key: 'exec.verdict',
         sortable: true,
         label: 'Verdict'
+      }, {
+        key: 'exec.duration',
+        sortable: true,
+        label: 'Duration',
+        formatter: function formatter(value, key, item) {
+          return vue__WEBPACK_IMPORTED_MODULE_11__["default"].moment.utc(vue__WEBPACK_IMPORTED_MODULE_11__["default"].moment.duration(value, 'seconds').asMilliseconds()).format('H[h] m[min]  s.S[s]');
+        } // '0h 0min 0.1s'
+
       }, {
         key: 'exec.note',
         sortable: false,

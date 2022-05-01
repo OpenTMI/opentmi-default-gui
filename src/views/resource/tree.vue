@@ -145,7 +145,7 @@ export default {
       } else {
         switch (resource.type) {
           case ('system'):
-            icon = 'el-icon-diagram3'
+            icon = 'el-icon-menu'
             break
           case ('instrument'):
             icon = 'el-icon-compass'

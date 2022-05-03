@@ -9,7 +9,12 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
+
+
 //
 //
 //
@@ -29,13 +34,37 @@ __webpack_require__.r(__webpack_exports__);
       schema: {}
     };
   },
-  created: function created() {
-    var _this = this;
+  created: function () {
+    var _created = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return Object(_api_results__WEBPACK_IMPORTED_MODULE_2__["getSchema"])(this._);
 
-    Object(_api_results__WEBPACK_IMPORTED_MODULE_0__["getSchema"])(this._).then(function (schema) {
-      _this.schema = schema;
-    });
-  },
+            case 2:
+              this.schema = _context.sent;
+              _context.next = 5;
+              return Object(_api_results__WEBPACK_IMPORTED_MODULE_2__["searchResult"])(this.$route.params.id);
+
+            case 5:
+              this.json = _context.sent;
+
+            case 6:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function created() {
+      return _created.apply(this, arguments);
+    }
+
+    return created;
+  }(),
   methods: {
     handleChange: function handleChange(val) {}
   }

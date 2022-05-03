@@ -96,6 +96,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -403,6 +408,44 @@ var render = function() {
                       })
                 ])
               })
+            }
+          },
+          {
+            key: "cell(name)",
+            fn: function(data) {
+              return [
+                _c(
+                  "div",
+                  {
+                    directives: [
+                      {
+                        name: "b-tooltip",
+                        rawName: "v-b-tooltip.hover",
+                        modifiers: { hover: true }
+                      }
+                    ],
+                    attrs: {
+                      placement: "bottom",
+                      title: "View resource: " + data.value
+                    }
+                  },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        attrs: {
+                          to: {
+                            name: "ViewResource",
+                            params: { id: data.item._id }
+                          }
+                        }
+                      },
+                      [_vm._v(_vm._s(data.value))]
+                    )
+                  ],
+                  1
+                )
+              ]
             }
           },
           {

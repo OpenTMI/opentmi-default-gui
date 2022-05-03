@@ -22,14 +22,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es6_object_keys__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es6.object.keys */ "./node_modules/core-js/modules/es6.object.keys.js");
 /* harmony import */ var core_js_modules_es6_object_keys__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_object_keys__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty */ "./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty.js");
-/* harmony import */ var core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es6.array.find */ "./node_modules/core-js/modules/es6.array.find.js");
-/* harmony import */ var core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
-/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue-json-pretty */ "./node_modules/vue-json-pretty/lib/vue-json-pretty.js");
-/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vue-json-pretty/lib/styles.css */ "./node_modules/vue-json-pretty/lib/styles.css");
-/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es6.array.find */ "./node_modules/core-js/modules/es6.array.find.js");
+/* harmony import */ var core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vue-json-pretty */ "./node_modules/vue-json-pretty/lib/vue-json-pretty.js");
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vue-json-pretty/lib/styles.css */ "./node_modules/vue-json-pretty/lib/styles.css");
+/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js");
 
 
 
@@ -38,6 +41,27 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -169,7 +193,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ResultList',
   components: {
-    VueJsonPretty: vue_json_pretty__WEBPACK_IMPORTED_MODULE_9___default.a
+    VueJsonPretty: vue_json_pretty__WEBPACK_IMPORTED_MODULE_11___default.a
   },
   data: function data() {
     var _this = this;
@@ -199,7 +223,7 @@ __webpack_require__.r(__webpack_exports__);
         sortable: true,
         label: 'Duration',
         formatter: function formatter(value, key, item) {
-          return vue__WEBPACK_IMPORTED_MODULE_11__["default"].moment.utc(vue__WEBPACK_IMPORTED_MODULE_11__["default"].moment.duration(value, 'seconds').asMilliseconds()).format('H[h] m[min]  s.S[s]');
+          return vue__WEBPACK_IMPORTED_MODULE_13__["default"].moment.utc(vue__WEBPACK_IMPORTED_MODULE_13__["default"].moment.duration(value, 'seconds').asMilliseconds()).format('H[h] m[min]  s.S[s]');
         } // '0h 0min 0.1s'
 
       }, {
@@ -221,6 +245,14 @@ __webpack_require__.r(__webpack_exports__);
         tooltip: 'Device Under Test model',
         formatter: function formatter(value, key, item) {
           return _this._.get(item, 'exec.duts.0.model', '');
+        }
+      }, {
+        key: 'exec.duts.sn',
+        sortable: false,
+        label: 'Dut SN',
+        tooltip: 'Device Under Test Serial Number',
+        formatter: function formatter(value, key, item) {
+          return _this._.get(item, 'exec.duts.0.sn', '');
         }
       }, {
         key: 'exec.sut.branch',
@@ -247,7 +279,8 @@ __webpack_require__.r(__webpack_exports__);
       listQuery: {
         page: 1,
         limit: 20
-      }
+      },
+      availableCampaigns: []
     };
   },
   watch: {
@@ -259,8 +292,9 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    this.selectedColumns = ['cre.time', 'tcid', 'campaign', 'exec.verdict', 'exec.duts', 'exec.sut', 'exec.note', 'exec.duts.model'];
+    this.selectedColumns = ['cre.time', 'tcid', 'campaign', 'exec.verdict', 'exec.sut', 'exec.note', 'exec.duts.model', 'exec.duts.sn'];
     this.columnChange();
+    this.updateCampaignList();
   },
   methods: {
     lengthLimiter: function lengthLimiter(value) {
@@ -282,6 +316,41 @@ __webpack_require__.r(__webpack_exports__);
         });
       });
     },
+    updateCampaignList: function () {
+      var _updateCampaignList = Object(_home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_8__["default"])( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var query, campaignQuery, _ref, data;
+
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                query = this._getQuery();
+                campaignQuery = this._.merge({
+                  t: 'distinct',
+                  f: 'campaign'
+                }, this._.omit(query, ['s', 'l', 'sk']));
+                _context.next = 4;
+                return Object(_api_results__WEBPACK_IMPORTED_MODULE_10__["resultsList"])(campaignQuery);
+
+              case 4:
+                _ref = _context.sent;
+                data = _ref.data;
+                this.availableCampaigns = data;
+
+              case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function updateCampaignList() {
+        return _updateCampaignList.apply(this, arguments);
+      }
+
+      return updateCampaignList;
+    }(),
     rowClicked: function rowClicked(row) {
       this.$set(row, '_showDetails', !row._showDetails);
     },
@@ -304,7 +373,7 @@ __webpack_require__.r(__webpack_exports__);
     _reload: function _reload() {
       this.$root.$emit('bv::refresh::table', 'my-table');
     },
-    _getList: function _getList() {
+    _getQuery: function _getQuery() {
       var _this3 = this;
 
       var query = this._.omitBy(this.listQuery, this._.isNil);
@@ -342,21 +411,27 @@ __webpack_require__.r(__webpack_exports__);
           query[key] = "{bi}".concat(value);
         }
       });
+      return query;
+    },
+    _getList: function _getList() {
+      var _this4 = this;
+
+      var query = this._getQuery();
 
       var countQuery = this._.merge({
         t: 'count'
       }, this._.omit(query, ['s', 'l', 'sk']));
 
-      return Object(_api_results__WEBPACK_IMPORTED_MODULE_8__["resultsList"])(countQuery).then(function (_ref) {
-        var data = _ref.data;
-        _this3.total = data.count;
-        return Object(_api_results__WEBPACK_IMPORTED_MODULE_8__["resultsList"])(query);
-      }).then(function (_ref2) {
+      return Object(_api_results__WEBPACK_IMPORTED_MODULE_10__["resultsList"])(countQuery).then(function (_ref2) {
         var data = _ref2.data;
+        _this4.total = data.count;
+        return Object(_api_results__WEBPACK_IMPORTED_MODULE_10__["resultsList"])(query);
+      }).then(function (_ref3) {
+        var data = _ref3.data;
         return data;
       }).catch(function (error) {
         console.error(error);
-        _this3.total = 0; // Returning an empty array, allows table to correctly handle
+        _this4.total = 0; // Returning an empty array, allows table to correctly handle
         // internal busy state in case of error
 
         return [];
@@ -454,7 +529,63 @@ var render = function() {
               var fields = ref.fields
               return _vm._l(fields, function(field) {
                 return _c("td", { key: field.key }, [
-                  field.key == "exec.verdict"
+                  field.key == "campaign"
+                    ? _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.listQuery[field.key],
+                              expression: "listQuery[field.key]"
+                            }
+                          ],
+                          on: {
+                            keyup: function($event) {
+                              if (
+                                !$event.type.indexOf("key") &&
+                                _vm._k(
+                                  $event.keyCode,
+                                  "enter",
+                                  13,
+                                  $event.key,
+                                  "Enter"
+                                )
+                              ) {
+                                return null
+                              }
+                              return _vm._reload($event)
+                            },
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.listQuery,
+                                field.key,
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(_vm.availableCampaigns, function(item) {
+                          return _c("option", {
+                            key: item,
+                            attrs: { label: item },
+                            domProps: { value: item }
+                          })
+                        }),
+                        0
+                      )
+                    : field.key == "exec.verdict"
                     ? _c(
                         "select",
                         {
@@ -564,8 +695,7 @@ var render = function() {
           },
           {
             key: "cell(tcid)",
-            fn: function(ref) {
-              var value = ref.value
+            fn: function(data) {
               return [
                 _c(
                   "div",
@@ -577,15 +707,26 @@ var render = function() {
                         modifiers: { hover: true }
                       }
                     ],
-                    attrs: { placement: "bottom", title: value }
+                    attrs: {
+                      placement: "bottom",
+                      title: "View result: " + data.value
+                    }
                   },
                   [
-                    _vm._v(
-                      "\n        " +
-                        _vm._s(_vm.lengthLimiter(value, 30)) +
-                        "\n      "
+                    _c(
+                      "router-link",
+                      {
+                        attrs: {
+                          to: {
+                            name: "ViewResult",
+                            params: { id: data.item._id }
+                          }
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.lengthLimiter(data.value, 30)))]
                     )
-                  ]
+                  ],
+                  1
                 )
               ]
             }
@@ -636,6 +777,50 @@ var render = function() {
                         "\n      "
                     )
                   ]
+                )
+              ]
+            }
+          },
+          {
+            key: "cell(exec.duts.sn)",
+            fn: function(data) {
+              return [
+                _c(
+                  "div",
+                  {
+                    directives: [
+                      {
+                        name: "b-tooltip",
+                        rawName: "v-b-tooltip.hover",
+                        modifiers: { hover: true }
+                      }
+                    ],
+                    attrs: {
+                      placement: "bottom",
+                      title: "View resource: " + data.value
+                    }
+                  },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        attrs: {
+                          to: {
+                            name: "ViewResource",
+                            params: {
+                              id: _vm._.get(data.item, "exec.duts.0.sn", "")
+                            }
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n          " + _vm._s(data.value) + "\n        "
+                        )
+                      ]
+                    )
+                  ],
+                  1
                 )
               ]
             }

@@ -46,6 +46,11 @@
       </template>
 
       <!-- Optional default data cell scoped slot -->
+      <template v-slot:cell(name)="data">
+        <div v-b-tooltip.hover placement="bottom" :title="'View resource: '+data.value">
+          <router-link :to="{ name: 'ViewResource', params: { id: data.item._id }}">{{ data.value }}</router-link>
+        </div>
+      </template>
       <template v-slot:cell(cre.time)="{ value }">
         <i>{{ value | moment('MM/DD/YYYY hh:mm') }}</i>
       </template>

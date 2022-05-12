@@ -8,6 +8,8 @@ import results from './results'
 import testcases from './testcases'
 import events from './events'
 import resources from './resources'
+import items from './items'
+import loans from './loans'
 import search from './remote-search'
 
 const mocks = [
@@ -18,7 +20,9 @@ const mocks = [
   ...testcases,
   ...results,
   ...events,
-  ...resources
+  ...resources,
+  ...items,
+  ...loans
 ]
 
 // for front mock

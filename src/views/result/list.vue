@@ -41,7 +41,23 @@
       <!-- filter row -->
       <template slot="top-row" slot-scope="{ fields }">
         <td v-for="field in fields" :key="field.key">
-          <select v-if="field.key == 'exec.verdict'" v-model="listQuery[field.key]">
+          <select
+            v-if="field.key == 'campaign'"
+            v-model="listQuery[field.key]"
+            @keyup.enter="_reload"
+          >
+            <option
+              v-for="item in availableCampaigns"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </select>
+          <select
+            v-else-if="field.key == 'exec.verdict'"
+            v-model="listQuery[field.key]"
+            @keyup.enter="_reload"
+          >
             <option />
             <option>pass</option>
             <option>fail</option>
@@ -57,28 +73,26 @@
             end-placeholder="End date"
             format="yyyy-MM-dd"
           /> -->
+
           <input
-            v-else-if="field.key == 'exec.duts'"
-            v-model="listQuery['exec.duts.model']"
-            placeholder="Dut Model"
+            v-else
+            v-model="listQuery[field.key]"
+            v-b-tooltip.hover
+            :title="field.tooltip"
+            :placeholder="field.label"
+            @keyup.enter="_reload"
           >
-          <input
-            v-else-if="field.key == 'exec.sut'"
-            v-model="listQuery['exec.sut.branch']"
-            placeholder="Branch"
-          >
-          <input v-else v-model="listQuery[field.key]" :placeholder="field.label" @keyup.enter="_reload">
         </td>
       </template>
 
       <!-- Optional default data cell scoped slot -->
-      <template v-slot:cell(tcid)="{value}">
-        <div v-b-tooltip.hover placement="bottom" :title="value">
-          {{ lengthLimiter(value, 30) }}
+      <template v-slot:cell(tcid)="data">
+        <div v-b-tooltip.hover placement="bottom" :title="'View result: '+data.value">
+          <router-link :to="{ name: 'ViewResult', params: { id: data.item._id }}">{{ (lengthLimiter(data.value, 30)) }}</router-link>
         </div>
       </template>
       <template v-slot:cell(cre.time)="{ value }">
-        <i>{{ value | moment('MM/DD/YYYY hh:mm') }}</i>
+        <i>{{ value | moment('YYYY.MM.DD hh:mm') }}</i>
       </template>
       <template v-slot:cell(exec.verdict)="{value}">
         <span :style="`color: ${getVerdictColor(value)}`">
@@ -88,6 +102,13 @@
       <template v-slot:cell(exec.note)="{value}">
         <div v-b-tooltip.hover placement="bottom" :title="value">
           {{ lengthLimiter(value) }}
+        </div>
+      </template>
+      <template v-slot:cell(exec.duts.sn)="data">
+        <div v-b-tooltip.hover placement="bottom" :title="'View resource: '+data.value">
+          <router-link :to="{ name: 'ViewResource', params: { id: _.get(data.item, 'exec.duts.0.sn', '') }}">
+            {{ data.value }}
+          </router-link>
         </div>
       </template>
       <template v-slot:table-busy>
@@ -124,6 +145,7 @@
 import { resultsList } from '@/api/results'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
+import Vue from 'vue'
 
 export default {
   name: 'ResultList',
@@ -138,7 +160,8 @@ export default {
         {
           key: 'cre.time',
           sortable: true,
-          label: 'Created at'
+          label: 'Created at',
+          tooltip: 'Search greater than day X: "{gt}2022.3.29"'
         },
         {
           key: 'tcid',
@@ -156,32 +179,52 @@ export default {
           label: 'Verdict'
         },
         {
+          key: 'exec.duration',
+          sortable: true,
+          label: 'Duration',
+          formatter: (value, key, item) =>
+            Vue.moment
+              .utc(Vue.moment.duration(value, 'seconds').asMilliseconds())
+              .format('H[h] m[min]  s.S[s]') // '0h 0min 0.1s'
+        },
+        {
           key: 'exec.note',
           sortable: false,
-          label: 'Note'
+          label: 'Note',
+          tooltip: 'search supports regex. E.g. /error/'
         },
         {
           key: 'exec.duts.vendor',
           sortable: false,
-          label: 'Dut0 Vendor',
+          label: 'Dut Vendor',
           formatter: (value, key, item) => this._.get(item, 'exec.duts.0.vendor', '')
         },
         {
           key: 'exec.duts.model',
           sortable: false,
-          label: 'Dut0 Model',
+          label: 'Dut Model',
+          tooltip: 'Device Under Test model',
           formatter: (value, key, item) => this._.get(item, 'exec.duts.0.model', '')
+        },
+        {
+          key: 'exec.duts.sn',
+          sortable: false,
+          label: 'Dut SN',
+          tooltip: 'Device Under Test Serial Number',
+          formatter: (value, key, item) => this._.get(item, 'exec.duts.0.sn', '')
         },
         {
           key: 'exec.sut.branch',
           sortable: false,
           label: 'Sut Branch',
+          tooltip: 'Software Under Test, Branch',
           formatter: (value, key, item) => this._.get(item, 'exec.sut.branch', '')
         },
         {
-          key: 'exec.sut.branch',
+          key: 'exec.sut.commitId',
           sortable: false,
           label: 'Sut commitId',
+          tooltip: 'Software Under Test, commitId',
           formatter: (value, key, item) => this._.get(item, 'exec.sut.commitId', '').substr(0, 7)
         }
       ],
@@ -193,7 +236,8 @@ export default {
       listQuery: {
         page: 1,
         limit: 20
-      }
+      },
+      availableCampaigns: []
     }
   },
   watch: {
@@ -207,9 +251,10 @@ export default {
   mounted() {
     this.selectedColumns = [
       'cre.time', 'tcid', 'campaign',
-      'exec.verdict', 'exec.duts', 'exec.sut',
-      'exec.note', 'exec.duts.model']
+      'exec.verdict', 'exec.sut', 'exec.note',
+      'exec.duts.model', 'exec.duts.sn']
     this.columnChange()
+    this.updateCampaignList()
   },
   methods: {
     lengthLimiter(value, maxLength = 20) {
@@ -221,6 +266,14 @@ export default {
     },
     columnChange() {
       this.fields = this.selectedColumns.map(key => this.columns.find(obj => obj.key === key))
+    },
+    async updateCampaignList() {
+      const query = this._getQuery()
+      const campaignQuery = this._.merge(
+        { t: 'distinct', f: 'campaign' },
+        this._.omit(query, ['s', 'l', 'sk']))
+      const { data } = await resultsList(campaignQuery)
+      this.availableCampaigns = data
     },
     rowClicked(row) {
       this.$set(row, '_showDetails', !row._showDetails)
@@ -244,13 +297,12 @@ export default {
     _reload() {
       this.$root.$emit('bv::refresh::table', 'my-table')
     },
-    _getList() {
+    _getQuery() {
       const query = this._.omitBy(this.listQuery, this._.isNil)
       query.l = query.limit
       query.sk = (query.page - 1) * query.limit
       this._.unset(query, 'limit')
       this._.unset(query, 'page')
-
       if (this.sortBy) {
         query.s = { [this.sortBy]: this.sortDesc ? -1 : 1 }
       } else {
@@ -273,7 +325,10 @@ export default {
           query[key] = `{bi}${value}`
         }
       })
-
+      return query
+    },
+    _getList() {
+      const query = this._getQuery()
       const countQuery = this._.merge({ t: 'count' }, this._.omit(query, ['s', 'l', 'sk']))
       return resultsList(countQuery)
         .then(({ data }) => {

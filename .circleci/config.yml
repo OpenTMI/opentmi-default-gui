@@ -11,7 +11,7 @@ workflows:
 
       - publish:
           requires:
-            - test-node12
+            - test-node14
           filters:
             tags:
               only: /^v.*/

@@ -15,7 +15,7 @@
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
     "new": "plop",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    //"prepare": "npm run snyk-protect"
   },
   "husky": {
     "hooks": {

@@ -36,6 +36,10 @@ defaults: &defaults
           # Workaround for https://github.blog/2021-09-01-improving-git-protocol-security-github/
           git config --global url."https://github.com/".insteadOf git://github.com/
     - run:
+        name: install python
+        command: |
+          apt-get update && apt-get install -y python3.
+    - run:
         name: npm-install
         command: npm ci
 

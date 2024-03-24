@@ -53,6 +53,7 @@ export function resultsList(query) {
   return request({
     url: '/api/v0/results',
     method: 'get',
-    params: query
+    params: query,
+    timeout: query.to + 1000
   })
 }

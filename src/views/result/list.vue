@@ -174,6 +174,11 @@ export default {
           label: 'Campaign'
         },
         {
+          key: 'job.id',
+          sortable: true,
+          label: 'JobID'
+        },
+        {
           key: 'exec.verdict',
           sortable: true,
           label: 'Verdict'
@@ -235,7 +240,8 @@ export default {
       listLoading: false,
       listQuery: {
         page: 1,
-        limit: 20
+        limit: 20,
+        'cre.time': `{gt}${new Date().toISOString().split('T')[0].replace(/-/g, '.')}`
       },
       availableCampaigns: []
     }
@@ -258,7 +264,7 @@ export default {
   },
   methods: {
     lengthLimiter(value, maxLength = 20) {
-      let out = value.substr(0, maxLength)
+      let out = value.substring(0, maxLength)
       if (value.length > maxLength) {
         out += '...'
       }
@@ -301,6 +307,8 @@ export default {
       const query = this._.omitBy(this.listQuery, this._.isNil)
       query.l = query.limit
       query.sk = (query.page - 1) * query.limit
+      query.to = 40000
+
       this._.unset(query, 'limit')
       this._.unset(query, 'page')
       if (this.sortBy) {
@@ -313,7 +321,9 @@ export default {
           return
         }
         let value = query[key]
-        if (value.startsWith('*')) {
+        if (typeof value !== 'string') {
+          // empty string
+        } else if (value.startsWith('*')) {
           value = value.slice(1)
           if (value.endsWith('*')) {
             query[key] = `/${value.slice(0, -1)}/`
@@ -338,6 +348,7 @@ export default {
         .then(({ data }) => data)
         .catch(error => {
           console.error(error)
+
           this.total = 0
           // Returning an empty array, allows table to correctly handle
           // internal busy state in case of error

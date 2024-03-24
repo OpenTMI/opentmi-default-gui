@@ -30,8 +30,11 @@
           <router-link to="/">
             <el-dropdown-item>Dashboard</el-dropdown-item>
           </router-link>
+          <a :href="'https://github.com/opentmi/opentmi/releases/v' + serverVersion" target="_blank">
+            <el-dropdown-item>opentmi/backend@{{ serverVersion }}</el-dropdown-item>
+          </a>
           <a target="_blank" href="https://github.com/opentmi/opentmi-default-gui/">
-            <el-dropdown-item>Github</el-dropdown-item>
+            <el-dropdown-item>Github/ui</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
@@ -50,6 +53,7 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import { getVersion } from '@/api/version'
 
 export default {
   components: {
@@ -66,6 +70,17 @@ export default {
       'avatar',
       'device'
     ])
+  },
+  data() {
+    return {
+      serverVersion: '',
+      commitId: ''
+    }
+  },
+  async created() {
+    const { OpenTMI, commitId } = await getVersion()
+    this.serverVersion = OpenTMI
+    this.commitId = commitId
   },
   methods: {
     toggleSideBar() {

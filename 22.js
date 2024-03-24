@@ -745,7 +745,8 @@ function resultsList(query) {
   return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
     url: '/api/v0/results',
     method: 'get',
-    params: query
+    params: query,
+    timeout: query.to + 1000
   });
 }
 

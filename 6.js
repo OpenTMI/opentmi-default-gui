@@ -27,12 +27,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _home_runner_work_opentmi_default_gui_opentmi_default_gui_node_modules_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs2/helpers/esm/asyncToGenerator.js");
 /* harmony import */ var core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es6.array.find */ "./node_modules/core-js/modules/es6.array.find.js");
 /* harmony import */ var core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_find__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
-/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vue-json-pretty */ "./node_modules/vue-json-pretty/lib/vue-json-pretty.js");
-/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vue-json-pretty/lib/styles.css */ "./node_modules/vue-json-pretty/lib/styles.css");
-/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js");
+/* harmony import */ var core_js_modules_es6_regexp_split__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es6.regexp.split */ "./node_modules/core-js/modules/es6.regexp.split.js");
+/* harmony import */ var core_js_modules_es6_regexp_split__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_regexp_split__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es6_regexp_replace__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es6.regexp.replace */ "./node_modules/core-js/modules/es6.regexp.replace.js");
+/* harmony import */ var core_js_modules_es6_regexp_replace__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_regexp_replace__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _api_results__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @/api/results */ "./src/api/results.js");
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vue-json-pretty */ "./node_modules/vue-json-pretty/lib/vue-json-pretty.js");
+/* harmony import */ var vue_json_pretty__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vue-json-pretty/lib/styles.css */ "./node_modules/vue-json-pretty/lib/styles.css");
+/* harmony import */ var vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(vue_json_pretty_lib_styles_css__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm.js");
+
+
 
 
 
@@ -193,7 +199,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ResultList',
   components: {
-    VueJsonPretty: vue_json_pretty__WEBPACK_IMPORTED_MODULE_11___default.a
+    VueJsonPretty: vue_json_pretty__WEBPACK_IMPORTED_MODULE_13___default.a
   },
   data: function data() {
     var _this = this;
@@ -215,6 +221,10 @@ __webpack_require__.r(__webpack_exports__);
         sortable: true,
         label: 'Campaign'
       }, {
+        key: 'job.id',
+        sortable: true,
+        label: 'JobID'
+      }, {
         key: 'exec.verdict',
         sortable: true,
         label: 'Verdict'
@@ -223,7 +233,7 @@ __webpack_require__.r(__webpack_exports__);
         sortable: true,
         label: 'Duration',
         formatter: function formatter(value, key, item) {
-          return vue__WEBPACK_IMPORTED_MODULE_13__["default"].moment.utc(vue__WEBPACK_IMPORTED_MODULE_13__["default"].moment.duration(value, 'seconds').asMilliseconds()).format('H[h] m[min]  s.S[s]');
+          return vue__WEBPACK_IMPORTED_MODULE_15__["default"].moment.utc(vue__WEBPACK_IMPORTED_MODULE_15__["default"].moment.duration(value, 'seconds').asMilliseconds()).format('H[h] m[min]  s.S[s]');
         } // '0h 0min 0.1s'
 
       }, {
@@ -278,7 +288,8 @@ __webpack_require__.r(__webpack_exports__);
       listLoading: false,
       listQuery: {
         page: 1,
-        limit: 20
+        limit: 20,
+        'cre.time': "{gt}".concat(new Date().toISOString().split('T')[0].replace(/-/g, '.'))
       },
       availableCampaigns: []
     };
@@ -299,7 +310,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     lengthLimiter: function lengthLimiter(value) {
       var maxLength = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 20;
-      var out = value.substr(0, maxLength);
+      var out = value.substring(0, maxLength);
 
       if (value.length > maxLength) {
         out += '...';
@@ -330,7 +341,7 @@ __webpack_require__.r(__webpack_exports__);
                   f: 'campaign'
                 }, this._.omit(query, ['s', 'l', 'sk']));
                 _context.next = 4;
-                return Object(_api_results__WEBPACK_IMPORTED_MODULE_10__["resultsList"])(campaignQuery);
+                return Object(_api_results__WEBPACK_IMPORTED_MODULE_12__["resultsList"])(campaignQuery);
 
               case 4:
                 _ref = _context.sent;
@@ -380,6 +391,7 @@ __webpack_require__.r(__webpack_exports__);
 
       query.l = query.limit;
       query.sk = (query.page - 1) * query.limit;
+      query.to = 40000;
 
       this._.unset(query, 'limit');
 
@@ -398,7 +410,8 @@ __webpack_require__.r(__webpack_exports__);
 
         var value = query[key];
 
-        if (value.startsWith('*')) {
+        if (typeof value !== 'string') {// empty string
+        } else if (value.startsWith('*')) {
           value = value.slice(1);
 
           if (value.endsWith('*')) {
@@ -422,10 +435,10 @@ __webpack_require__.r(__webpack_exports__);
         t: 'count'
       }, this._.omit(query, ['s', 'l', 'sk']));
 
-      return Object(_api_results__WEBPACK_IMPORTED_MODULE_10__["resultsList"])(countQuery).then(function (_ref2) {
+      return Object(_api_results__WEBPACK_IMPORTED_MODULE_12__["resultsList"])(countQuery).then(function (_ref2) {
         var data = _ref2.data;
         _this4.total = data.count;
-        return Object(_api_results__WEBPACK_IMPORTED_MODULE_10__["resultsList"])(query);
+        return Object(_api_results__WEBPACK_IMPORTED_MODULE_12__["resultsList"])(query);
       }).then(function (_ref3) {
         var data = _ref3.data;
         return data;
@@ -1126,7 +1139,8 @@ function resultsList(query) {
   return Object(_utils_request__WEBPACK_IMPORTED_MODULE_2__["default"])({
     url: '/api/v0/results',
     method: 'get',
-    params: query
+    params: query,
+    timeout: query.to + 1000
   });
 }
 

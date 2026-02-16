@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@femessage/log-viewer": "^1.4.1",
-    "axios": "0.21.2",
+    "axios": "1.13.5",
     "bootstrap-vue": "^2.13.0",
     "clipboard": "2.0.6",
     "codemirror": "5.58.2",
@@ -74,7 +74,7 @@
     "string-similarity": "^4.0.1",
     "tui-editor": "1.4.10",
     "vue": "2.6.10",
-    "vue-authenticate": "^1.4.1",
+    "vue-authenticate": "^1.5.0",
     "vue-count-to": "1.0.13",
     "vue-json-pretty": "^1.8.1",
     "vue-jstree": "^2.1.6",
